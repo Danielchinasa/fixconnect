@@ -1,0 +1,16 @@
+<!--
+Source - https://stackoverflow.com/a
+Posted by Richard R, modified by community. See post 'Timeline' for change history
+Retrieved 2026-01-18, License - CC BY-SA 4.0
+-->
+
+<!-- <?xml version="1.0" encoding="utf-8"?> -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground>
+        <inset android:drawable="@drawable/ic_launcher_foreground"
+            android:inset="20%">
+        </inset>
+    </foreground>
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
