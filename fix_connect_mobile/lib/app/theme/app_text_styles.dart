@@ -27,4 +27,16 @@ class AppTextStyles {
     fontSize: _scale(14),
     fontWeight: FontWeight.w400,
   );
+
+  static final h2Heading = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: _scale(36),
+    fontWeight: FontWeight.bold,
+  );
+
+  static final h3Heading = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: _scale(24),
+    fontWeight: FontWeight.bold,
+  );
 }

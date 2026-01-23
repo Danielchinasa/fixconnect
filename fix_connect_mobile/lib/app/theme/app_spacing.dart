@@ -8,6 +8,9 @@ class AppSpacing {
     return value; // Mobile
   }
 
+  static double xxxxs = scale(0.70);
+  static double xxxs = scale(0.8);
+  static double xxs = scale(0.02);
   static double xs = scale(4);
   static double sm = scale(8);
   static double md = scale(16);
