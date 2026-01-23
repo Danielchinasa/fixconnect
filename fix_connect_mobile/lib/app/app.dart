@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/core/utils/screen_util.dart';
 import 'package:fix_connect_mobile/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize ScreenUtil to get the screen dimensions
+    ScreenUtil.init(context);
+
     return BlocProvider(
       create: (_) => ThemeCubit(),
       child: BlocBuilder<ThemeCubit, ThemeMode>(
