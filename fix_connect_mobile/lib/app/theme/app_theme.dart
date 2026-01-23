@@ -7,16 +7,16 @@ class AppTheme {
     brightness: Brightness.light,
     fontFamily: 'Inter',
     scaffoldBackgroundColor: AppColors.lightBackground,
-    primaryColor: AppColors.primary,
+    primaryColor: AppColors.primaryLight,
 
-    textTheme: const TextTheme(
-      headlineLarge: AppTextStyles.heading,
+    textTheme: TextTheme(
+      titleLarge: AppTextStyles.heading.copyWith(color: AppColors.primaryLight),
       bodyMedium: AppTextStyles.body,
-      bodySmall: AppTextStyles.caption,
+      bodySmall: AppTextStyles.description,
     ),
 
     colorScheme: ColorScheme.light(
-      primary: AppColors.primary,
+      primary: AppColors.primaryLight,
       secondary: AppColors.secondary,
       error: AppColors.error,
     ),
@@ -26,16 +26,16 @@ class AppTheme {
     brightness: Brightness.dark,
     fontFamily: 'Inter',
     scaffoldBackgroundColor: AppColors.darkBackground,
-    primaryColor: AppColors.primary,
+    primaryColor: AppColors.primaryDark,
 
-    textTheme: const TextTheme(
-      headlineLarge: AppTextStyles.heading,
+    textTheme: TextTheme(
+      titleLarge: AppTextStyles.heading.copyWith(color: AppColors.primaryDark),
       bodyMedium: AppTextStyles.body,
-      bodySmall: AppTextStyles.caption,
+      bodySmall: AppTextStyles.description,
     ),
 
     colorScheme: ColorScheme.dark(
-      primary: AppColors.primary,
+      primary: AppColors.primaryDark,
       secondary: AppColors.secondary,
       error: AppColors.error,
     ),

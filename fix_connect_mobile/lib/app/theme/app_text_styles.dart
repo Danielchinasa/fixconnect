@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 
 class AppTextStyles {
   static const _fontFamily = 'Inter';
@@ -16,9 +15,9 @@ class AppTextStyles {
     fontWeight: FontWeight.normal,
   );
 
-  static const caption = TextStyle(
+  static const description = TextStyle(
     fontFamily: _fontFamily,
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
   );
 }
