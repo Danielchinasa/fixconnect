@@ -1,3 +1,5 @@
+import 'package:fix_connect_mobile/app/router/app_navigator.dart';
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/constants/integer_constants.dart';
@@ -31,9 +33,9 @@ class _CarouselPageState extends State<CarouselPage> {
     super.dispose();
   }
 
-  // void onNextPage() {
-  //   AppNavigator.of(context).pushReplacement(AppRoutes.loginScreen());
-  // }
+  void onNextPage() {
+    AppNavigator.pushReplacement(AppRoutes.loginPage());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +92,7 @@ class _CarouselPageState extends State<CarouselPage> {
             child: ButtonPrimary(
               bgColor: Theme.of(context).primaryColor,
               text: 'next',
-              onTap: () {},
+              onTap: onNextPage,
             ),
           ),
           AppGaps.hMd,
