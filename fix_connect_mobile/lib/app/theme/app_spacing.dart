@@ -1,11 +1,20 @@
+import 'package:fix_connect_mobile/core/utils/screen_util.dart';
+
 class AppSpacing {
-  static const double xs = 4;
-  static const double sm = 8;
-  static const double md = 16;
-  static const double lg = 24;
-  static const double xl = 32;
-  static const double xxl = 48;
+  // Scale spacing based on device type
+  static double scale(double value) {
+    if (ScreenUtil.isTablet) return value * 1.2;
+    if (ScreenUtil.isDesktop) return value * 1.4;
+    return value; // Mobile
+  }
+
+  static double xs = scale(4);
+  static double sm = scale(8);
+  static double md = scale(16);
+  static double lg = scale(24);
+  static double xl = scale(32);
+  static double xxl = scale(48);
 
   // Screen padding
-  static const double pagePadding = 16;
+  static double pagePadding = scale(16);
 }
