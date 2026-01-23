@@ -25,7 +25,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   AppGaps.hXs,
                   Text(
-                    'Welcome back to your creatived',
+                    'Welcome back to your creative',
                     style: TextStyle(fontSize: 16),
                   ),
                   IconButton(
