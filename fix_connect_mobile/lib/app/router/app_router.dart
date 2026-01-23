@@ -20,13 +20,13 @@ class RouteGenerator {
                     'Discover verified professionals in your area, reviewed by real customers and ready to get the job done right.',
               ),
               CarouselModel(
-                image: ImageAssets.carouselFirst(),
+                image: ImageAssets.carouselSecond(),
                 title: 'Work Smarter, Earn More',
                 description:
                     'Get more jobs, keep track of your bookings easily, connect with clients, and earn more money your way.',
               ),
               CarouselModel(
-                image: ImageAssets.carouselFirst(),
+                image: ImageAssets.carouselThird(),
                 title: 'Your Money Is Safe Until the Job Is Done',
                 description:
                     'Your payments are completely safe, held securely, and only released when the work is done to your satisfaction.',
