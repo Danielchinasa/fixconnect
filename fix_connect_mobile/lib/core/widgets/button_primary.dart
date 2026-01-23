@@ -25,18 +25,18 @@ class ButtonPrimary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(AppSpacing.lg),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: Theme.of(context).colorScheme.primary,
-            offset: Offset(4, 8),
-            blurRadius: 24,
+            offset: Offset(AppSpacing.xs, AppSpacing.sm),
+            blurRadius: AppSpacing.lg,
             spreadRadius: -10,
           ),
         ],
       ),
       child: MaterialButton(
-        height: 48,
+        height: AppSpacing.xxl,
         onPressed: enabled
             ? () {
                 if (onTap != null) {
@@ -44,12 +44,14 @@ class ButtonPrimary extends StatelessWidget {
                 }
               }
             : null,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.lg),
+        ),
         minWidth: MediaQuery.of(context).size.width,
         color: bgColor,
-        disabledElevation: 0.02,
+        disabledElevation: AppSpacing.xxs,
         disabledColor: AppColors.grey400,
-        elevation: 0,
+        elevation: AppSpacing.zero,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -69,7 +71,7 @@ class ButtonPrimary extends StatelessWidget {
         textAlign: TextAlign.center,
         overflow: TextOverflow.ellipsis,
         style: AppTextStyles.h3Heading.copyWith(
-          color: textColor ?? Theme.of(context).colorScheme.onSecondary,
+          color: textColor ?? Theme.of(context).colorScheme.surface,
         ),
       ),
     );
