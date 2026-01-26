@@ -22,6 +22,8 @@ class AppSpacing {
   static double custom20 = scale(20);
   static double custom40 = scale(40);
   static double custom60 = scale(60);
+  static double custom52 = scale(52);
+  static double custom80 = scale(80);
 
   // Screen padding
   static double pagePadding = scale(16);

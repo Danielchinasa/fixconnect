@@ -70,7 +70,7 @@ class ButtonPrimary extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         overflow: TextOverflow.ellipsis,
-        style: AppTextStyles.h3Heading.copyWith(
+        style: AppTextStyles.header4Bold(
           color: textColor ?? Theme.of(context).colorScheme.surface,
         ),
       ),

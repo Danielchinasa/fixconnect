@@ -87,6 +87,7 @@ class _InputPrimaryState extends State<InputPrimary> {
                 ),
                 Expanded(
                   child: TextFormField(
+                    obscureText: widget.obscureText ?? false,
                     controller: widget.controller,
                     autofocus: widget.autofocus ?? false,
                     focusNode: widget.focusNode,
