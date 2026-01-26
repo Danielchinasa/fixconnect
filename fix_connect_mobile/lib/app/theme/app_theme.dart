@@ -1,3 +1,5 @@
+import 'package:fix_connect_mobile/app/theme/app_text_style_extension.dart';
+import 'package:fix_connect_mobile/app/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
@@ -28,6 +30,17 @@ class AppTheme {
       surface: AppColors.lightBackground,
       error: AppColors.error,
     ),
+    extensions: [
+      AppThemeExtension(
+        surfaceSelected: AppColors.surfaceSelectedLight,
+        surface: AppColors.surfaceLight,
+      ),
+      AppTextStyleExtension(
+        bodyLargeSemibold: AppTextStyles.bodyLargeSemibold(
+          color: AppColors.lightText,
+        ),
+      ),
+    ],
   );
 
   // dark theme
@@ -55,5 +68,17 @@ class AppTheme {
       surface: AppColors.darkBackground,
       error: AppColors.error,
     ),
+
+    extensions: [
+      AppThemeExtension(
+        surfaceSelected: AppColors.surfaceSelectedDark,
+        surface: AppColors.surfaceDark,
+      ),
+      AppTextStyleExtension(
+        bodyLargeSemibold: AppTextStyles.bodyLargeSemibold(
+          color: AppColors.darkText,
+        ),
+      ),
+    ],
   );
 }
