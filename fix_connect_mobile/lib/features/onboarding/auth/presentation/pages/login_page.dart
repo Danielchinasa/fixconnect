@@ -24,25 +24,11 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _focusNodePassword = FocusNode();
 
   bool _passwordObscured = true;
-  bool _canUserContinue = false;
 
   void _togglePasswordObscured() {
     setState(() {
       _passwordObscured = !_passwordObscured;
     });
-  }
-
-  void _checkIfUserCanContinue() {
-    final password = _textEditingControllerPassword.text.trim();
-    setState(() {
-      _canUserContinue = password.isNotEmpty && password.length > 7;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _textEditingControllerPassword.addListener(_checkIfUserCanContinue);
   }
 
   @override
@@ -116,13 +102,27 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
+                      AppGaps.hSm,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'Forgot password?',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ),
                       AppGaps.hLg,
 
                       /// Sign in button
                       ButtonPrimary(
                         text: 'Sign In',
                         bgColor: Theme.of(context).primaryColor,
-                        enabled: _canUserContinue,
                       ),
 
                       AppGaps.hXl,

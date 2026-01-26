@@ -11,6 +11,8 @@ class SocialIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(AppSpacing.custom12),
+      splashColor: Theme.of(context).primaryColor.withOpacity(0.1),
+      highlightColor: Theme.of(context).colorScheme.primary.withOpacity(0.04),
       onTap: onTap,
       child: Container(
         width: AppSpacing.custom52,
