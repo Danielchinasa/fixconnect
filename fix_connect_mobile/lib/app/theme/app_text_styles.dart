@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/core/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,18 @@ class AppTextStyles {
     fontFamily: _fontFamily,
     fontSize: _scale(54),
     fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle header4Bold({
+    Color? color,
+    FontWeight? fontWeight,
+    double? height,
+  }) => TextStyle(
+    color: color ?? AppColors.grey500,
+    fontSize: 18,
+    height: height ?? 1.3333333333333333,
+    fontWeight: fontWeight ?? FontWeight.w700,
+    fontStyle: FontStyle.normal,
   );
 
   static final body = TextStyle(

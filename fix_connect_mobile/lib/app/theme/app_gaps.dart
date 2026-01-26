@@ -7,6 +7,8 @@ class AppGaps {
   static final hMd = SizedBox(height: AppSpacing.md);
   static final hLg = SizedBox(height: AppSpacing.lg);
   static final hXl = SizedBox(height: AppSpacing.xl);
+  static final hCustom60 = SizedBox(height: AppSpacing.custom60);
+  static final hCustom80 = SizedBox(height: AppSpacing.custom80);
 
   static final wXs = SizedBox(width: AppSpacing.xs);
   static final wSm = SizedBox(width: AppSpacing.sm);
