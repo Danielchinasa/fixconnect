@@ -1,6 +1,5 @@
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class SocialIconButton extends StatelessWidget {
   final Widget asset;
