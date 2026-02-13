@@ -182,6 +182,7 @@ class _SignupPageState extends State<SignupPage> {
 
                       /// Sign up button
                       ButtonPrimary(
+                        onTap: () {},
                         text: 'Create Account',
                         bgColor: Theme.of(context).primaryColor,
                       ),
