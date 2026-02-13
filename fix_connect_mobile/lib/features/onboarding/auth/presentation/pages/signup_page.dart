@@ -2,26 +2,30 @@ import 'package:fix_connect_mobile/app/router/app_navigator.dart';
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
-import 'package:fix_connect_mobile/app/theme/theme_cubit.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/social_icon_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
+  final TextEditingController _textEditingControllerFirstname =
+      TextEditingController();
+  final TextEditingController _textEditingControllerLastname =
+      TextEditingController();
   final TextEditingController _textEditingControllerEmail =
       TextEditingController();
   final TextEditingController _textEditingControllerPassword =
       TextEditingController();
+  final FocusNode _focusNodeFirstname = FocusNode();
+  final FocusNode _focusNodeLastname = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
   final FocusNode _focusNodePassword = FocusNode();
 
@@ -37,13 +41,17 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _textEditingControllerPassword.dispose();
     _textEditingControllerEmail.dispose();
+    _textEditingControllerLastname.dispose();
+    _textEditingControllerFirstname.dispose();
     _focusNodeEmail.dispose();
+    _focusNodeLastname.dispose();
+    _focusNodeFirstname.dispose();
     _focusNodePassword.dispose();
     super.dispose();
   }
 
-  void gotoSignUp() {
-    AppNavigator.pushReplacement(AppRoutes.signUpPage());
+  void goBackToLogin() {
+    AppNavigator.pushReplacement(AppRoutes.loginPage());
   }
 
   @override
@@ -60,22 +68,49 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       Text(
-                        'Fix Connect',
+                        'Create Account',
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
                       AppGaps.hXs,
                       Text(
-                        'Hi! Welcome back, you\'ve been missed',
+                        'Create an account to find trusted experts near you and get your jobs done hassle-free.',
                         style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
                       ),
                       AppGaps.hXl,
+
+                      /// First name
+                      InputPrimary(
+                        focusNode: _focusNodeFirstname,
+                        controller: _textEditingControllerFirstname,
+                        autofocus: true,
+                        label: 'First name',
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+
+                      AppGaps.hSm,
+
+                      /// Last name
+                      InputPrimary(
+                        focusNode: _focusNodeLastname,
+                        controller: _textEditingControllerLastname,
+                        label: 'Last name',
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+
+                      AppGaps.hSm,
 
                       /// Email
                       InputPrimary(
                         focusNode: _focusNodeEmail,
                         controller: _textEditingControllerEmail,
-                        autofocus: true,
-                        label: 'Enter your email',
+                        label: 'Email',
                         prefixIcon: Icon(
                           Icons.email,
                           color: Theme.of(context).colorScheme.primary,
@@ -89,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: _passwordObscured,
                         focusNode: _focusNodePassword,
                         controller: _textEditingControllerPassword,
-                        label: 'Enter your password',
+                        label: 'Password',
                         prefixIcon: Icon(
                           Icons.lock,
                           color: Theme.of(context).colorScheme.primary,
@@ -109,25 +144,46 @@ class _LoginPageState extends State<LoginPage> {
                       ),
 
                       AppGaps.hSm,
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'Forgot password?',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                            textAlign: TextAlign.right,
-                          ),
+
+                      /// Terms and conditions
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: 'By creating an account, you agree to our ',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: [
+                            TextSpan(
+                              text: 'Terms of Service',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                            ),
+                            TextSpan(
+                              text: ' and ',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            TextSpan(
+                              text: 'Privacy Policy',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                            ),
+                            TextSpan(
+                              text: '.',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
                         ),
                       ),
+
                       AppGaps.hLg,
 
-                      /// Sign in button
+                      /// Sign up button
                       ButtonPrimary(
-                        text: 'Sign In',
+                        onTap: () {},
+                        text: 'Create Account',
                         bgColor: Theme.of(context).primaryColor,
                       ),
 
@@ -181,27 +237,19 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Don\'t have an account?',
+                    'Already have an account?',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   TextButton(
-                    onPressed: gotoSignUp,
+                    onPressed: goBackToLogin,
                     child: Text(
-                      'Sign Up',
+                      'Sign In',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
                   ),
                 ],
-              ),
-
-              /// Theme toggle (optional dev tool)
-              IconButton(
-                icon: const Icon(Icons.brightness_6),
-                onPressed: () {
-                  context.read<ThemeCubit>().toggleTheme();
-                },
               ),
             ],
           ),
