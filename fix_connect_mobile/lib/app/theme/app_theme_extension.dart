@@ -21,7 +21,6 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
     covariant ThemeExtension<AppThemeExtension>? other,
     double t,
   ) {
-    // TODO: implement lerp
     throw UnimplementedError();
   }
 }

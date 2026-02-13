@@ -18,7 +18,6 @@ class AppTextStyleExtension extends ThemeExtension<AppTextStyleExtension> {
     covariant ThemeExtension<AppTextStyleExtension>? other,
     double t,
   ) {
-    // TODO: implement lerp
     throw UnimplementedError();
   }
 }
