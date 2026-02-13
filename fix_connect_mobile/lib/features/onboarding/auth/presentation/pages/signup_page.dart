@@ -97,7 +97,6 @@ class _SignupPageState extends State<SignupPage> {
                       InputPrimary(
                         focusNode: _focusNodeLastname,
                         controller: _textEditingControllerLastname,
-                        autofocus: true,
                         label: 'Last name',
                         prefixIcon: Icon(
                           Icons.person,
@@ -111,7 +110,6 @@ class _SignupPageState extends State<SignupPage> {
                       InputPrimary(
                         focusNode: _focusNodeEmail,
                         controller: _textEditingControllerEmail,
-                        autofocus: true,
                         label: 'Email',
                         prefixIcon: Icon(
                           Icons.email,
