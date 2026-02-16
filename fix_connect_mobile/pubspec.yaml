@@ -17,6 +17,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   equatable: ^2.0.8
   flutter_svg: ^2.2.3
+  sms_otp_auto_verify: ^2.2.0
 
 dev_dependencies:
   flutter_test:

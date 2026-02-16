@@ -232,6 +232,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  sms_otp_auto_verify:
+    dependency: "direct main"
+    description:
+      name: sms_otp_auto_verify
+      sha256: ee02af0d6b81d386ef70d7d0317a1929bc0b4a3a30a451284450bbcf6901ba1a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   source_span:
     dependency: transitive
     description:

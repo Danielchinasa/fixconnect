@@ -1,6 +1,8 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/forgot_password_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/login_page.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/otp_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/signup_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/data/carousel_model.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/presentation/carousel_page.dart';
@@ -39,6 +41,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const LoginPage());
       case AppRoutes.signup:
         return MaterialPageRoute(builder: (_) => const SignupPage());
+      case AppRoutes.otp:
+        return MaterialPageRoute(builder: (_) => const OtpPage());
+      case AppRoutes.forgotPassword:
+        return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
