@@ -46,6 +46,15 @@ class _LoginPageState extends State<LoginPage> {
     AppNavigator.pushReplacement(AppRoutes.signUpPage());
   }
 
+  void gotoOtpPage() {
+    print("going to OTP page");
+    AppNavigator.push(AppRoutes.otpPage());
+  }
+
+  void gotoForgotPasswordPage() {
+    AppNavigator.push(AppRoutes.forgotPasswordPage());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +63,6 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.all(AppSpacing.pagePadding),
           child: Column(
             children: [
-              /// 🔹 Scrollable content
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -112,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: gotoForgotPasswordPage,
                           child: Text(
                             'Forgot password?',
                             style: Theme.of(context).textTheme.bodyMedium
@@ -129,6 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                       ButtonPrimary(
                         text: 'Sign In',
                         bgColor: Theme.of(context).primaryColor,
+                        onTap: gotoOtpPage,
                       ),
 
                       AppGaps.hXl,
