@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
@@ -25,7 +27,9 @@ class _OtpPageState extends State<OtpPage> {
   @override
   void dispose() {
     super.dispose();
-    SmsVerification.stopListening();
+    if (Platform.isAndroid) {
+      SmsVerification.stopListening();
+    }
   }
 
   BoxDecoration get _pinPutDecoration {
