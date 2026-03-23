@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:fix_connect_mobile/app/router/app_navigator.dart';
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
@@ -104,7 +106,9 @@ class _OtpPageState extends State<OtpPage> {
                 ButtonPrimary(
                   text: 'Submit',
                   bgColor: Theme.of(context).primaryColor,
-                  onTap: () {},
+                  onTap: () {
+                    AppNavigator.pushAndRemoveUntil(AppRoutes.homePage());
+                  },
                 ),
               ],
             ),
