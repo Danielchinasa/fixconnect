@@ -33,10 +33,10 @@ class HomeSearchBar extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
-              height: 52,
+              height: AppSpacing.custom52,
               decoration: BoxDecoration(
                 color: surfaceColor,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppSpacing.md),
               ),
               child: TextField(
                 controller: controller,
@@ -48,13 +48,17 @@ class HomeSearchBar extends StatelessWidget {
                   hintStyle: AppTextStyles.bodyMediumRegular(
                     color: textColor.withOpacity(0.4),
                   ),
-                  prefixIcon: Icon(Icons.search, color: primary, size: 22),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: primary,
+                    size: AppSpacing.custom22,
+                  ),
                   suffixIcon: hasText
                       ? IconButton(
                           icon: Icon(
                             Icons.close_rounded,
                             color: textColor.withOpacity(0.5),
-                            size: 18,
+                            size: AppSpacing.custom22,
                           ),
                           onPressed: () {
                             controller.clear();
@@ -63,7 +67,7 @@ class HomeSearchBar extends StatelessWidget {
                         )
                       : null,
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  contentPadding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 ),
               ),
             ),
@@ -72,11 +76,11 @@ class HomeSearchBar extends StatelessWidget {
           GestureDetector(
             onTap: onFilterTap,
             child: Container(
-              width: 52,
-              height: 52,
+              width: AppSpacing.custom52,
+              height: AppSpacing.custom52,
               decoration: BoxDecoration(
                 color: primary,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppSpacing.md),
               ),
               child: Stack(
                 alignment: Alignment.center,
@@ -84,15 +88,15 @@ class HomeSearchBar extends StatelessWidget {
                   Icon(
                     Icons.tune_rounded,
                     color: Theme.of(context).colorScheme.surface,
-                    size: 22,
+                    size: AppSpacing.custom22,
                   ),
                   if (hasActiveFilter)
                     Positioned(
-                      top: 8,
-                      right: 8,
+                      top: AppSpacing.sm,
+                      right: AppSpacing.sm,
                       child: Container(
-                        width: 8,
-                        height: 8,
+                        width: AppSpacing.sm,
+                        height: AppSpacing.sm,
                         decoration: const BoxDecoration(
                           color: AppColors.error,
                           shape: BoxShape.circle,

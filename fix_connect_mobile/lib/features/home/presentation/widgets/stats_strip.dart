@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -22,11 +23,11 @@ class StatsStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSpacing.md),
       ),
       child: Row(
         children: List.generate(_stats.length * 2 - 1, (i) {
@@ -47,7 +48,7 @@ class StatsStrip extends StatelessWidget {
                   stat.value,
                   style: AppTextStyles.bodyLargeBold(color: primary),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: AppSpacing.custom2),
                 Text(
                   stat.label,
                   style: AppTextStyles.bodySmallRegular(

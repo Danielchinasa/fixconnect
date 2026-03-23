@@ -1,5 +1,7 @@
+import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
+import 'package:fix_connect_mobile/core/constants/integer_constants.dart';
 import 'package:flutter/material.dart';
 
 class ServiceCategoryGrid extends StatelessWidget {
@@ -35,10 +37,10 @@ class ServiceCategoryGrid extends StatelessWidget {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: IntegerConstants.custom4,
+          mainAxisSpacing: AppSpacing.custom12,
+          crossAxisSpacing: AppSpacing.custom12,
           childAspectRatio: 0.95,
         ),
         itemCount: _categories.length,
@@ -78,16 +80,16 @@ class _CategoryItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14),
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.custom14),
         decoration: BoxDecoration(
           color: primary.withOpacity(0.10),
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppSpacing.custom18),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(data.icon, color: primary, size: 24),
-            const SizedBox(height: 5),
+            Icon(data.icon, color: primary, size: AppSpacing.lg),
+            AppGaps.hXs,
             Text(
               data.label,
               style: AppTextStyles.bodySmallMedium(color: textColor),

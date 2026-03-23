@@ -146,7 +146,9 @@ class _FilterSheetState extends State<FilterSheet> {
                   child: Text(
                     cat,
                     style: AppTextStyles.bodySmallMedium(
-                      color: isSelected ? Colors.white : textColor,
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.surface
+                          : textColor,
                     ),
                   ),
                 ),
@@ -195,7 +197,9 @@ class _FilterSheetState extends State<FilterSheet> {
                         Text(
                           opt.label,
                           style: AppTextStyles.bodySmallMedium(
-                            color: isSelected ? Colors.white : textColor,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.surface
+                                : textColor,
                           ),
                         ),
                       ],
@@ -247,7 +251,9 @@ class _FilterSheetState extends State<FilterSheet> {
                       Text(
                         opt.label,
                         style: AppTextStyles.bodySmallMedium(
-                          color: isSelected ? Colors.white : textColor,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.surface
+                              : textColor,
                         ),
                       ),
                     ],
@@ -311,7 +317,9 @@ class _FilterSheetState extends State<FilterSheet> {
               ),
               child: Text(
                 'Apply Filters',
-                style: AppTextStyles.bodyLargeBold(color: Colors.white),
+                style: AppTextStyles.header4Bold(
+                  color: Theme.of(context).colorScheme.surface,
+                ),
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
+import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -37,26 +38,31 @@ class HomeHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Good morning, John!',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
-                  const SizedBox(height: 2),
+                  AppGaps.hSm,
                   GestureDetector(
                     onTap: onLocationTap,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.location_on, color: primary, size: 16),
-                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.location_on,
+                          color: primary,
+                          size: AppSpacing.md,
+                        ),
+                        AppGaps.wSm,
                         Text(
                           location,
-                          style: AppTextStyles.bodyMediumSemibold(
-                            color: textColor,
-                          ),
+                          style: AppTextStyles.bodyMediumBold(color: textColor),
                         ),
                         Icon(
                           Icons.keyboard_arrow_down,
                           color: textColor.withOpacity(0.6),
-                          size: 18,
+                          size: AppSpacing.custom18,
                         ),
                       ],
                     ),
@@ -77,10 +83,7 @@ class HomeHeader extends StatelessWidget {
               child: CircleAvatar(
                 radius: 20,
                 backgroundColor: primary,
-                child: Text(
-                  'JD',
-                  style: AppTextStyles.bodySmallBold(color: Colors.white),
-                ),
+                child: Text('DO', style: AppTextStyles.bodySmallBold()),
               ),
             ),
           ],
@@ -114,18 +117,18 @@ class _IconBtn extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: AppSpacing.custom40,
+            height: AppSpacing.custom40,
             decoration: BoxDecoration(color: surfBg, shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 22),
+            child: Icon(icon, color: color, size: AppSpacing.custom22),
           ),
           if (badge)
             Positioned(
-              top: 2,
-              right: 2,
+              top: AppSpacing.custom2,
+              right: AppSpacing.custom2,
               child: Container(
-                width: 8,
-                height: 8,
+                width: AppSpacing.sm,
+                height: AppSpacing.sm,
                 decoration: const BoxDecoration(
                   color: AppColors.error,
                   shape: BoxShape.circle,

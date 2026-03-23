@@ -1,5 +1,6 @@
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
+import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/features/home/data/datasources/home_mock_datasource.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
@@ -101,7 +102,6 @@ class _HomePageState extends State<HomePage> {
                 onFilterTap: _showFilterSheet,
               ),
             ),
-
             SliverToBoxAdapter(child: AppGaps.hLg),
             SliverToBoxAdapter(
               child: StatsStrip(
@@ -258,8 +258,10 @@ class _HomePageState extends State<HomePage> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.lg),
+        ),
       ),
       builder: (_) => FilterSheet(
         filter: _filter,
@@ -279,8 +281,10 @@ class _HomePageState extends State<HomePage> {
   void _showLocationPicker() {
     showModalBottomSheet<void>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.lg),
+        ),
       ),
       builder: (_) => LocationPickerSheet(
         currentLocation: _selectedLocation,

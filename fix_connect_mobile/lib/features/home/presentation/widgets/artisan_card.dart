@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +24,11 @@ class ArtisanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardInner = Container(
-      width: 150,
-      padding: const EdgeInsets.all(14),
+      width: AppSpacing.custom150,
+      padding: EdgeInsets.all(AppSpacing.custom14),
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppSpacing.custom18),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -38,7 +39,7 @@ class ArtisanCard extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               CircleAvatar(
-                radius: 26,
+                radius: 35,
                 backgroundColor: artisan.badgeColor.withOpacity(0.15),
                 child: Text(
                   artisan.initials,
@@ -48,34 +49,34 @@ class ArtisanCard extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 1,
-                right: 1,
+                bottom: 4,
+                right: 2,
                 child: Container(
-                  width: 13,
-                  height: 13,
+                  width: AppSpacing.custom12,
+                  height: AppSpacing.custom12,
                   decoration: BoxDecoration(
                     color: artisan.isOnline
                         ? const Color(0xFF22C55E)
                         : const Color(0xFF9E9E9E),
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
+                    border: Border.all(color: Colors.black, width: 1),
                   ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 8),
+          SizedBox(height: AppSpacing.sm),
 
           // Name
           Text(
             artisan.name,
-            style: AppTextStyles.bodySmallBold(color: textColor),
+            style: AppTextStyles.bodyMediumSemibold(color: textColor),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
 
-          const SizedBox(height: 2),
+          SizedBox(height: AppSpacing.custom2),
 
           // Specialty
           Text(
@@ -87,15 +88,15 @@ class ArtisanCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
 
-          const SizedBox(height: 6),
+          SizedBox(height: AppSpacing.custom6),
 
           // Rating
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.star_rounded,
                 color: Color(0xFFFFB800),
-                size: 14,
+                size: AppSpacing.custom14,
               ),
               const SizedBox(width: 3),
               Text(
@@ -132,8 +133,8 @@ class ArtisanCard extends StatelessWidget {
                 message: 'Verified',
                 location: BannerLocation.topEnd,
                 color: const Color(0xFF22C55E),
-                textStyle: const TextStyle(
-                  fontSize: 11,
+                textStyle: TextStyle(
+                  fontSize: AppSpacing.custom12,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.4,
                 ),
