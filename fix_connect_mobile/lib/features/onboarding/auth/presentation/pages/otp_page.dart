@@ -4,7 +4,7 @@ import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:flutter/material.dart';
-import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
+import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class OtpPage extends StatefulWidget {
   const OtpPage({super.key});
@@ -22,14 +22,6 @@ class _OtpPageState extends State<OtpPage> {
   void initState() {
     super.initState();
     _getSignatureCode();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    if (Platform.isAndroid) {
-      SmsVerification.stopListening();
-    }
   }
 
   BoxDecoration get _pinPutDecoration {
@@ -76,24 +68,20 @@ class _OtpPageState extends State<OtpPage> {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      TextFieldPin(
-                        textController: textEditingController,
-                        autoFocus: true,
-                        codeLength: _otpCodeLength,
-                        alignment: MainAxisAlignment.center,
-                        defaultBoxSize: 46.0,
-                        margin: 10,
-                        selectedBoxSize: 46.0,
-                        textStyle: TextStyle(fontSize: 16),
-                        defaultDecoration: _pinPutDecoration.copyWith(
-                          border: Border.all(
-                            color: Theme.of(
-                              context,
-                            ).primaryColor.withOpacity(0.6),
-                          ),
-                        ),
-                        selectedDecoration: _pinPutDecoration,
-                        onChange: (code) {},
+                      OtpTextField(
+                        numberOfFields: _otpCodeLength,
+                        borderColor: Theme.of(context).primaryColor,
+                        focusedBorderColor: Theme.of(context).primaryColor,
+                        showFieldAsBox: false,
+                        borderWidth: 1.0,
+                        fieldWidth: 50,
+                        fieldHeight: 50,
+                        borderRadius: BorderRadius.circular(15.0),
+                        textStyle: Theme.of(context).textTheme.headlineMedium,
+                        onSubmit: (String verificationCode) {
+                          // Handle OTP submission
+                          print('OTP is => $verificationCode');
+                        },
                       ),
                     ],
                   ),
