@@ -22,4 +22,16 @@ class AppNavigator {
   static void pop<T extends Object?>([T? result]) {
     _navigator.pop(result);
   }
+
+  // ✅ PUSH AND REMOVE ALL PREVIOUS ROUTES (e.g. after login/OTP)
+  static Future<void> pushAndRemoveUntil(
+    String routeName, {
+    Object? arguments,
+  }) {
+    return _navigator.pushNamedAndRemoveUntil(
+      routeName,
+      (route) => false,
+      arguments: arguments,
+    );
+  }
 }

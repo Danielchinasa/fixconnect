@@ -9,4 +9,7 @@ class IntegerConstants {
   static const double opacity75 = 0.75;
   static const double opacity50 = 0.5;
   static const double opacity25 = 0.25;
+
+  // Max lengths
+  static const int custom4 = 4;
 }
