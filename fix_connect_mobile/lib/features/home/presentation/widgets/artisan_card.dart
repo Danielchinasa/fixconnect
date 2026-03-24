@@ -66,7 +66,7 @@ class ArtisanCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: AppSpacing.sm),
+          SizedBox(height: AppSpacing.custom8),
 
           // Name
           Text(

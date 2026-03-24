@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.pagePadding),
+          padding: EdgeInsets.all(AppSpacing.custom16),
           child: Column(
             children: [
               Expanded(
@@ -71,12 +71,12 @@ class _LoginPageState extends State<LoginPage> {
                         'Fix Connect',
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
-                      AppGaps.hXs,
+                      AppGaps.h4,
                       Text(
                         'Hi! Welcome back, you\'ve been missed',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                      AppGaps.hXl,
+                      AppGaps.h32,
 
                       /// Email
                       InputPrimary(
@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
-                      AppGaps.hSm,
+                      AppGaps.h8,
 
                       /// Password
                       InputPrimary(
@@ -103,20 +103,20 @@ class _LoginPageState extends State<LoginPage> {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         suffixIcon: Padding(
-                          padding: EdgeInsets.only(right: AppSpacing.xs),
+                          padding: EdgeInsets.only(right: AppSpacing.custom4),
                           child: GestureDetector(
                             onTap: _togglePasswordObscured,
                             child: Icon(
                               _passwordObscured
                                   ? Icons.visibility_off_rounded
                                   : Icons.visibility_rounded,
-                              size: AppSpacing.lg,
+                              size: AppSpacing.custom24,
                             ),
                           ),
                         ),
                       ),
 
-                      AppGaps.hSm,
+                      AppGaps.h8,
                       Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                      AppGaps.hLg,
+                      AppGaps.h24,
 
                       /// Sign in button
                       ButtonPrimary(
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                         onTap: gotoOtpPage,
                       ),
 
-                      AppGaps.hXl,
+                      AppGaps.h32,
 
                       /// Divider
                       Row(
@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                           const Expanded(child: Divider()),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm,
+                              horizontal: AppSpacing.custom8,
                             ),
                             child: Text(
                               'Or continue with',
@@ -159,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
 
-                      AppGaps.hXl,
+                      AppGaps.h32,
 
                       /// Social buttons
                       Row(
@@ -169,12 +169,12 @@ class _LoginPageState extends State<LoginPage> {
                             asset: ImageAssets.google(),
                             onTap: () {},
                           ),
-                          SizedBox(width: AppSpacing.md),
+                          SizedBox(width: AppSpacing.custom16),
                           SocialIconButton(
                             asset: ImageAssets.facebook(),
                             onTap: () {},
                           ),
-                          SizedBox(width: AppSpacing.md),
+                          SizedBox(width: AppSpacing.custom16),
                           SocialIconButton(
                             asset: ImageAssets.apple(),
                             onTap: () {},

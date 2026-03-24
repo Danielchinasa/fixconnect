@@ -33,8 +33,8 @@ class BookingCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.symmetric(
-          horizontal: AppSpacing.pagePadding,
-          vertical: AppSpacing.xs,
+          horizontal: AppSpacing.custom16,
+          vertical: AppSpacing.custom4,
         ),
         decoration: BoxDecoration(
           color: surfaceColor,
@@ -50,7 +50,7 @@ class BookingCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.md),
+          padding: EdgeInsets.all(AppSpacing.custom16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -70,7 +70,7 @@ class BookingCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: AppSpacing.sm),
+                  SizedBox(width: AppSpacing.custom8),
                   // Name + specialty
                   Expanded(
                     child: Column(
@@ -94,12 +94,12 @@ class BookingCard extends StatelessWidget {
                 ],
               ),
 
-              SizedBox(height: AppSpacing.md),
+              SizedBox(height: AppSpacing.custom16),
 
               // Divider
               Divider(height: 1, color: textColor.withValues(alpha: 0.08)),
 
-              SizedBox(height: AppSpacing.md),
+              SizedBox(height: AppSpacing.custom16),
 
               // Booking details: service, date, time, price
               Row(
@@ -114,7 +114,7 @@ class BookingCard extends StatelessWidget {
                           textColor: textColor,
                           iconColor: statusColor,
                         ),
-                        SizedBox(height: AppSpacing.xs),
+                        SizedBox(height: AppSpacing.custom4),
                         _DetailRow(
                           icon: Icons.calendar_today_rounded,
                           label: DateFormat(
@@ -123,7 +123,7 @@ class BookingCard extends StatelessWidget {
                           textColor: textColor,
                           iconColor: textColor.withValues(alpha: 0.45),
                         ),
-                        SizedBox(height: AppSpacing.xs),
+                        SizedBox(height: AppSpacing.custom4),
                         _DetailRow(
                           icon: Icons.access_time_rounded,
                           label: booking.timeSlot,

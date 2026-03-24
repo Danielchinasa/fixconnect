@@ -59,7 +59,7 @@ class _InputPrimaryState extends State<InputPrimary> {
       },
       child: Container(
         height: AppSpacing.custom60,
-        margin: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        margin: EdgeInsets.symmetric(vertical: AppSpacing.custom8),
         decoration: BoxDecoration(
           color: isFocused
               ? Theme.of(
@@ -83,7 +83,7 @@ class _InputPrimaryState extends State<InputPrimary> {
                 SizedBox(
                   width: widget.prefixIcon != null
                       ? AppSpacing.custom12
-                      : AppSpacing.zero,
+                      : AppSpacing.custom0,
                 ),
                 Expanded(
                   child: TextFormField(
@@ -110,7 +110,7 @@ class _InputPrimaryState extends State<InputPrimary> {
                 SizedBox(
                   width: widget.suffixIcon != null
                       ? AppSpacing.custom12
-                      : AppSpacing.zero,
+                      : AppSpacing.custom0,
                 ),
                 widget.suffixIcon ?? SizedBox(),
               ],

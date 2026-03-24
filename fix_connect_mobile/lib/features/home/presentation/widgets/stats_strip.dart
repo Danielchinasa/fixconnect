@@ -23,11 +23,11 @@ class StatsStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+      margin: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.custom16),
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(AppSpacing.md),
+        borderRadius: BorderRadius.circular(AppSpacing.custom16),
       ),
       child: Row(
         children: List.generate(_stats.length * 2 - 1, (i) {

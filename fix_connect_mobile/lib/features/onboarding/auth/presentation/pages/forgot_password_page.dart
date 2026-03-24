@@ -16,23 +16,23 @@ class ForgotPasswordPage extends StatelessWidget {
       appBar: AppBar(),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.pagePadding),
+          padding: EdgeInsets.all(AppSpacing.custom16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AppGaps.hMd,
+              AppGaps.h16,
               Text(
                 'Forgot Password',
                 style: Theme.of(context).textTheme.displayLarge,
                 textAlign: TextAlign.center,
               ),
-              AppGaps.hSm,
+              AppGaps.h8,
               Text(
                 'Enter your email address to reset your password',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-              AppGaps.hLg,
+              AppGaps.h24,
               InputPrimary(
                 focusNode: focusNodeEmail,
                 controller: textEditingControllerEmail,
@@ -42,7 +42,7 @@ class ForgotPasswordPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              AppGaps.hLg,
+              AppGaps.h24,
 
               /// Sign in button
               ButtonPrimary(

@@ -33,7 +33,7 @@ class ServiceCategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.pagePadding),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -88,8 +88,8 @@ class _CategoryItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(data.icon, color: primary, size: AppSpacing.lg),
-            AppGaps.hXs,
+            Icon(data.icon, color: primary, size: AppSpacing.custom24),
+            AppGaps.h4,
             Text(
               data.label,
               style: AppTextStyles.bodySmallMedium(color: textColor),

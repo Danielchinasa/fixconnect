@@ -42,18 +42,18 @@ class _OtpPageState extends State<OtpPage> {
       appBar: AppBar(),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.pagePadding),
+          padding: EdgeInsets.all(AppSpacing.custom16),
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                AppGaps.hMd,
+                AppGaps.h16,
                 Text(
                   'Verify Code',
                   style: Theme.of(context).textTheme.displayLarge,
                   textAlign: TextAlign.center,
                 ),
-                AppGaps.hSm,
+                AppGaps.h8,
                 Text(
                   'We emailed you the six digit code to',
                   style: Theme.of(context).textTheme.bodyMedium,
@@ -64,7 +64,7 @@ class _OtpPageState extends State<OtpPage> {
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
-                AppGaps.hLg,
+                AppGaps.h24,
                 Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -89,7 +89,7 @@ class _OtpPageState extends State<OtpPage> {
                   ),
                 ),
 
-                AppGaps.hMd,
+                AppGaps.h16,
                 Text(
                   'Didn\'t receive the code?',
                   style: Theme.of(context).textTheme.bodyMedium,
@@ -102,7 +102,7 @@ class _OtpPageState extends State<OtpPage> {
                     decorationColor: Theme.of(context).primaryColor,
                   ),
                 ),
-                AppGaps.hLg,
+                AppGaps.h24,
                 ButtonPrimary(
                   text: 'Submit',
                   bgColor: Theme.of(context).primaryColor,

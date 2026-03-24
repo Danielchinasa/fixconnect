@@ -75,10 +75,10 @@ class _BookingsPageState extends State<BookingsPage>
           // ─── Page title ──────────────────────────────────────────
           Padding(
             padding: EdgeInsets.fromLTRB(
-              AppSpacing.pagePadding,
-              AppSpacing.md,
-              AppSpacing.pagePadding,
-              AppSpacing.sm,
+              AppSpacing.custom16,
+              AppSpacing.custom16,
+              AppSpacing.custom16,
+              AppSpacing.custom8,
             ),
             child: Text(
               'My Bookings',
@@ -95,7 +95,7 @@ class _BookingsPageState extends State<BookingsPage>
           // Setting indicator to a BoxDecoration with the same borderRadius as
           // the container creates the "sliding pill" effect.
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.pagePadding),
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
             child: Container(
               decoration: BoxDecoration(
                 color: surfaceColor,
@@ -122,7 +122,7 @@ class _BookingsPageState extends State<BookingsPage>
             ),
           ),
 
-          AppGaps.hMd,
+          AppGaps.h16,
 
           // ─── Tab body ────────────────────────────────────────────
           Expanded(
@@ -230,7 +230,7 @@ class _BookingList extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(emptyIcon, size: 56, color: primary.withValues(alpha: 0.3)),
-            AppGaps.hMd,
+            AppGaps.h16,
             Text(
               emptyMessage,
               style: AppTextStyles.bodyMediumRegular(
@@ -250,7 +250,7 @@ class _BookingList extends StatelessWidget {
       ),
       physics: const BouncingScrollPhysics(),
       itemCount: bookings.length,
-      separatorBuilder: (_, __) => SizedBox(height: AppSpacing.xs),
+      separatorBuilder: (_, __) => SizedBox(height: AppSpacing.custom4),
       itemBuilder: (context, index) => BookingCard(
         booking: bookings[index],
         textColor: textColor,

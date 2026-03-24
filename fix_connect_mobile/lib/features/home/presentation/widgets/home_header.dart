@@ -25,10 +25,10 @@ class HomeHeader extends StatelessWidget {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-          AppSpacing.pagePadding,
-          AppSpacing.md,
-          AppSpacing.pagePadding,
-          AppSpacing.md,
+          AppSpacing.custom16,
+          AppSpacing.custom16,
+          AppSpacing.custom16,
+          AppSpacing.custom16,
         ),
         child: Row(
           children: [
@@ -43,7 +43,7 @@ class HomeHeader extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  AppGaps.hSm,
+                  AppGaps.h8,
                   GestureDetector(
                     onTap: onLocationTap,
                     child: Row(
@@ -52,9 +52,9 @@ class HomeHeader extends StatelessWidget {
                         Icon(
                           Icons.location_on,
                           color: primary,
-                          size: AppSpacing.md,
+                          size: AppSpacing.custom16,
                         ),
-                        AppGaps.wSm,
+                        AppGaps.w8,
                         Text(
                           location,
                           style: AppTextStyles.bodyMediumBold(color: textColor),
@@ -77,7 +77,7 @@ class HomeHeader extends StatelessWidget {
               isDark: isDark,
               onTap: () {},
             ),
-            SizedBox(width: AppSpacing.sm),
+            SizedBox(width: AppSpacing.custom8),
             GestureDetector(
               onTap: () {},
               child: CircleAvatar(
@@ -127,8 +127,8 @@ class _IconBtn extends StatelessWidget {
               top: AppSpacing.custom2,
               right: AppSpacing.custom2,
               child: Container(
-                width: AppSpacing.sm,
-                height: AppSpacing.sm,
+                width: AppSpacing.custom8,
+                height: AppSpacing.custom8,
                 decoration: const BoxDecoration(
                   color: AppColors.error,
                   shape: BoxShape.circle,

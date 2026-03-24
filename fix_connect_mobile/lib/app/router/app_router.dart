@@ -1,5 +1,7 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
+import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/artisan_profile_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/forgot_password_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/login_page.dart';
@@ -48,6 +50,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
+      case AppRoutes.artisanProfile:
+        final artisan = settings.arguments as ArtisanModel;
+        return MaterialPageRoute(
+          builder: (_) => ArtisanProfilePage(artisan: artisan),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

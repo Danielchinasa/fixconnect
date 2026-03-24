@@ -62,7 +62,7 @@ class _PromoBannerCarouselState extends State<PromoBannerCarousel> {
               final b = _banners[index];
               return Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.pagePadding,
+                  horizontal: AppSpacing.custom16,
                 ),
                 child: _BannerCard(data: b),
               );

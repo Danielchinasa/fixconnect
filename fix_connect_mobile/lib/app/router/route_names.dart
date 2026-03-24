@@ -5,6 +5,7 @@ class AppRoutes {
   static const otp = '/otp';
   static const forgotPassword = '/forgot-password';
   static const home = '/home';
+  static const artisanProfile = '/artisan-profile';
 
   static String loginPage() => login;
   static String onboardingScreen() => onboarding;
