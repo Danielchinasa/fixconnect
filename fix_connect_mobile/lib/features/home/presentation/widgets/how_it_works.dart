@@ -35,8 +35,8 @@ class HowItWorks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppSpacing.pagePadding),
-      padding: EdgeInsets.all(AppSpacing.md),
+      margin: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
+      padding: EdgeInsets.all(AppSpacing.custom16),
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(20),
@@ -48,7 +48,7 @@ class HowItWorks extends StatelessWidget {
             'How FixConnect works',
             style: AppTextStyles.bodyLargeBold(color: textColor),
           ),
-          SizedBox(height: AppSpacing.md),
+          SizedBox(height: AppSpacing.custom16),
           Row(
             children: _steps.map((s) {
               final isLast = s == _steps.last;
@@ -67,7 +67,7 @@ class HowItWorks extends StatelessWidget {
                             ),
                             child: Icon(s.icon, color: primary, size: 22),
                           ),
-                          SizedBox(height: AppSpacing.xs),
+                          SizedBox(height: AppSpacing.custom4),
                           Text(
                             s.title,
                             style: AppTextStyles.bodySmallBold(

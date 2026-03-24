@@ -59,7 +59,7 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.pagePadding),
+          padding: EdgeInsets.all(AppSpacing.custom16),
           child: Column(
             children: [
               /// 🔹 Scrollable content
@@ -71,13 +71,13 @@ class _SignupPageState extends State<SignupPage> {
                         'Create Account',
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
-                      AppGaps.hXs,
+                      AppGaps.h4,
                       Text(
                         'Create an account to find trusted experts near you and get your jobs done hassle-free.',
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
-                      AppGaps.hXl,
+                      AppGaps.h32,
 
                       /// First name
                       InputPrimary(
@@ -91,7 +91,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
 
-                      AppGaps.hSm,
+                      AppGaps.h8,
 
                       /// Last name
                       InputPrimary(
@@ -104,7 +104,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
 
-                      AppGaps.hSm,
+                      AppGaps.h8,
 
                       /// Email
                       InputPrimary(
@@ -117,7 +117,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
 
-                      AppGaps.hSm,
+                      AppGaps.h8,
 
                       /// Password
                       InputPrimary(
@@ -130,20 +130,20 @@ class _SignupPageState extends State<SignupPage> {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         suffixIcon: Padding(
-                          padding: EdgeInsets.only(right: AppSpacing.xs),
+                          padding: EdgeInsets.only(right: AppSpacing.custom4),
                           child: GestureDetector(
                             onTap: _togglePasswordObscured,
                             child: Icon(
                               _passwordObscured
                                   ? Icons.visibility_off_rounded
                                   : Icons.visibility_rounded,
-                              size: AppSpacing.lg,
+                              size: AppSpacing.custom24,
                             ),
                           ),
                         ),
                       ),
 
-                      AppGaps.hSm,
+                      AppGaps.h8,
 
                       /// Terms and conditions
                       RichText(
@@ -178,7 +178,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
 
-                      AppGaps.hLg,
+                      AppGaps.h24,
 
                       /// Sign up button
                       ButtonPrimary(
@@ -187,7 +187,7 @@ class _SignupPageState extends State<SignupPage> {
                         bgColor: Theme.of(context).primaryColor,
                       ),
 
-                      AppGaps.hXl,
+                      AppGaps.h32,
 
                       /// Divider
                       Row(
@@ -195,7 +195,7 @@ class _SignupPageState extends State<SignupPage> {
                           const Expanded(child: Divider()),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm,
+                              horizontal: AppSpacing.custom8,
                             ),
                             child: Text(
                               'Or continue with',
@@ -206,7 +206,7 @@ class _SignupPageState extends State<SignupPage> {
                         ],
                       ),
 
-                      AppGaps.hXl,
+                      AppGaps.h32,
 
                       /// Social buttons
                       Row(
@@ -216,12 +216,12 @@ class _SignupPageState extends State<SignupPage> {
                             asset: ImageAssets.google(),
                             onTap: () {},
                           ),
-                          SizedBox(width: AppSpacing.md),
+                          SizedBox(width: AppSpacing.custom16),
                           SocialIconButton(
                             asset: ImageAssets.facebook(),
                             onTap: () {},
                           ),
-                          SizedBox(width: AppSpacing.md),
+                          SizedBox(width: AppSpacing.custom16),
                           SocialIconButton(
                             asset: ImageAssets.apple(),
                             onTap: () {},

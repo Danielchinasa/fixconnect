@@ -1,5 +1,4 @@
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
-import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/data/carousel_model.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +25,7 @@ class CarouselItem extends StatelessWidget {
           return Column(
             children: <Widget>[
               Container(
-                height: screenHeight * AppSpacing.xxxxs,
+                height: screenHeight * 0.70,
                 width: double.infinity,
                 clipBehavior: Clip.hardEdge,
                 decoration: const BoxDecoration(
@@ -34,12 +33,10 @@ class CarouselItem extends StatelessWidget {
                 ),
                 child: carouselModel.image,
               ),
-              SizedBox(height: screenHeight * AppSpacing.xxs),
+              SizedBox(height: screenHeight * 0.02),
               Center(
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * AppSpacing.xxs,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                   child: Column(
                     children: [
                       Text(
@@ -47,7 +44,7 @@ class CarouselItem extends StatelessWidget {
                         style: Theme.of(context).textTheme.displayLarge,
                         textAlign: TextAlign.center,
                       ),
-                      AppGaps.hMd,
+                      AppGaps.h16,
                       Text(
                         carouselModel.description,
                         style: Theme.of(context).textTheme.bodyMedium,

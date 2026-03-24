@@ -28,7 +28,7 @@ class HomeSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.pagePadding),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
       child: Row(
         children: [
           Expanded(
@@ -36,7 +36,7 @@ class HomeSearchBar extends StatelessWidget {
               height: AppSpacing.custom52,
               decoration: BoxDecoration(
                 color: surfaceColor,
-                borderRadius: BorderRadius.circular(AppSpacing.md),
+                borderRadius: BorderRadius.circular(AppSpacing.custom16),
               ),
               child: TextField(
                 controller: controller,
@@ -67,12 +67,12 @@ class HomeSearchBar extends StatelessWidget {
                         )
                       : null,
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  contentPadding: EdgeInsets.symmetric(vertical: AppSpacing.custom16),
                 ),
               ),
             ),
           ),
-          SizedBox(width: AppSpacing.sm),
+          SizedBox(width: AppSpacing.custom8),
           GestureDetector(
             onTap: onFilterTap,
             child: Container(
@@ -80,7 +80,7 @@ class HomeSearchBar extends StatelessWidget {
               height: AppSpacing.custom52,
               decoration: BoxDecoration(
                 color: primary,
-                borderRadius: BorderRadius.circular(AppSpacing.md),
+                borderRadius: BorderRadius.circular(AppSpacing.custom16),
               ),
               child: Stack(
                 alignment: Alignment.center,
@@ -92,11 +92,11 @@ class HomeSearchBar extends StatelessWidget {
                   ),
                   if (hasActiveFilter)
                     Positioned(
-                      top: AppSpacing.sm,
-                      right: AppSpacing.sm,
+                      top: AppSpacing.custom8,
+                      right: AppSpacing.custom8,
                       child: Container(
-                        width: AppSpacing.sm,
-                        height: AppSpacing.sm,
+                        width: AppSpacing.custom8,
+                        height: AppSpacing.custom8,
                         decoration: const BoxDecoration(
                           color: AppColors.error,
                           shape: BoxShape.circle,

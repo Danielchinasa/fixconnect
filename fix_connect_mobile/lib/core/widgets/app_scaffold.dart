@@ -33,7 +33,7 @@ class AppScaffold extends StatelessWidget {
       content = Padding(padding: padding!, child: content);
     } else {
       content = Padding(
-        padding: EdgeInsets.all(AppSpacing.pagePadding),
+        padding: EdgeInsets.all(AppSpacing.custom16),
         child: content,
       );
     }

@@ -23,20 +23,25 @@ class ButtonPrimary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final isInverse = bgColor != primary;
+
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSpacing.lg),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary,
-            offset: Offset(AppSpacing.xs, AppSpacing.sm),
-            blurRadius: AppSpacing.lg,
-            spreadRadius: -10,
-          ),
-        ],
+        borderRadius: BorderRadius.circular(AppSpacing.custom24),
+        boxShadow: isInverse
+            ? null
+            : <BoxShadow>[
+                BoxShadow(
+                  color: primary,
+                  offset: Offset(AppSpacing.custom4, AppSpacing.custom8),
+                  blurRadius: AppSpacing.custom24,
+                  spreadRadius: -10,
+                ),
+              ],
       ),
       child: MaterialButton(
-        height: AppSpacing.xxl,
+        height: AppSpacing.custom48,
         onPressed: enabled
             ? () {
                 if (onTap != null) {
@@ -45,13 +50,13 @@ class ButtonPrimary extends StatelessWidget {
               }
             : null,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.lg),
+          borderRadius: BorderRadius.circular(AppSpacing.custom24),
         ),
         minWidth: MediaQuery.of(context).size.width,
         color: bgColor,
-        disabledElevation: AppSpacing.xxs,
+        disabledElevation: 0.02,
         disabledColor: AppColors.grey400,
-        elevation: AppSpacing.zero,
+        elevation: AppSpacing.custom0,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +84,7 @@ class ButtonPrimary extends StatelessWidget {
 
   Widget _buildTrailingWidget() {
     return Padding(
-      padding: EdgeInsets.only(right: AppSpacing.sm, left: AppSpacing.md),
+      padding: EdgeInsets.only(right: AppSpacing.custom8, left: AppSpacing.custom16),
       child: trailing,
     );
   }

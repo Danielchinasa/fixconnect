@@ -9,6 +9,7 @@ class TopArtisansSection extends StatelessWidget {
   final Color textColor;
   final Color primary;
   final bool isDark;
+  final void Function(ArtisanModel)? onArtisanTap;
 
   const TopArtisansSection({
     super.key,
@@ -17,6 +18,7 @@ class TopArtisansSection extends StatelessWidget {
     required this.textColor,
     required this.primary,
     required this.isDark,
+    this.onArtisanTap,
   });
 
   @override
@@ -24,21 +26,21 @@ class TopArtisansSection extends StatelessWidget {
     return SizedBox(
       height: AppSpacing.custom200,
       child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: AppSpacing.pagePadding),
+        padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemCount: artisans.length,
         itemBuilder: (context, index) {
           final artisan = artisans[index];
           return Padding(
-            padding: EdgeInsets.only(right: AppSpacing.md),
+            padding: EdgeInsets.only(right: AppSpacing.custom16),
             child: ArtisanCard(
               artisan: artisan,
               surfaceColor: surfaceColor,
               textColor: textColor,
               primary: primary,
               isDark: isDark,
-              onTap: () {},
+              onTap: () => onArtisanTap?.call(artisan),
             ),
           );
         },

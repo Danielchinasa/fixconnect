@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
@@ -82,75 +83,77 @@ class _HomeTabState extends State<HomeTab> {
     // headers, lists, grids — all sharing one scroll controller.
     // SliverToBoxAdapter wraps a regular (non-sliver) widget so it can live
     // inside a CustomScrollView.
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        SliverToBoxAdapter(
-          child: HomeHeader(
-            location: _selectedLocation,
-            onLocationTap: _showLocationPicker,
-            textColor: textColor,
-            primary: primary,
-            isDark: isDark,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: HomeSearchBar(
-            controller: _searchController,
-            surfaceColor: surfaceColor,
-            textColor: textColor,
-            primary: primary,
-            hasText: _searchQuery.isNotEmpty,
-            hasActiveFilter: _filter.isActive,
-            onChanged: (q) => setState(() => _searchQuery = q),
-            onFilterTap: _showFilterSheet,
-          ),
-        ),
-        SliverToBoxAdapter(child: AppGaps.hLg),
-        SliverToBoxAdapter(
-          child: StatsStrip(
-            primary: primary,
-            textColor: textColor,
-            surfaceColor: surfaceColor,
-          ),
-        ),
-        if (!_isSearching) ...[
-          SliverToBoxAdapter(child: AppGaps.hLg),
+    return SafeArea(
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
           SliverToBoxAdapter(
-            child: PromoBannerCarousel(primary: primary, isDark: isDark),
-          ),
-          SliverToBoxAdapter(child: AppGaps.hLg),
-          SliverToBoxAdapter(
-            child: SectionHeader(
-              title: 'What do you need fixed?',
-              actionLabel: 'See all',
-              onAction: () {},
+            child: HomeHeader(
+              location: _selectedLocation,
+              onLocationTap: _showLocationPicker,
               textColor: textColor,
               primary: primary,
-            ),
-          ),
-          SliverToBoxAdapter(child: AppGaps.hSm),
-          SliverToBoxAdapter(
-            child: ServiceCategoryGrid(
-              primary: primary,
-              textColor: textColor,
-              surfaceColor: surfaceColor,
               isDark: isDark,
             ),
           ),
+          SliverToBoxAdapter(
+            child: HomeSearchBar(
+              controller: _searchController,
+              surfaceColor: surfaceColor,
+              textColor: textColor,
+              primary: primary,
+              hasText: _searchQuery.isNotEmpty,
+              hasActiveFilter: _filter.isActive,
+              onChanged: (q) => setState(() => _searchQuery = q),
+              onFilterTap: _showFilterSheet,
+            ),
+          ),
+          SliverToBoxAdapter(child: AppGaps.h24),
+          SliverToBoxAdapter(
+            child: StatsStrip(
+              primary: primary,
+              textColor: textColor,
+              surfaceColor: surfaceColor,
+            ),
+          ),
+          if (!_isSearching) ...[
+            SliverToBoxAdapter(child: AppGaps.h24),
+            SliverToBoxAdapter(
+              child: PromoBannerCarousel(primary: primary, isDark: isDark),
+            ),
+            SliverToBoxAdapter(child: AppGaps.h24),
+            SliverToBoxAdapter(
+              child: SectionHeader(
+                title: 'What do you need fixed?',
+                actionLabel: 'See all',
+                onAction: () {},
+                textColor: textColor,
+                primary: primary,
+              ),
+            ),
+            SliverToBoxAdapter(child: AppGaps.h8),
+            SliverToBoxAdapter(
+              child: ServiceCategoryGrid(
+                primary: primary,
+                textColor: textColor,
+                surfaceColor: surfaceColor,
+                isDark: isDark,
+              ),
+            ),
+          ],
+          SliverToBoxAdapter(child: AppGaps.h24),
+          if (_isSearching)
+            ..._buildSearchResults(textColor, surfaceColor, primary)
+          else
+            ..._buildHomeContent(textColor, surfaceColor, primary, isDark),
+          // Extra bottom padding so content doesn't hide behind the nav bar.
+          // 📚 CONCEPT: MediaQuery.of(context).padding.bottom gives the safe-area
+          // inset (the notch/home indicator). We add 80 for the nav bar height.
+          SliverToBoxAdapter(
+            child: SizedBox(height: MediaQuery.of(context).padding.bottom + 80),
+          ),
         ],
-        SliverToBoxAdapter(child: AppGaps.hLg),
-        if (_isSearching)
-          ..._buildSearchResults(textColor, surfaceColor, primary)
-        else
-          ..._buildHomeContent(textColor, surfaceColor, primary, isDark),
-        // Extra bottom padding so content doesn't hide behind the nav bar.
-        // 📚 CONCEPT: MediaQuery.of(context).padding.bottom gives the safe-area
-        // inset (the notch/home indicator). We add 80 for the nav bar height.
-        SliverToBoxAdapter(
-          child: SizedBox(height: MediaQuery.of(context).padding.bottom + 80),
-        ),
-      ],
+      ),
     );
   }
 
@@ -182,7 +185,7 @@ class _HomeTabState extends State<HomeTab> {
           ),
         ),
       ),
-      SliverToBoxAdapter(child: AppGaps.hSm),
+      SliverToBoxAdapter(child: AppGaps.h8),
       if (results.isEmpty)
         SliverToBoxAdapter(
           child: EmptySearchResult(
@@ -199,6 +202,9 @@ class _HomeTabState extends State<HomeTab> {
               surfaceColor: surfaceColor,
               textColor: textColor,
               primary: primary,
+              onTap: () => Navigator.of(
+                context,
+              ).pushNamed(AppRoutes.artisanProfile, arguments: results[index]),
             ),
             childCount: results.length,
           ),
@@ -222,17 +228,20 @@ class _HomeTabState extends State<HomeTab> {
           primary: primary,
         ),
       ),
-      SliverToBoxAdapter(child: AppGaps.hSm),
+      SliverToBoxAdapter(child: AppGaps.h8),
       SliverToBoxAdapter(
         child: TopArtisansSection(
           artisans: _artisans,
           surfaceColor: surfaceColor,
           textColor: textColor,
+          onArtisanTap: (artisan) => Navigator.of(
+            context,
+          ).pushNamed(AppRoutes.artisanProfile, arguments: artisan),
           primary: primary,
           isDark: isDark,
         ),
       ),
-      SliverToBoxAdapter(child: AppGaps.hLg),
+      SliverToBoxAdapter(child: AppGaps.h24),
       SliverToBoxAdapter(
         child: HowItWorks(
           primary: primary,
@@ -257,7 +266,7 @@ class _HomeTabState extends State<HomeTab> {
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppSpacing.lg),
+          top: Radius.circular(AppSpacing.custom24),
         ),
       ),
       builder: (_) => FilterSheet(
@@ -280,7 +289,7 @@ class _HomeTabState extends State<HomeTab> {
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppSpacing.lg),
+          top: Radius.circular(AppSpacing.custom24),
         ),
       ),
       builder: (_) => LocationPickerSheet(

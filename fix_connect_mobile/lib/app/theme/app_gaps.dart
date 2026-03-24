@@ -2,16 +2,17 @@ import 'package:flutter/widgets.dart';
 import 'app_spacing.dart';
 
 class AppGaps {
-  static final hXs = SizedBox(height: AppSpacing.xs);
-  static final hSm = SizedBox(height: AppSpacing.sm);
-  static final hMd = SizedBox(height: AppSpacing.md);
-  static final hLg = SizedBox(height: AppSpacing.lg);
-  static final hXl = SizedBox(height: AppSpacing.xl);
-  static final hCustom60 = SizedBox(height: AppSpacing.custom60);
-  static final hCustom80 = SizedBox(height: AppSpacing.custom80);
-  static final hCustom2 = SizedBox(height: AppSpacing.custom2);
+  static final h2 = SizedBox(height: AppSpacing.custom2);
+  static final h4 = SizedBox(height: AppSpacing.custom4);
+  static final h8 = SizedBox(height: AppSpacing.custom8);
+  static final h10 = SizedBox(height: AppSpacing.custom10);
+  static final h16 = SizedBox(height: AppSpacing.custom16);
+  static final h24 = SizedBox(height: AppSpacing.custom24);
+  static final h32 = SizedBox(height: AppSpacing.custom32);
+  static final h60 = SizedBox(height: AppSpacing.custom60);
+  static final h80 = SizedBox(height: AppSpacing.custom80);
 
-  static final wXs = SizedBox(width: AppSpacing.xs);
-  static final wSm = SizedBox(width: AppSpacing.sm);
-  static final wMd = SizedBox(width: AppSpacing.md);
+  static final w4 = SizedBox(width: AppSpacing.custom4);
+  static final w8 = SizedBox(width: AppSpacing.custom8);
+  static final w16 = SizedBox(width: AppSpacing.custom16);
 }

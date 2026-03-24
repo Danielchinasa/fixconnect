@@ -12,6 +12,15 @@ class ArtisanModel {
   final Color badgeColor;
   final String initials;
 
+  // Extended profile fields
+  final String location;
+  final String bio;
+  final int completedJobs;
+  final String todayOpenTime;
+  final bool isTodayOpen;
+  final String responseTime;
+  final Map<String, String?> weeklySchedule;
+
   const ArtisanModel({
     required this.id,
     required this.name,
@@ -23,6 +32,13 @@ class ArtisanModel {
     required this.isOnline,
     required this.badgeColor,
     required this.initials,
+    this.location = '',
+    this.bio = '',
+    this.completedJobs = 0,
+    this.todayOpenTime = 'Closed today',
+    this.isTodayOpen = false,
+    this.responseTime = 'Within 24 hours',
+    this.weeklySchedule = const {},
   });
 
   factory ArtisanModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +53,12 @@ class ArtisanModel {
       isOnline: json['isOnline'] as bool,
       badgeColor: Color(json['badgeColorValue'] as int),
       initials: json['initials'] as String,
+      location: json['location'] as String? ?? '',
+      bio: json['bio'] as String? ?? '',
+      completedJobs: json['completedJobs'] as int? ?? 0,
+      todayOpenTime: json['todayOpenTime'] as String? ?? 'Closed today',
+      isTodayOpen: json['isTodayOpen'] as bool? ?? false,
+      responseTime: json['responseTime'] as String? ?? 'Within 24 hours',
     );
   }
 
@@ -51,5 +73,11 @@ class ArtisanModel {
     'isOnline': isOnline,
     'badgeColorValue': badgeColor.value,
     'initials': initials,
+    'location': location,
+    'bio': bio,
+    'completedJobs': completedJobs,
+    'todayOpenTime': todayOpenTime,
+    'isTodayOpen': isTodayOpen,
+    'responseTime': responseTime,
   };
 }
