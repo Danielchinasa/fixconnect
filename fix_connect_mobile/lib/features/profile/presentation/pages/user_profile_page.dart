@@ -1,14 +1,10 @@
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/section_header.dart';
-import 'package:fix_connect_mobile/features/profile/presentation/pages/edit_profile_page.dart';
-import 'package:fix_connect_mobile/features/profile/presentation/pages/payment_methods_page.dart';
-import 'package:fix_connect_mobile/features/profile/presentation/pages/personal_information_page.dart';
-import 'package:fix_connect_mobile/features/profile/presentation/pages/saved_addresses_page.dart';
-import 'package:fix_connect_mobile/features/profile/presentation/pages/settings_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile_identity_card.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile_logout_button.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile_menu_section.dart';
@@ -26,8 +22,7 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   bool _notificationsEnabled = true;
 
-  void _push(Widget page) =>
-      Navigator.push(context, MaterialPageRoute<void>(builder: (_) => page));
+  void _push(String route) => Navigator.of(context).pushNamed(route);
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +54,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               actions: [
                 _AppBarIcon(
                   icon: Icons.settings_outlined,
-                  onTap: () => _push(const SettingsPage()),
+                  onTap: () => _push(AppRoutes.settings),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -67,7 +62,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
             SliverToBoxAdapter(
               child: ProfileIdentityCard(
-                onEditTap: () => _push(const EditProfilePage()),
+                onEditTap: () => _push(AppRoutes.editProfile),
               ),
             ),
             SliverToBoxAdapter(child: AppGaps.h16),
@@ -90,19 +85,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     icon: Icons.person_outline_rounded,
                     label: 'Personal Information',
                     subtitle: '+234 810 000 0000',
-                    onTap: () => _push(const PersonalInformationPage()),
+                    onTap: () => _push(AppRoutes.personalInformation),
                   ),
                   ProfileMenuItem(
                     icon: Icons.location_on_outlined,
                     label: 'Saved Addresses',
                     subtitle: '2 addresses',
-                    onTap: () => _push(const SavedAddressesPage()),
+                    onTap: () => _push(AppRoutes.savedAddresses),
                   ),
                   ProfileMenuItem(
                     icon: Icons.credit_card_outlined,
                     label: 'Payment Methods',
                     subtitle: 'Visa •••• 4242',
-                    onTap: () => _push(const PaymentMethodsPage()),
+                    onTap: () => _push(AppRoutes.paymentMethods),
                   ),
                   ProfileMenuToggle(
                     icon: Icons.notifications_outlined,

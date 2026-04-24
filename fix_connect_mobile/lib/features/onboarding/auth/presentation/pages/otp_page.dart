@@ -1,11 +1,9 @@
-import 'dart:io';
-
-import 'package:fix_connect_mobile/app/router/app_navigator.dart';
-import 'package:fix_connect_mobile/app/router/route_names.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class OtpPage extends StatefulWidget {
@@ -24,13 +22,6 @@ class _OtpPageState extends State<OtpPage> {
   void initState() {
     super.initState();
     _getSignatureCode();
-  }
-
-  BoxDecoration get _pinPutDecoration {
-    return BoxDecoration(
-      border: Border.all(color: Theme.of(context).primaryColor),
-      borderRadius: BorderRadius.circular(15.0),
-    );
   }
 
   /// get signature code
@@ -107,7 +98,7 @@ class _OtpPageState extends State<OtpPage> {
                   text: 'Submit',
                   bgColor: Theme.of(context).primaryColor,
                   onTap: () {
-                    AppNavigator.pushAndRemoveUntil(AppRoutes.homePage());
+                    context.read<AuthCubit>().logIn();
                   },
                 ),
               ],

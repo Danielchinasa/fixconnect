@@ -1,4 +1,3 @@
-import 'package:fix_connect_mobile/app/router/app_navigator.dart';
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
@@ -51,7 +50,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   void goBackToLogin() {
-    AppNavigator.pushReplacement(AppRoutes.loginPage());
+    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
 
   @override

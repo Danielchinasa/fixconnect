@@ -3,7 +3,9 @@ import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:fix_connect_mobile/core/widgets/confirm_sheet.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// The red "Log Out" row with a confirmation bottom sheet.
 class ProfileLogoutButton extends StatelessWidget {
@@ -67,7 +69,7 @@ class ProfileLogoutButton extends StatelessWidget {
       confirmLabel: 'Log Out',
     );
     if (confirmed == true && context.mounted) {
-      // TODO: dispatch logout event to auth bloc
+      context.read<AuthCubit>().logOut();
     }
   }
 }

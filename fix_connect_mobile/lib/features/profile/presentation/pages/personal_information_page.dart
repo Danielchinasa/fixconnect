@@ -1,8 +1,8 @@
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
-import 'package:fix_connect_mobile/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -93,12 +93,8 @@ class PersonalInformationPage extends StatelessWidget {
           centerTitle: true,
           actions: [
             TextButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => const EditProfilePage(),
-                ),
-              ),
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(AppRoutes.editProfile),
               child: Text(
                 'Edit',
                 style: AppTextStyles.bodyMediumBold(color: primary),
@@ -187,12 +183,8 @@ class PersonalInformationPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (_) => const EditProfilePage(),
-                  ),
-                ),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.editProfile),
                 icon: Icon(
                   Icons.edit_outlined,
                   size: 18,
