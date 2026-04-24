@@ -12,6 +12,11 @@ import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/o
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/signup_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/data/carousel_model.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/presentation/carousel_page.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/pages/payment_methods_page.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/pages/personal_information_page.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/pages/saved_addresses_page.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {
@@ -65,6 +70,18 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => ServiceDetailPage(service: service),
         );
+      case AppRoutes.settings:
+        return MaterialPageRoute(builder: (_) => const SettingsPage());
+      case AppRoutes.editProfile:
+        return MaterialPageRoute(builder: (_) => const EditProfilePage());
+      case AppRoutes.personalInformation:
+        return MaterialPageRoute(
+          builder: (_) => const PersonalInformationPage(),
+        );
+      case AppRoutes.paymentMethods:
+        return MaterialPageRoute(builder: (_) => const PaymentMethodsPage());
+      case AppRoutes.savedAddresses:
+        return MaterialPageRoute(builder: (_) => const SavedAddressesPage());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -1,14 +1,11 @@
-import 'package:fix_connect_mobile/app/router/app_navigator.dart';
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
-import 'package:fix_connect_mobile/app/theme/theme_cubit.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/social_icon_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -43,16 +40,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void gotoSignUp() {
-    AppNavigator.pushReplacement(AppRoutes.signUpPage());
+    Navigator.of(context).pushReplacementNamed(AppRoutes.signup);
   }
 
   void gotoOtpPage() {
-    print("going to OTP page");
-    AppNavigator.push(AppRoutes.otpPage());
+    Navigator.of(context).pushNamed(AppRoutes.otp);
   }
 
   void gotoForgotPasswordPage() {
-    AppNavigator.push(AppRoutes.forgotPasswordPage());
+    Navigator.of(context).pushNamed(AppRoutes.forgotPassword);
   }
 
   @override
@@ -203,14 +199,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ],
-              ),
-
-              /// Theme toggle (optional dev tool)
-              IconButton(
-                icon: const Icon(Icons.brightness_6),
-                onPressed: () {
-                  context.read<ThemeCubit>().toggleTheme();
-                },
               ),
             ],
           ),

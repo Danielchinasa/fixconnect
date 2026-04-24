@@ -1,4 +1,3 @@
-import 'package:fix_connect_mobile/app/router/app_navigator.dart';
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
@@ -34,7 +33,7 @@ class _CarouselPageState extends State<CarouselPage> {
   }
 
   void onNextPage() {
-    AppNavigator.pushReplacement(AppRoutes.loginPage());
+    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
 
   @override
@@ -73,7 +72,9 @@ class _CarouselPageState extends State<CarouselPage> {
                     milliseconds: IntegerConstants.duration300,
                   ),
                   height: AppSpacing.custom8,
-                  width: _currentPage == index ? AppSpacing.custom24 : AppSpacing.custom8,
+                  width: _currentPage == index
+                      ? AppSpacing.custom24
+                      : AppSpacing.custom8,
                   decoration: BoxDecoration(
                     color: _currentPage == index
                         ? Theme.of(context).primaryColor
