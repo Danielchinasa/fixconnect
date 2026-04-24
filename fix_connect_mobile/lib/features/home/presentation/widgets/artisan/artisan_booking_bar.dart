@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
@@ -41,7 +42,9 @@ class ArtisanBookingBar extends StatelessWidget {
           ButtonPrimary(
             text: 'Book Now',
             bgColor: primary,
-            onTap: () {},
+            onTap: () => Navigator.of(
+              context,
+            ).pushNamed(AppRoutes.bookingFlow, arguments: artisan),
             trailing: Icon(
               Icons.calendar_month_rounded,
               color: Theme.of(context).colorScheme.surface,

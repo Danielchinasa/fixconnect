@@ -93,6 +93,8 @@ class _HomeTabState extends State<HomeTab> {
             child: HomeHeader(
               location: _selectedLocation,
               onLocationTap: _showLocationPicker,
+              onNotificationTap: () =>
+                  Navigator.of(context).pushNamed(AppRoutes.notifications),
               textColor: textColor,
               primary: primary,
               isDark: isDark,
@@ -107,6 +109,9 @@ class _HomeTabState extends State<HomeTab> {
               hasText: _searchQuery.isNotEmpty,
               hasActiveFilter: _filter.isActive,
               onChanged: (q) => setState(() => _searchQuery = q),
+              onSubmitted: () => Navigator.of(
+                context,
+              ).pushNamed(AppRoutes.searchResults, arguments: _searchQuery),
               onFilterTap: _showFilterSheet,
             ),
           ),

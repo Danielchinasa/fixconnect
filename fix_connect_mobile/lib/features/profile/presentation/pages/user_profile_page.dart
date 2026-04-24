@@ -1,5 +1,4 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
-import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
@@ -160,17 +159,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ProfileMenuItem(
                     icon: Icons.help_outline_rounded,
                     label: 'Help & FAQ',
-                    onTap: () {},
+                    onTap: () => _push(AppRoutes.helpSupport),
                   ),
                   ProfileMenuItem(
                     icon: Icons.chat_bubble_outline_rounded,
                     label: 'Contact Support',
-                    onTap: () {},
+                    onTap: () => _push(AppRoutes.helpSupport),
                   ),
                   ProfileMenuItem(
                     icon: Icons.shield_outlined,
                     label: 'Terms & Privacy',
-                    onTap: () {},
+                    onTap: () => _push(AppRoutes.termsPrivacy),
                   ),
                 ],
               ),
@@ -209,11 +208,7 @@ class _AppBarIcon extends StatelessWidget {
           color: context.surfaceColor,
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          size: 20,
-          color: context.isDark ? AppColors.darkText : AppColors.lightText,
-        ),
+        child: Icon(icon, size: 20, color: context.primary),
       ),
     );
   }

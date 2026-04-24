@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class HomeHeader extends StatelessWidget {
   final String location;
   final VoidCallback onLocationTap;
+  final VoidCallback onNotificationTap;
   final Color textColor;
   final Color primary;
   final bool isDark;
@@ -15,6 +16,7 @@ class HomeHeader extends StatelessWidget {
     super.key,
     required this.location,
     required this.onLocationTap,
+    required this.onNotificationTap,
     required this.textColor,
     required this.primary,
     required this.isDark,
@@ -75,7 +77,7 @@ class HomeHeader extends StatelessWidget {
               badge: true,
               color: textColor,
               isDark: isDark,
-              onTap: () {},
+              onTap: onNotificationTap,
             ),
             SizedBox(width: AppSpacing.custom8),
             GestureDetector(

@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
@@ -308,7 +309,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: 20,
                     color: isDark ? AppColors.grey600 : AppColors.grey400,
                   ),
-                  onTap: () {},
+                  onTap: () =>
+                      Navigator.of(context).pushNamed(AppRoutes.termsPrivacy),
                   isDark: isDark,
                   textColor: textColor,
                   subTextColor: subTextColor,
