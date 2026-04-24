@@ -21,6 +21,10 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
     covariant ThemeExtension<AppThemeExtension>? other,
     double t,
   ) {
-    throw UnimplementedError();
+    if (other is! AppThemeExtension) return this;
+    return AppThemeExtension(
+      surfaceSelected: Color.lerp(surfaceSelected, other.surfaceSelected, t),
+      surface: Color.lerp(surface, other.surface, t),
+    );
   }
 }

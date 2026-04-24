@@ -1,8 +1,11 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
+import 'package:fix_connect_mobile/features/home/data/models/service_category_model.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/artisan_profile_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_page.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/service_detail_page.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/forgot_password_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/login_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/otp_page.dart';
@@ -54,6 +57,13 @@ class RouteGenerator {
         final artisan = settings.arguments as ArtisanModel;
         return MaterialPageRoute(
           builder: (_) => ArtisanProfilePage(artisan: artisan),
+        );
+      case AppRoutes.servicesAll:
+        return MaterialPageRoute(builder: (_) => const ServicesAllPage());
+      case AppRoutes.serviceDetail:
+        final service = settings.arguments as ServiceCategoryModel;
+        return MaterialPageRoute(
+          builder: (_) => ServiceDetailPage(service: service),
         );
       default:
         return MaterialPageRoute(

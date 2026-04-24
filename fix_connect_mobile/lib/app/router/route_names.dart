@@ -6,6 +6,8 @@ class AppRoutes {
   static const forgotPassword = '/forgot-password';
   static const home = '/home';
   static const artisanProfile = '/artisan-profile';
+  static const servicesAll = '/services';
+  static const serviceDetail = '/service-detail';
 
   static String loginPage() => login;
   static String onboardingScreen() => onboarding;
@@ -13,4 +15,6 @@ class AppRoutes {
   static String otpPage() => otp;
   static String forgotPasswordPage() => forgotPassword;
   static String homePage() => home;
+  static String servicesAllPage() => servicesAll;
+  static String serviceDetailPage() => serviceDetail;
 }
