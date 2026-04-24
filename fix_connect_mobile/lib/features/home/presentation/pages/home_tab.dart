@@ -26,7 +26,9 @@ import 'package:flutter/material.dart';
 // and UI independently. Each tab lives in its own class — easy to find, test,
 // and change without touching anything else.
 class HomeTab extends StatefulWidget {
-  const HomeTab({super.key});
+  final VoidCallback? onSeeAllServices;
+
+  const HomeTab({super.key, this.onSeeAllServices});
 
   @override
   State<HomeTab> createState() => _HomeTabState();
@@ -126,7 +128,7 @@ class _HomeTabState extends State<HomeTab> {
               child: SectionHeader(
                 title: 'What do you need fixed?',
                 actionLabel: 'See all',
-                onAction: () {},
+                onAction: () => widget.onSeeAllServices?.call(),
                 textColor: textColor,
                 primary: primary,
               ),

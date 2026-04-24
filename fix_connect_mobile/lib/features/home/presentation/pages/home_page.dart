@@ -2,7 +2,9 @@ import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_tab.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/home_bottom_nav.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/pages/user_profile_page.dart';
 import 'package:flutter/material.dart';
 
 // 📚 CONCEPT: Navigation Shell Pattern
@@ -22,15 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentNavIndex = 0;
 
-  // 📚 CONCEPT: Declarative list of tab bodies.
-  // Adding a new tab = add one entry here. Zero changes elsewhere in the shell.
-  static const List<Widget> _tabs = [
-    HomeTab(),
-    _PlaceholderTab(label: 'Search', icon: Icons.search_rounded),
-    BookingsPage(),
-    _PlaceholderTab(label: 'Messages', icon: Icons.chat_bubble_rounded),
-    _PlaceholderTab(label: 'Profile', icon: Icons.person_rounded),
-  ];
+  void _switchToServicesTab() => setState(() => _currentNavIndex = 1);
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +32,18 @@ class _HomePageState extends State<HomePage> {
     final isDark = theme.brightness == Brightness.dark;
     final primary = theme.colorScheme.primary;
 
+    // Built here (not static const) so the callback can be wired in.
+    final tabs = [
+      HomeTab(onSeeAllServices: _switchToServicesTab),
+      const ServicesAllPage(),
+      const BookingsPage(),
+      const _PlaceholderTab(label: 'Messages', icon: Icons.chat_bubble_rounded),
+      const UserProfilePage(),
+    ];
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      // 📚 CONCEPT: IndexedStack
-      // Renders all _tabs widgets but clips visibility to only index _currentNavIndex.
-      // Each child is kept alive in the widget tree — no rebuilds on tab switch.
-      body: IndexedStack(index: _currentNavIndex, children: _tabs),
+      body: IndexedStack(index: _currentNavIndex, children: tabs),
       bottomNavigationBar: HomeBottomNav(
         currentIndex: _currentNavIndex,
         onTap: (i) => setState(() => _currentNavIndex = i),
