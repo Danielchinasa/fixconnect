@@ -18,4 +18,13 @@ class AppRoutes {
   static const personalInformation = '/personal-information';
   static const paymentMethods = '/payment-methods';
   static const savedAddresses = '/saved-addresses';
+
+  // ── Feature pages ─────────────────────────────────────────────────────────────
+  static const bookingFlow = '/booking-flow';
+  static const bookingDetail = '/booking-detail';
+  static const writeReview = '/write-review';
+  static const notifications = '/notifications';
+  static const searchResults = '/search-results';
+  static const helpSupport = '/help-support';
+  static const termsPrivacy = '/terms-privacy';
 }

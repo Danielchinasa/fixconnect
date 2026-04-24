@@ -1,6 +1,14 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
+import 'package:fix_connect_mobile/features/bookings/data/models/booking_model.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/pages/booking_detail_page.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/pages/booking_flow_page.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/pages/write_review_page.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/search_results_page.dart';
+import 'package:fix_connect_mobile/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:fix_connect_mobile/features/support/presentation/pages/help_support_page.dart';
+import 'package:fix_connect_mobile/features/support/presentation/pages/terms_privacy_page.dart';
 import 'package:fix_connect_mobile/features/home/data/models/service_category_model.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/artisan_profile_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_page.dart';
@@ -82,6 +90,32 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const PaymentMethodsPage());
       case AppRoutes.savedAddresses:
         return MaterialPageRoute(builder: (_) => const SavedAddressesPage());
+      case AppRoutes.bookingFlow:
+        final artisan = settings.arguments as ArtisanModel;
+        return MaterialPageRoute(
+          builder: (_) => BookingFlowPage(artisan: artisan),
+        );
+      case AppRoutes.bookingDetail:
+        final booking = settings.arguments as BookingModel;
+        return MaterialPageRoute(
+          builder: (_) => BookingDetailPage(booking: booking),
+        );
+      case AppRoutes.writeReview:
+        final booking = settings.arguments as BookingModel;
+        return MaterialPageRoute(
+          builder: (_) => WriteReviewPage(booking: booking),
+        );
+      case AppRoutes.notifications:
+        return MaterialPageRoute(builder: (_) => const NotificationsPage());
+      case AppRoutes.searchResults:
+        final query = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => SearchResultsPage(initialQuery: query),
+        );
+      case AppRoutes.helpSupport:
+        return MaterialPageRoute(builder: (_) => const HelpSupportPage());
+      case AppRoutes.termsPrivacy:
+        return MaterialPageRoute(builder: (_) => const TermsPrivacyPage());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

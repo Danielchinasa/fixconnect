@@ -12,6 +12,7 @@ class HomeSearchBar extends StatelessWidget {
   final bool hasActiveFilter;
   final ValueChanged<String> onChanged;
   final VoidCallback onFilterTap;
+  final VoidCallback? onSubmitted;
 
   const HomeSearchBar({
     super.key,
@@ -23,6 +24,7 @@ class HomeSearchBar extends StatelessWidget {
     required this.hasActiveFilter,
     required this.onChanged,
     required this.onFilterTap,
+    this.onSubmitted,
   });
 
   @override
@@ -41,6 +43,7 @@ class HomeSearchBar extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 onChanged: onChanged,
+                onSubmitted: (_) => onSubmitted?.call(),
                 textInputAction: TextInputAction.search,
                 style: AppTextStyles.bodyMediumRegular(color: textColor),
                 decoration: InputDecoration(
@@ -67,7 +70,9 @@ class HomeSearchBar extends StatelessWidget {
                         )
                       : null,
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: AppSpacing.custom16),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: AppSpacing.custom16,
+                  ),
                 ),
               ),
             ),
