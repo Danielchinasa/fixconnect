@@ -15,19 +15,27 @@ import 'package:flutter/material.dart';
 // Why not PageView? PageView destroys/rebuilds pages when you swipe away.
 // IndexedStack keeps them all alive → scroll position preserved when switching tabs.
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int initialIndex;
+  const HomePage({super.key, this.initialIndex = 0});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentNavIndex = 0;
+  late int _currentNavIndex;
 
   void _switchToServicesTab() => setState(() => _currentNavIndex = 1);
 
   @override
+  void initState() {
+    super.initState();
+    _currentNavIndex = widget.initialIndex;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _currentNavIndex = _currentNavIndex;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final primary = theme.colorScheme.primary;

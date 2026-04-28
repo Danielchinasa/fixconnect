@@ -10,6 +10,8 @@ import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:fix_connect_mobile/core/widgets/photo_options_sheet.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // EditProfilePage
@@ -334,57 +336,35 @@ class _AvatarPicker extends StatefulWidget {
 }
 
 class _AvatarPickerState extends State<_AvatarPicker> {
-  void _showPhotoOptions() {
-    final isDark = widget.isDark;
-    final surfBg = isDark ? AppColors.surfaceDark : AppColors.lightBackground;
-    final textColor = isDark ? AppColors.darkText : AppColors.lightText;
-
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: surfBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _BottomSheetHandle(isDark: isDark),
-            const SizedBox(height: 20),
-            Text(
-              'Change Profile Photo',
-              style: AppTextStyles.header4Bold(color: textColor),
-            ),
-            const SizedBox(height: 20),
-            _PhotoOption(
-              icon: Icons.camera_alt_outlined,
-              label: 'Take a Photo',
-              isDark: isDark,
-              primary: widget.primary,
-              onTap: () => Navigator.pop(context),
-            ),
-            const SizedBox(height: 12),
-            _PhotoOption(
-              icon: Icons.photo_library_outlined,
-              label: 'Choose from Gallery',
-              isDark: isDark,
-              primary: widget.primary,
-              onTap: () => Navigator.pop(context),
-            ),
-            const SizedBox(height: 12),
-            _PhotoOption(
-              icon: Icons.delete_outline_rounded,
-              label: 'Remove Photo',
-              isDark: isDark,
-              primary: AppColors.error,
-              onTap: () => Navigator.pop(context),
-              isDestructive: true,
-            ),
-          ],
-        ),
-      ),
+  Future<void> _showPhotoOptions() async {
+    final result = await showPhotoOptionsSheet(
+      context,
+      isDark: widget.isDark,
+      primary: widget.primary,
+      title: 'Change Profile Photo',
+      showRemove: true,
     );
+    if (result == null) return;
+    final picker = ImagePicker();
+    if (result == PhotoOptionResult.camera) {
+      final x = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+      if (x != null) {
+        // TODO: handle picked avatar image
+      }
+    } else if (result == PhotoOptionResult.gallery) {
+      final x = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+      if (x != null) {
+        // TODO: handle picked avatar image
+      }
+    } else if (result == PhotoOptionResult.remove) {
+      // TODO: handle remove
+    }
   }
 
   @override
@@ -445,58 +425,7 @@ class _AvatarPickerState extends State<_AvatarPicker> {
   }
 }
 
-class _PhotoOption extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isDark;
-  final Color primary;
-  final VoidCallback onTap;
-  final bool isDestructive;
-
-  const _PhotoOption({
-    required this.icon,
-    required this.label,
-    required this.isDark,
-    required this.primary,
-    required this.onTap,
-    this.isDestructive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final surfaceColor = isDark
-        ? AppColors.surfaceDark.withValues(alpha: 0.5)
-        : AppColors.grey100;
-    final textColor = isDestructive
-        ? AppColors.error
-        : (isDark ? AppColors.darkText : AppColors.lightText);
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: surfaceColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: primary),
-            const SizedBox(width: 12),
-            Flexible(
-              child: Text(
-                label,
-                style: AppTextStyles.bodyMediumMedium(color: textColor),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// _PhotoOption removed — replaced by reusable photo options sheet
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bio input — multiline field that mirrors InputPrimary's container style.
