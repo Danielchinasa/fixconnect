@@ -65,7 +65,10 @@ class RouteGenerator {
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
       case AppRoutes.home:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        final idx = settings.arguments as int?;
+        return MaterialPageRoute(
+          builder: (_) => HomePage(initialIndex: idx ?? 0),
+        );
       case AppRoutes.artisanProfile:
         final artisan = settings.arguments as ArtisanModel;
         return MaterialPageRoute(

@@ -19,6 +19,7 @@ dependencies:
   flutter_svg: ^2.2.3
   flutter_otp_text_field: ^1.5.1+1
   intl: ^0.20.2
+  image_picker: ^0.8.7
 
 dev_dependencies:
   flutter_test:

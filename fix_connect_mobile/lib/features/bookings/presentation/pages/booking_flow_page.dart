@@ -6,8 +6,13 @@ import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
+import 'package:fix_connect_mobile/core/widgets/photo_options_sheet.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 
 class BookingFlowPage extends StatefulWidget {
   final ArtisanModel artisan;
@@ -29,19 +34,33 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
   // Step 1
   final _notesCtrl = TextEditingController();
   String _selectedAddress = 'Home';
+  final List<XFile?> _images = [null, null, null];
 
   // Step 2
   int _selectedPayment = 0;
 
   static const _timeSlots = [
-    '7:00 AM', '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM',
-    '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
-    '5:00 PM', '6:00 PM',
+    '7:00 AM',
+    '8:00 AM',
+    '9:00 AM',
+    '10:00 AM',
+    '11:00 AM',
+    '12:00 PM',
+    '1:00 PM',
+    '2:00 PM',
+    '3:00 PM',
+    '4:00 PM',
+    '5:00 PM',
+    '6:00 PM',
   ];
 
   static const _addresses = [
     ('Home', Icons.home_rounded, '14 Admiralty Way, Lekki Phase 1, Lagos'),
-    ('Work', Icons.business_center_rounded, '1A Adeola Odeku St, Victoria Island'),
+    (
+      'Work',
+      Icons.business_center_rounded,
+      '1A Adeola Odeku St, Victoria Island',
+    ),
   ];
 
   static const _payments = [
@@ -58,8 +77,11 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
   void _next() {
     if (_step < 2) {
       setState(() => _step++);
-      _pageController.animateToPage(_step,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.animateToPage(
+        _step,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     } else {
       _showConfirmSheet();
     }
@@ -68,8 +90,11 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
   void _back() {
     if (_step > 0) {
       setState(() => _step--);
-      _pageController.animateToPage(_step,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.animateToPage(
+        _step,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     } else {
       Navigator.pop(context);
     }
@@ -84,52 +109,97 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
       context: context,
       backgroundColor: bgColor,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (_) => Padding(
         padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
                 color: AppColors.secondary.withValues(alpha: 0.12),
-                shape: BoxShape.circle),
-            child: const Icon(Icons.check_circle_rounded,
-                color: AppColors.secondary, size: 32),
-          ),
-          AppGaps.h16,
-          Text('Booking Confirmed!',
-              style: AppTextStyles.header4Bold(color: textColor)),
-          AppGaps.h8,
-          Text(
-            'Your booking with ${widget.artisan.name} has been sent.\nYou will receive a confirmation shortly.',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.bodyMediumRegular(
-                color: textColor.withValues(alpha: 0.65)),
-          ),
-          const SizedBox(height: 28),
-          ButtonPrimary(
-            text: 'View My Bookings',
-            bgColor: primary,
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          ),
-          AppGaps.h10,
-          ButtonPrimary(
-            text: 'Back to Artisan',
-            bgColor: context.surfaceColor,
-            textColor: primary,
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          ),
-        ]),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.secondary,
+                size: 32,
+              ),
+            ),
+            AppGaps.h16,
+            Text(
+              'Booking Confirmed!',
+              style: AppTextStyles.header4Bold(color: textColor),
+            ),
+            AppGaps.h8,
+            Text(
+              'Your booking with ${widget.artisan.name} has been sent.\nYou will receive a confirmation shortly.',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodyMediumRegular(
+                color: textColor.withValues(alpha: 0.65),
+              ),
+            ),
+            const SizedBox(height: 28),
+            ButtonPrimary(
+              text: 'View My Bookings',
+              bgColor: primary,
+              onTap: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.home,
+                  (r) => false,
+                  arguments: 2,
+                );
+              },
+            ),
+            AppGaps.h10,
+            ButtonPrimary(
+              text: 'Back to Artisan',
+              bgColor: context.surfaceColor,
+              textColor: primary,
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  Future<void> _pickImageFromSource(int index, ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final img = await picker.pickImage(source: source, imageQuality: 80);
+      if (img != null) setState(() => _images[index] = img);
+    } catch (e) {
+      // ignore errors for now
+    }
+  }
+
+  Future<void> _showImageOptions(int index) async {
+    final res = await showPhotoOptionsSheet(
+      context,
+      isDark: context.isDark,
+      primary: context.primary,
+      title: 'Add image',
+      showRemove: true,
+    );
+    if (res == null) return;
+    if (res == PhotoOptionResult.camera) {
+      await _pickImageFromSource(index, ImageSource.camera);
+    } else if (res == PhotoOptionResult.gallery) {
+      await _pickImageFromSource(index, ImageSource.gallery);
+    } else if (res == PhotoOptionResult.remove) {
+      _removeImage(index);
+    }
+  }
+
+  void _removeImage(int index) => setState(() => _images[index] = null);
 
   @override
   void dispose() {
@@ -160,90 +230,108 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
           elevation: 0,
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_rounded, size: 20, color: textColor),
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+              size: 20,
+              color: textColor,
+            ),
             onPressed: _back,
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Book ${widget.artisan.name.split(' ').first}',
-                  style: AppTextStyles.header4Bold(color: textColor)),
-              Text('Step ${_step + 1} of 3 · ${stepTitles[_step]}',
-                  style: AppTextStyles.bodySmallRegular(
-                      color: textColor.withValues(alpha: 0.5))),
+              Text(
+                'Book ${widget.artisan.name.split(' ').first}',
+                style: AppTextStyles.header4Bold(color: textColor),
+              ),
+              Text(
+                'Step ${_step + 1} of 3 · ${stepTitles[_step]}',
+                style: AppTextStyles.bodySmallRegular(
+                  color: textColor.withValues(alpha: 0.5),
+                ),
+              ),
             ],
           ),
         ),
-        body: Column(children: [
-          LinearProgressIndicator(
-            value: (_step + 1) / 3,
-            backgroundColor: surfaceColor,
-            valueColor: AlwaysStoppedAnimation<Color>(primary),
-            minHeight: 3,
-          ),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _DateTimeStep(
-                  dates: _dates,
-                  selectedDate: _selectedDate,
-                  selectedSlot: _selectedSlot,
-                  timeSlots: _timeSlots,
-                  textColor: textColor,
-                  surfaceColor: surfaceColor,
-                  primary: primary,
-                  onDateSelected: (d) => setState(() => _selectedDate = d),
-                  onSlotSelected: (s) => setState(() => _selectedSlot = s),
-                ),
-                _DetailsStep(
-                  notesCtrl: _notesCtrl,
-                  selectedAddress: _selectedAddress,
-                  addresses: _addresses,
-                  textColor: textColor,
-                  surfaceColor: surfaceColor,
-                  primary: primary,
-                  isDark: isDark,
-                  onAddressSelected: (a) => setState(() => _selectedAddress = a),
-                ),
-                _SummaryStep(
-                  artisan: widget.artisan,
-                  selectedDate: _selectedDate,
-                  selectedSlot: _selectedSlot ?? '–',
-                  selectedAddress: _selectedAddress,
-                  notes: _notesCtrl.text,
-                  payments: _payments,
-                  selectedPayment: _selectedPayment,
-                  textColor: textColor,
-                  surfaceColor: surfaceColor,
-                  primary: primary,
-                  isDark: isDark,
-                  onPaymentSelected: (i) => setState(() => _selectedPayment = i),
-                ),
-              ],
+        body: Column(
+          children: [
+            LinearProgressIndicator(
+              value: (_step + 1) / 3,
+              backgroundColor: surfaceColor,
+              valueColor: AlwaysStoppedAnimation<Color>(primary),
+              minHeight: 3,
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _DateTimeStep(
+                    dates: _dates,
+                    selectedDate: _selectedDate,
+                    selectedSlot: _selectedSlot,
+                    timeSlots: _timeSlots,
+                    textColor: textColor,
+                    surfaceColor: surfaceColor,
+                    primary: primary,
+                    onDateSelected: (d) => setState(() => _selectedDate = d),
+                    onSlotSelected: (s) => setState(() => _selectedSlot = s),
+                  ),
+                  _DetailsStep(
+                    notesCtrl: _notesCtrl,
+                    selectedAddress: _selectedAddress,
+                    addresses: _addresses,
+                    images: _images,
+                    textColor: textColor,
+                    surfaceColor: surfaceColor,
+                    primary: primary,
+                    isDark: isDark,
+                    onAddressSelected: (a) =>
+                        setState(() => _selectedAddress = a),
+                    onPickImage: _showImageOptions,
+                    onRemoveImage: _removeImage,
+                  ),
+                  _SummaryStep(
+                    artisan: widget.artisan,
+                    selectedDate: _selectedDate,
+                    selectedSlot: _selectedSlot ?? '–',
+                    selectedAddress: _selectedAddress,
+                    notes: _notesCtrl.text,
+                    payments: _payments,
+                    selectedPayment: _selectedPayment,
+                    textColor: textColor,
+                    surfaceColor: surfaceColor,
+                    primary: primary,
+                    isDark: isDark,
+                    onPaymentSelected: (i) =>
+                        setState(() => _selectedPayment = i),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(
                 AppSpacing.custom16,
                 AppSpacing.custom12,
                 AppSpacing.custom16,
-                MediaQuery.of(context).padding.bottom + AppSpacing.custom12),
-            decoration: BoxDecoration(
-              color: bgColor,
-              border:
-                  Border(top: BorderSide(color: textColor.withValues(alpha: 0.08))),
+                MediaQuery.of(context).padding.bottom + AppSpacing.custom12,
+              ),
+              decoration: BoxDecoration(
+                color: bgColor,
+                border: Border(
+                  top: BorderSide(color: textColor.withValues(alpha: 0.08)),
+                ),
+              ),
+              child: ButtonPrimary(
+                text: _step == 2 ? 'Confirm Booking' : 'Continue',
+                bgColor: primary,
+                enabled: _canProceed,
+                onTap: _next,
+              ),
             ),
-            child: ButtonPrimary(
-              text: _step == 2 ? 'Confirm Booking' : 'Continue',
-              bgColor: primary,
-              enabled: _canProceed,
-              onTap: _next,
-            ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }
@@ -275,80 +363,99 @@ class _DateTimeStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(AppSpacing.custom16),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        AppGaps.h8,
-        Text('Select a date',
-            style: AppTextStyles.bodyLargeBold(color: textColor)),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 80,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => AppGaps.w8,
-            itemCount: dates.length,
-            itemBuilder: (_, i) {
-              final d = dates[i];
-              final sel = selectedDate != null &&
-                  selectedDate!.day == d.day &&
-                  selectedDate!.month == d.month;
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppGaps.h8,
+          Text(
+            'Select a date',
+            style: AppTextStyles.bodyLargeBold(color: textColor),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 80,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              separatorBuilder: (_, __) => AppGaps.w8,
+              itemCount: dates.length,
+              itemBuilder: (_, i) {
+                final d = dates[i];
+                final sel =
+                    selectedDate != null &&
+                    selectedDate!.day == d.day &&
+                    selectedDate!.month == d.month;
+                return GestureDetector(
+                  onTap: () => onDateSelected(d),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 56,
+                    decoration: BoxDecoration(
+                      color: sel ? primary : surfaceColor,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          DateFormat('E').format(d),
+                          style: AppTextStyles.bodySmallMedium(
+                            color: sel
+                                ? Colors.white
+                                : textColor.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${d.day}',
+                          style: AppTextStyles.bodyMediumBold(
+                            color: sel ? Colors.white : textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          AppGaps.h24,
+          Text(
+            'Select a time',
+            style: AppTextStyles.bodyLargeBold(color: textColor),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: timeSlots.map((slot) {
+              final sel = selectedSlot == slot;
               return GestureDetector(
-                onTap: () => onDateSelected(d),
+                onTap: () => onSlotSelected(slot),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 56,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: sel ? primary : surfaceColor,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: sel ? primary : textColor.withValues(alpha: 0.12),
+                    ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(DateFormat('E').format(d),
-                          style: AppTextStyles.bodySmallMedium(
-                              color: sel
-                                  ? Colors.white
-                                  : textColor.withValues(alpha: 0.5))),
-                      const SizedBox(height: 4),
-                      Text('${d.day}',
-                          style: AppTextStyles.bodyMediumBold(
-                              color: sel ? Colors.white : textColor)),
-                    ],
+                  child: Text(
+                    slot,
+                    style: AppTextStyles.bodySmallSemibold(
+                      color: sel ? Colors.white : textColor,
+                    ),
                   ),
                 ),
               );
-            },
+            }).toList(),
           ),
-        ),
-        AppGaps.h24,
-        Text('Select a time',
-            style: AppTextStyles.bodyLargeBold(color: textColor)),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: timeSlots.map((slot) {
-            final sel = selectedSlot == slot;
-            return GestureDetector(
-              onTap: () => onSlotSelected(slot),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: sel ? primary : surfaceColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: sel ? primary : textColor.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: Text(slot,
-                    style: AppTextStyles.bodySmallSemibold(
-                        color: sel ? Colors.white : textColor)),
-              ),
-            );
-          }).toList(),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -358,9 +465,12 @@ class _DetailsStep extends StatelessWidget {
   final TextEditingController notesCtrl;
   final String selectedAddress;
   final List<(String, IconData, String)> addresses;
+  final List<XFile?>? images;
   final Color textColor, surfaceColor, primary;
   final bool isDark;
   final ValueChanged<String> onAddressSelected;
+  final Future<void> Function(int)? onPickImage;
+  final void Function(int)? onRemoveImage;
 
   const _DetailsStep({
     required this.notesCtrl,
@@ -371,82 +481,182 @@ class _DetailsStep extends StatelessWidget {
     required this.primary,
     required this.isDark,
     required this.onAddressSelected,
+    this.images,
+    this.onPickImage,
+    this.onRemoveImage,
   });
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(AppSpacing.custom16),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        AppGaps.h8,
-        Text('Describe what you need',
-            style: AppTextStyles.bodyLargeBold(color: textColor)),
-        const SizedBox(height: 4),
-        Text('Help the artisan prepare by describing the job.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppGaps.h8,
+          Text(
+            'Describe what you need',
+            style: AppTextStyles.bodyLargeBold(color: textColor),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Help the artisan prepare by describing the job.',
             style: AppTextStyles.bodySmallRegular(
-                color: textColor.withValues(alpha: 0.55))),
-        const SizedBox(height: 12),
-        Container(
-          decoration: BoxDecoration(
-              color: surfaceColor, borderRadius: BorderRadius.circular(14)),
-          child: TextField(
-            controller: notesCtrl,
-            maxLines: 4,
-            style: AppTextStyles.bodyMediumRegular(color: textColor),
-            cursorColor: primary,
-            decoration: InputDecoration(
-              hintText: 'e.g. Kitchen sink has been leaking for 2 days...',
-              hintStyle: AppTextStyles.bodyMediumRegular(
-                  color: textColor.withValues(alpha: 0.35)),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
+              color: textColor.withValues(alpha: 0.55),
             ),
           ),
-        ),
-        AppGaps.h24,
-        Text('Service location',
-            style: AppTextStyles.bodyLargeBold(color: textColor)),
-        const SizedBox(height: 12),
-        ...addresses.map((addr) {
-          final sel = selectedAddress == addr.$1;
-          return GestureDetector(
-            onTap: () => onAddressSelected(addr.$1),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: EdgeInsets.all(AppSpacing.custom14),
-              decoration: BoxDecoration(
-                color: sel ? primary.withValues(alpha: 0.08) : surfaceColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: sel ? primary : textColor.withValues(alpha: 0.1),
-                  width: sel ? 1.5 : 1,
+          const SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: TextField(
+              controller: notesCtrl,
+              maxLines: 4,
+              style: AppTextStyles.bodyMediumRegular(color: textColor),
+              cursorColor: primary,
+              decoration: InputDecoration(
+                hintText: 'e.g. Kitchen sink has been leaking for 2 days...',
+                hintStyle: AppTextStyles.bodyMediumRegular(
+                  color: textColor.withValues(alpha: 0.35),
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.all(16),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Upload images (optional)',
+            style: AppTextStyles.bodySmallRegular(
+              color: textColor.withValues(alpha: 0.65),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: List.generate(3, (i) {
+              final img = images != null ? images![i] : null;
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: i == 2 ? 0 : AppSpacing.custom12,
+                ),
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        if (onPickImage != null) await onPickImage!(i);
+                      },
+                      child: Container(
+                        width: 86,
+                        height: 86,
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: textColor.withValues(alpha: 0.08),
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: img != null
+                              ? Image.file(File(img.path), fit: BoxFit.cover)
+                              : Center(
+                                  child: Icon(
+                                    Icons.add_a_photo_rounded,
+                                    color: textColor.withValues(alpha: 0.45),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                    if (img != null && onRemoveImage != null)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: GestureDetector(
+                          onTap: () => onRemoveImage!(i),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              shape: BoxShape.circle,
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(
+                              Icons.close,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }),
+          ),
+          AppGaps.h24,
+          Text(
+            'Service location',
+            style: AppTextStyles.bodyLargeBold(color: textColor),
+          ),
+          const SizedBox(height: 12),
+          ...addresses.map((addr) {
+            final sel = selectedAddress == addr.$1;
+            return GestureDetector(
+              onTap: () => onAddressSelected(addr.$1),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.all(AppSpacing.custom14),
+                decoration: BoxDecoration(
+                  color: sel ? primary.withValues(alpha: 0.08) : surfaceColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: sel ? primary : textColor.withValues(alpha: 0.1),
+                    width: sel ? 1.5 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      addr.$2,
+                      color: sel ? primary : textColor.withValues(alpha: 0.5),
+                      size: 22,
+                    ),
+                    SizedBox(width: AppSpacing.custom12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            addr.$1,
+                            style: AppTextStyles.bodyMediumBold(
+                              color: sel ? primary : textColor,
+                            ),
+                          ),
+                          Text(
+                            addr.$3,
+                            style: AppTextStyles.bodySmallRegular(
+                              color: textColor.withValues(alpha: 0.55),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (sel)
+                      Icon(
+                        Icons.check_circle_rounded,
+                        color: primary,
+                        size: 20,
+                      ),
+                  ],
                 ),
               ),
-              child: Row(children: [
-                Icon(addr.$2,
-                    color: sel ? primary : textColor.withValues(alpha: 0.5),
-                    size: 22),
-                SizedBox(width: AppSpacing.custom12),
-                Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(addr.$1,
-                            style: AppTextStyles.bodyMediumBold(
-                                color: sel ? primary : textColor)),
-                        Text(addr.$3,
-                            style: AppTextStyles.bodySmallRegular(
-                                color: textColor.withValues(alpha: 0.55))),
-                      ]),
-                ),
-                if (sel)
-                  Icon(Icons.check_circle_rounded, color: primary, size: 20),
-              ]),
-            ),
-          );
-        }),
-      ]),
+            );
+          }),
+        ],
+      ),
     );
   }
 }
@@ -485,148 +695,228 @@ class _SummaryStep extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(AppSpacing.custom16),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        AppGaps.h8,
-        Text('Review your booking',
-            style: AppTextStyles.bodyLargeBold(color: textColor)),
-        AppGaps.h16,
-        // Artisan card
-        Container(
-          padding: EdgeInsets.all(AppSpacing.custom14),
-          decoration: BoxDecoration(
-              color: surfaceColor, borderRadius: BorderRadius.circular(16)),
-          child: Row(children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: artisan.badgeColor.withValues(alpha: 0.15),
-              child: Text(artisan.initials,
-                  style: AppTextStyles.bodySmallBold(color: artisan.badgeColor)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppGaps.h8,
+          Text(
+            'Review your booking',
+            style: AppTextStyles.bodyLargeBold(color: textColor),
+          ),
+          AppGaps.h16,
+          // Artisan card
+          Container(
+            padding: EdgeInsets.all(AppSpacing.custom14),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(16),
             ),
-            SizedBox(width: AppSpacing.custom12),
-            Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      Text(artisan.name,
-                          style: AppTextStyles.bodyMediumBold(color: textColor)),
-                      if (artisan.isVerified) ...[
-                        const SizedBox(width: 4),
-                        Icon(Icons.verified_rounded, color: primary, size: 14),
-                      ],
-                    ]),
-                    Text(artisan.specialty,
-                        style: AppTextStyles.bodySmallRegular(
-                            color: textColor.withValues(alpha: 0.55))),
-                  ]),
-            ),
-            Row(children: [
-              const Icon(Icons.star_rounded,
-                  color: Color(0xFFFFB800), size: 14),
-              const SizedBox(width: 3),
-              Text(artisan.rating.toStringAsFixed(1),
-                  style: AppTextStyles.bodySmallBold(color: textColor)),
-            ]),
-          ]),
-        ),
-        const SizedBox(height: 12),
-        // Detail rows
-        Container(
-          padding: EdgeInsets.all(AppSpacing.custom14),
-          decoration: BoxDecoration(
-              color: surfaceColor, borderRadius: BorderRadius.circular(16)),
-          child: Column(children: [
-            _SummaryRow(Icons.calendar_today_rounded, 'Date', dateStr,
-                textColor, primary),
-            _Divider(textColor),
-            _SummaryRow(Icons.access_time_rounded, 'Time', selectedSlot,
-                textColor, primary),
-            _Divider(textColor),
-            _SummaryRow(Icons.location_on_rounded, 'Location', selectedAddress,
-                textColor, primary),
-            if (notes.trim().isNotEmpty) ...[
-              _Divider(textColor),
-              _SummaryRow(Icons.notes_rounded, 'Notes', notes.trim(),
-                  textColor, primary),
-            ],
-          ]),
-        ),
-        const SizedBox(height: 12),
-        // Price breakdown
-        Container(
-          padding: EdgeInsets.all(AppSpacing.custom14),
-          decoration: BoxDecoration(
-              color: surfaceColor, borderRadius: BorderRadius.circular(16)),
-          child: Column(children: [
-            Row(children: [
-              Text('Starting price',
-                  style: AppTextStyles.bodyMediumRegular(
-                      color: textColor.withValues(alpha: 0.65))),
-              const Spacer(),
-              Text(artisan.startingPrice,
-                  style: AppTextStyles.bodyMediumMedium(color: textColor)),
-            ]),
-            const SizedBox(height: 8),
-            Row(children: [
-              Text('Platform fee',
-                  style: AppTextStyles.bodyMediumRegular(
-                      color: textColor.withValues(alpha: 0.65))),
-              const Spacer(),
-              Text('₦500',
-                  style: AppTextStyles.bodyMediumMedium(color: textColor)),
-            ]),
-            const SizedBox(height: 12),
-            Divider(color: textColor.withValues(alpha: 0.1)),
-            const SizedBox(height: 8),
-            Row(children: [
-              Text('Total estimate',
-                  style: AppTextStyles.bodyMediumBold(color: textColor)),
-              const Spacer(),
-              Text(artisan.startingPrice,
-                  style: AppTextStyles.bodyLargeBold(color: primary)),
-            ]),
-          ]),
-        ),
-        AppGaps.h16,
-        Text('Payment Method',
-            style: AppTextStyles.bodyLargeBold(color: textColor)),
-        AppGaps.h10,
-        ...List.generate(payments.length, (i) {
-          final sel = selectedPayment == i;
-          return GestureDetector(
-            onTap: () => onPaymentSelected(i),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: sel ? primary.withValues(alpha: 0.08) : surfaceColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: sel ? primary : textColor.withValues(alpha: 0.1),
-                  width: sel ? 1.5 : 1,
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: artisan.badgeColor.withValues(alpha: 0.15),
+                  child: Text(
+                    artisan.initials,
+                    style: AppTextStyles.bodySmallBold(
+                      color: artisan.badgeColor,
+                    ),
+                  ),
                 ),
-              ),
-              child: Row(children: [
-                Icon(payments[i].$2,
-                    color: sel
-                        ? primary
-                        : textColor.withValues(alpha: 0.5),
-                    size: 22),
                 SizedBox(width: AppSpacing.custom12),
                 Expanded(
-                  child: Text(payments[i].$1,
-                      style: AppTextStyles.bodyMediumMedium(
-                          color: sel ? primary : textColor)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            artisan.name,
+                            style: AppTextStyles.bodyMediumBold(
+                              color: textColor,
+                            ),
+                          ),
+                          if (artisan.isVerified) ...[
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.verified_rounded,
+                              color: primary,
+                              size: 14,
+                            ),
+                          ],
+                        ],
+                      ),
+                      Text(
+                        artisan.specialty,
+                        style: AppTextStyles.bodySmallRegular(
+                          color: textColor.withValues(alpha: 0.55),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                if (sel)
-                  Icon(Icons.check_circle_rounded, color: primary, size: 20),
-              ]),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.star_rounded,
+                      color: Color(0xFFFFB800),
+                      size: 14,
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      artisan.rating.toStringAsFixed(1),
+                      style: AppTextStyles.bodySmallBold(color: textColor),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          );
-        }),
-        AppGaps.h16,
-      ]),
+          ),
+          const SizedBox(height: 12),
+          // Detail rows
+          Container(
+            padding: EdgeInsets.all(AppSpacing.custom14),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                _SummaryRow(
+                  Icons.calendar_today_rounded,
+                  'Date',
+                  dateStr,
+                  textColor,
+                  primary,
+                ),
+                _Divider(textColor),
+                _SummaryRow(
+                  Icons.access_time_rounded,
+                  'Time',
+                  selectedSlot,
+                  textColor,
+                  primary,
+                ),
+                _Divider(textColor),
+                _SummaryRow(
+                  Icons.location_on_rounded,
+                  'Location',
+                  selectedAddress,
+                  textColor,
+                  primary,
+                ),
+                if (notes.trim().isNotEmpty) ...[
+                  _Divider(textColor),
+                  _SummaryRow(
+                    Icons.notes_rounded,
+                    'Notes',
+                    notes.trim(),
+                    textColor,
+                    primary,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Price breakdown
+          Container(
+            padding: EdgeInsets.all(AppSpacing.custom14),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Starting price',
+                      style: AppTextStyles.bodyMediumRegular(
+                        color: textColor.withValues(alpha: 0.65),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      artisan.startingPrice,
+                      style: AppTextStyles.bodyMediumMedium(color: textColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Divider(color: textColor.withValues(alpha: 0.1)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(
+                      'Total estimate',
+                      style: AppTextStyles.bodyMediumBold(color: textColor),
+                    ),
+                    const Spacer(),
+                    Text(
+                      artisan.startingPrice,
+                      style: AppTextStyles.bodyLargeBold(color: primary),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          AppGaps.h16,
+          Text(
+            'Payment Method',
+            style: AppTextStyles.bodyLargeBold(color: textColor),
+          ),
+          AppGaps.h10,
+          ...List.generate(payments.length, (i) {
+            final sel = selectedPayment == i;
+            return GestureDetector(
+              onTap: () => onPaymentSelected(i),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: sel ? primary.withValues(alpha: 0.08) : surfaceColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: sel ? primary : textColor.withValues(alpha: 0.1),
+                    width: sel ? 1.5 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      payments[i].$2,
+                      color: sel ? primary : textColor.withValues(alpha: 0.5),
+                      size: 22,
+                    ),
+                    SizedBox(width: AppSpacing.custom12),
+                    Expanded(
+                      child: Text(
+                        payments[i].$1,
+                        style: AppTextStyles.bodyMediumMedium(
+                          color: sel ? primary : textColor,
+                        ),
+                      ),
+                    ),
+                    if (sel)
+                      Icon(
+                        Icons.check_circle_rounded,
+                        color: primary,
+                        size: 20,
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }),
+          AppGaps.h16,
+        ],
+      ),
     );
   }
 }
@@ -637,27 +927,39 @@ class _SummaryRow extends StatelessWidget {
   final Color textColor, primary;
 
   const _SummaryRow(
-      this.icon, this.label, this.value, this.textColor, this.primary);
+    this.icon,
+    this.label,
+    this.value,
+    this.textColor,
+    this.primary,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(children: [
-        Icon(icon, color: primary, size: 16),
-        const SizedBox(width: 10),
-        Text(label,
+      child: Row(
+        children: [
+          Icon(icon, color: primary, size: 16),
+          const SizedBox(width: 10),
+          Text(
+            label,
             style: AppTextStyles.bodySmallMedium(
-                color: textColor.withValues(alpha: 0.5))),
-        const Spacer(),
-        Flexible(
-          child: Text(value,
+              color: textColor.withValues(alpha: 0.5),
+            ),
+          ),
+          const Spacer(),
+          Flexible(
+            child: Text(
+              value,
               style: AppTextStyles.bodySmallSemibold(color: textColor),
               textAlign: TextAlign.right,
               maxLines: 2,
-              overflow: TextOverflow.ellipsis),
-        ),
-      ]),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
