@@ -18,22 +18,55 @@ class ServiceStatsStrip extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.all(AppSpacing.custom16),
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.custom16, horizontal: AppSpacing.custom8),
+      padding: EdgeInsets.symmetric(
+        vertical: AppSpacing.custom16,
+        horizontal: AppSpacing.custom8,
+      ),
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(AppSpacing.custom20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 3))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      child: Row(children: [
-        Expanded(child: _StatItem(icon: Icons.people_rounded, value: '\${service.artisanCount}+',
-            label: 'Artisans', primary: primary, textColor: textColor)),
-        _StatDivider(),
-        Expanded(child: _StatItem(icon: Icons.star_rounded, value: service.avgRating.toStringAsFixed(1),
-            label: 'Avg. Rating', primary: primary, textColor: textColor)),
-        _StatDivider(),
-        Expanded(child: _StatItem(icon: Icons.payments_outlined, value: 'From',
-            subValue: service.startingPrice, label: 'Starting price', primary: primary, textColor: textColor)),
-      ]),
+      child: Row(
+        children: [
+          Expanded(
+            child: _StatItem(
+              icon: Icons.people_rounded,
+              value: '${service.artisanCount}+',
+              label: 'Artisans',
+              primary: primary,
+              textColor: textColor,
+            ),
+          ),
+          _StatDivider(),
+          Expanded(
+            child: _StatItem(
+              icon: Icons.star_rounded,
+              value: service.avgRating.toStringAsFixed(1),
+              label: 'Avg. Rating',
+              primary: primary,
+              textColor: textColor,
+            ),
+          ),
+          _StatDivider(),
+          Expanded(
+            child: _StatItem(
+              icon: Icons.payments_outlined,
+              value: 'From',
+              subValue: service.startingPrice,
+              label: 'Starting price',
+              primary: primary,
+              textColor: textColor,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -53,22 +86,41 @@ class _StatItem extends StatelessWidget {
   final Color textColor;
 
   const _StatItem({
-    required this.icon, required this.value, this.subValue,
-    required this.label, required this.primary, required this.textColor,
+    required this.icon,
+    required this.value,
+    this.subValue,
+    required this.label,
+    required this.primary,
+    required this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Icon(icon, color: primary, size: 22),
-      AppGaps.h4,
-      if (subValue != null) ...[
-        Text(value, style: AppTextStyles.bodySmallRegular(color: textColor.withOpacity(0.5))),
-        Text(subValue!, style: AppTextStyles.bodyMediumBold(color: textColor)),
-      ] else
-        Text(value, style: AppTextStyles.bodyLargeBold(color: textColor)),
-      AppGaps.h2,
-      Text(label, style: AppTextStyles.bodySmallRegular(color: textColor.withOpacity(0.5))),
-    ]);
+    return Column(
+      children: [
+        Icon(icon, color: primary, size: 22),
+        AppGaps.h4,
+        if (subValue != null) ...[
+          Text(
+            value,
+            style: AppTextStyles.bodySmallRegular(
+              color: textColor.withOpacity(0.5),
+            ),
+          ),
+          Text(
+            subValue!,
+            style: AppTextStyles.bodyMediumBold(color: textColor),
+          ),
+        ] else
+          Text(value, style: AppTextStyles.bodyLargeBold(color: textColor)),
+        AppGaps.h2,
+        Text(
+          label,
+          style: AppTextStyles.bodySmallRegular(
+            color: textColor.withOpacity(0.5),
+          ),
+        ),
+      ],
+    );
   }
 }

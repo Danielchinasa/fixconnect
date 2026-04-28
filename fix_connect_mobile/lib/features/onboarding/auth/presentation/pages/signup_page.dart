@@ -30,6 +30,21 @@ class _SignupPageState extends State<SignupPage> {
 
   bool _passwordObscured = true;
 
+  bool get _canSignUp =>
+      _textEditingControllerFirstname.text.trim().isNotEmpty &&
+      _textEditingControllerLastname.text.trim().isNotEmpty &&
+      _textEditingControllerEmail.text.trim().isNotEmpty &&
+      _textEditingControllerPassword.text.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _textEditingControllerFirstname.addListener(() => setState(() {}));
+    _textEditingControllerLastname.addListener(() => setState(() {}));
+    _textEditingControllerEmail.addListener(() => setState(() {}));
+    _textEditingControllerPassword.addListener(() => setState(() {}));
+  }
+
   void _togglePasswordObscured() {
     setState(() {
       _passwordObscured = !_passwordObscured;
@@ -182,6 +197,7 @@ class _SignupPageState extends State<SignupPage> {
                       /// Sign up button
                       ButtonPrimary(
                         onTap: () {},
+                        enabled: _canSignUp,
                         text: 'Create Account',
                         bgColor: Theme.of(context).primaryColor,
                       ),
