@@ -29,7 +29,7 @@ class ButtonPrimary extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSpacing.custom24),
-        boxShadow: isInverse
+        boxShadow: isInverse || !enabled
             ? null
             : <BoxShadow>[
                 BoxShadow(
@@ -84,7 +84,10 @@ class ButtonPrimary extends StatelessWidget {
 
   Widget _buildTrailingWidget() {
     return Padding(
-      padding: EdgeInsets.only(right: AppSpacing.custom8, left: AppSpacing.custom16),
+      padding: EdgeInsets.only(
+        right: AppSpacing.custom8,
+        left: AppSpacing.custom16,
+      ),
       child: trailing,
     );
   }

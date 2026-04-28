@@ -33,11 +33,18 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
 
   // Step 1
   final _notesCtrl = TextEditingController();
-  String _selectedAddress = 'Home';
+  String? _selectedAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    _notesCtrl.addListener(() => setState(() {}));
+  }
+
   final List<XFile?> _images = [null, null, null];
 
   // Step 2
-  int _selectedPayment = 0;
+  int? _selectedPayment;
 
   static const _timeSlots = [
     '7:00 AM',
@@ -71,8 +78,13 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
   List<DateTime> get _dates =>
       List.generate(14, (i) => DateTime.now().add(Duration(days: i)));
 
-  bool get _canProceed =>
-      _step != 0 || (_selectedDate != null && _selectedSlot != null);
+  bool get _canProceed {
+    if (_step == 0) return _selectedDate != null && _selectedSlot != null;
+    if (_step == 1)
+      return _notesCtrl.text.trim().isNotEmpty && _selectedAddress != null;
+    if (_step == 2) return _selectedPayment != null;
+    return true;
+  }
 
   void _next() {
     if (_step < 2) {
@@ -98,6 +110,54 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
     } else {
       Navigator.pop(context);
     }
+  }
+
+  Future<void> _cancelBooking() async {
+    if (_step == 0) {
+      Navigator.pop(context);
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final textColor = ctx.textColor;
+        final bgColor = ctx.bgColor;
+        final primary = ctx.primary;
+        return AlertDialog(
+          backgroundColor: bgColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            'Cancel booking?',
+            style: AppTextStyles.header4Bold(color: textColor),
+          ),
+          content: Text(
+            'Your progress will be lost. Are you sure you want to cancel?',
+            style: AppTextStyles.bodyMediumRegular(
+              color: textColor.withValues(alpha: 0.65),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(
+                'Keep editing',
+                style: AppTextStyles.bodyMediumMedium(color: primary),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                'Yes, cancel',
+                style: AppTextStyles.bodyMediumMedium(color: AppColors.error),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed == true && mounted) Navigator.pop(context);
   }
 
   void _showConfirmSheet() {
@@ -237,6 +297,16 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
             ),
             onPressed: _back,
           ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.close_rounded,
+                color: textColor.withValues(alpha: 0.6),
+              ),
+              tooltip: 'Cancel booking',
+              onPressed: _cancelBooking,
+            ),
+          ],
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -463,7 +533,7 @@ class _DateTimeStep extends StatelessWidget {
 // ── Step 1: Service Details ───────────────────────────────────────────────────
 class _DetailsStep extends StatelessWidget {
   final TextEditingController notesCtrl;
-  final String selectedAddress;
+  final String? selectedAddress;
   final List<(String, IconData, String)> addresses;
   final List<XFile?>? images;
   final Color textColor, surfaceColor, primary;
@@ -494,13 +564,20 @@ class _DetailsStep extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppGaps.h8,
-          Text(
-            'Describe what you need',
-            style: AppTextStyles.bodyLargeBold(color: textColor),
+          Row(
+            children: [
+              Text(
+                'Describe what you need',
+                style: AppTextStyles.bodyLargeBold(color: textColor),
+              ),
+              const SizedBox(width: 4),
+              Text('*', style: AppTextStyles.bodyLargeBold(color: primary)),
+            ],
           ),
           const SizedBox(height: 4),
           Text(
-            'Help the artisan prepare by describing the job.',
+            'Required — help the artisan prepare by describing the job.',
+            // ignore: lines_longer_than_80_chars
             style: AppTextStyles.bodySmallRegular(
               color: textColor.withValues(alpha: 0.55),
             ),
@@ -602,7 +679,7 @@ class _DetailsStep extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ...addresses.map((addr) {
-            final sel = selectedAddress == addr.$1;
+            final sel = selectedAddress != null && selectedAddress == addr.$1;
             return GestureDetector(
               onTap: () => onAddressSelected(addr.$1),
               child: AnimatedContainer(
@@ -665,9 +742,10 @@ class _DetailsStep extends StatelessWidget {
 class _SummaryStep extends StatelessWidget {
   final ArtisanModel artisan;
   final DateTime? selectedDate;
-  final String selectedSlot, selectedAddress, notes;
+  final String selectedSlot, notes;
+  final String? selectedAddress;
   final List<(String, IconData)> payments;
-  final int selectedPayment;
+  final int? selectedPayment;
   final Color textColor, surfaceColor, primary;
   final bool isDark;
   final ValueChanged<int> onPaymentSelected;
@@ -801,7 +879,7 @@ class _SummaryStep extends StatelessWidget {
                 _SummaryRow(
                   Icons.location_on_rounded,
                   'Location',
-                  selectedAddress,
+                  selectedAddress ?? '–',
                   textColor,
                   primary,
                 ),
@@ -869,7 +947,7 @@ class _SummaryStep extends StatelessWidget {
           ),
           AppGaps.h10,
           ...List.generate(payments.length, (i) {
-            final sel = selectedPayment == i;
+            final sel = selectedPayment != null && selectedPayment == i;
             return GestureDetector(
               onTap: () => onPaymentSelected(i),
               child: AnimatedContainer(

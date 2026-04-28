@@ -50,7 +50,10 @@ class ServiceDetailPage extends StatelessWidget {
                 child: ServicePopularServices(service: service),
               ),
               SliverToBoxAdapter(
-                child: ServiceFeaturedArtisans(artisans: featured),
+                child: ServiceFeaturedArtisans(
+                  artisans: featured,
+                  serviceLabel: service.label,
+                ),
               ),
               const SliverToBoxAdapter(child: ServiceWhyChooseUs()),
               SliverToBoxAdapter(

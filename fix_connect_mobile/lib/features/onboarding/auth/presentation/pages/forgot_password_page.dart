@@ -4,14 +4,34 @@ import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:flutter/material.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
+class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final TextEditingController _emailCtrl = TextEditingController();
+  final FocusNode _focusNodeEmail = FocusNode();
+
+  bool get _canSubmit => _emailCtrl.text.trim().isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _focusNodeEmail.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController textEditingControllerEmail =
-        TextEditingController();
-    final FocusNode focusNodeEmail = FocusNode();
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -34,8 +54,8 @@ class ForgotPasswordPage extends StatelessWidget {
               ),
               AppGaps.h24,
               InputPrimary(
-                focusNode: focusNodeEmail,
-                controller: textEditingControllerEmail,
+                focusNode: _focusNodeEmail,
+                controller: _emailCtrl,
                 label: 'Email',
                 prefixIcon: Icon(
                   Icons.email,
@@ -44,10 +64,11 @@ class ForgotPasswordPage extends StatelessWidget {
               ),
               AppGaps.h24,
 
-              /// Sign in button
+              /// Submit button
               ButtonPrimary(
                 text: 'Submit',
                 bgColor: Theme.of(context).primaryColor,
+                enabled: _canSubmit,
                 onTap: () {},
               ),
             ],

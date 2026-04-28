@@ -24,6 +24,17 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _passwordObscured = true;
 
+  bool get _canLogin =>
+      _textEditingControllerEmail.text.trim().isNotEmpty &&
+      _textEditingControllerPassword.text.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _textEditingControllerEmail.addListener(() => setState(() {}));
+    _textEditingControllerPassword.addListener(() => setState(() {}));
+  }
+
   void _togglePasswordObscured() {
     setState(() {
       _passwordObscured = !_passwordObscured;
@@ -133,6 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                       ButtonPrimary(
                         text: 'Sign In',
                         bgColor: Theme.of(context).primaryColor,
+                        enabled: _canLogin,
                         onTap: gotoOtpPage,
                       ),
 
