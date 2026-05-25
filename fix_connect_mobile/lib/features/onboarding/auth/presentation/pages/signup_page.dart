@@ -5,6 +5,7 @@ import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/social_icon_button.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
 import 'package:flutter/material.dart';
 
 class SignupPage extends StatefulWidget {
@@ -66,6 +67,16 @@ class _SignupPageState extends State<SignupPage> {
 
   void goBackToLogin() {
     Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+  }
+
+  void _goToOtp() {
+    Navigator.of(context).pushNamed(
+      AppRoutes.otp,
+      arguments: OtpArgs(
+        email: _textEditingControllerEmail.text.trim(),
+        source: OtpSource.signup,
+      ),
+    );
   }
 
   @override
@@ -196,7 +207,7 @@ class _SignupPageState extends State<SignupPage> {
 
                       /// Sign up button
                       ButtonPrimary(
-                        onTap: () {},
+                        onTap: _goToOtp,
                         enabled: _canSignUp,
                         text: 'Create Account',
                         bgColor: Theme.of(context).primaryColor,

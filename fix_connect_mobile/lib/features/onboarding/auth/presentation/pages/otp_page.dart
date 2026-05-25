@@ -1,4 +1,6 @@
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
@@ -10,7 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class OtpPage extends StatefulWidget {
-  const OtpPage({super.key});
+  const OtpPage({super.key, required this.args});
+
+  final OtpArgs args;
 
   @override
   State<OtpPage> createState() => _OtpPageState();
@@ -18,18 +22,15 @@ class OtpPage extends StatefulWidget {
 
 class _OtpPageState extends State<OtpPage> {
   final int _otpCodeLength = 4;
-  final intRegex = RegExp(r'\d+', multiLine: true);
-  TextEditingController textEditingController = TextEditingController(text: '');
   String _enteredCode = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _getSignatureCode();
+  void _onSubmit() {
+    if (widget.args.source == OtpSource.forgotPassword) {
+      Navigator.of(context).pushReplacementNamed(AppRoutes.resetPassword);
+    } else {
+      context.read<AuthCubit>().logIn();
+    }
   }
-
-  /// get signature code
-  _getSignatureCode() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +70,12 @@ class _OtpPageState extends State<OtpPage> {
                   ),
                 ),
                 Text(
-                  'sample@example.com',
+                  widget.args.email,
                   style: AppTextStyles.bodyMediumMedium(color: primary),
                 ),
                 AppGaps.h32,
                 OtpTextField(
                   numberOfFields: _otpCodeLength,
-                  // Box style — clearly visible on any background
                   showFieldAsBox: true,
                   filled: true,
                   fillColor: surfaceColor,
@@ -107,7 +107,9 @@ class _OtpPageState extends State<OtpPage> {
                 ),
                 AppGaps.h4,
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    // TODO: trigger resend OTP API call
+                  },
                   child: Text(
                     'Resend Code',
                     style: AppTextStyles.bodyMediumMedium(color: primary)
@@ -122,9 +124,7 @@ class _OtpPageState extends State<OtpPage> {
                   text: 'Submit',
                   bgColor: primary,
                   enabled: _enteredCode.length == _otpCodeLength,
-                  onTap: () {
-                    context.read<AuthCubit>().logIn();
-                  },
+                  onTap: _onSubmit,
                 ),
               ],
             ),

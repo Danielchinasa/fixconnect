@@ -1,5 +1,7 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
@@ -52,10 +54,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void gotoSignUp() {
     Navigator.of(context).pushReplacementNamed(AppRoutes.signup);
-  }
-
-  void gotoOtpPage() {
-    Navigator.of(context).pushNamed(AppRoutes.otp);
   }
 
   void gotoForgotPasswordPage() {
@@ -145,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                         text: 'Sign In',
                         bgColor: Theme.of(context).primaryColor,
                         enabled: _canLogin,
-                        onTap: gotoOtpPage,
+                        onTap: () => context.read<AuthCubit>().logIn(),
                       ),
 
                       AppGaps.h32,

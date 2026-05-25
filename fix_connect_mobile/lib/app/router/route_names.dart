@@ -1,10 +1,14 @@
 class AppRoutes {
+  // ── Splash gate ──────────────────────────────────────────────────────────────
+  static const splash = '/';
+
   // ── Onboarding ──────────────────────────────────────────────────────────────
-  static const onboarding = '/';
+  static const onboarding = '/onboarding';
   static const login = '/login';
   static const signup = '/signup';
   static const otp = '/otp';
   static const forgotPassword = '/forgot-password';
+  static const resetPassword = '/reset-password';
 
   // ── Main app ─────────────────────────────────────────────────────────────────
   static const home = '/home';
