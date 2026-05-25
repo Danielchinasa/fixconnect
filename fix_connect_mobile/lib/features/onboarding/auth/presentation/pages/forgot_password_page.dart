@@ -1,7 +1,9 @@
+import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -69,7 +71,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 text: 'Submit',
                 bgColor: Theme.of(context).primaryColor,
                 enabled: _canSubmit,
-                onTap: () {},
+                onTap: () => Navigator.of(context).pushNamed(
+                  AppRoutes.otp,
+                  arguments: OtpArgs(
+                    email: _emailCtrl.text.trim(),
+                    source: OtpSource.forgotPassword,
+                  ),
+                ),
               ),
             ],
           ),

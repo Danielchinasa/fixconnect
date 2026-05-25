@@ -2,6 +2,7 @@ import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/core/constants/integer_constants.dart';
+import 'package:fix_connect_mobile/core/utils/onboarding_prefs.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/data/carousel_model.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/presentation/carousel_item.dart';
@@ -33,7 +34,19 @@ class _CarouselPageState extends State<CarouselPage> {
   }
 
   void onNextPage() {
-    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+    final isLastPage = _currentPage == widget.pages.length - 1;
+    if (isLastPage) {
+      OnboardingPrefs.markOnboardingSeen().then((_) {
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+        }
+      });
+    } else {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -92,7 +105,9 @@ class _CarouselPageState extends State<CarouselPage> {
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
             child: ButtonPrimary(
               bgColor: Theme.of(context).primaryColor,
-              text: 'next',
+              text: _currentPage == widget.pages.length - 1
+                  ? 'Get Started'
+                  : 'Next',
               onTap: onNextPage,
             ),
           ),

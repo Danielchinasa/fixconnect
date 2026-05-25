@@ -14,12 +14,15 @@ import 'package:fix_connect_mobile/features/home/presentation/pages/artisan_prof
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/service_detail_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/forgot_password_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/login_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/otp_page.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/reset_password_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/signup_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/data/carousel_model.dart';
 import 'package:fix_connect_mobile/features/onboarding/carousel/presentation/carousel_page.dart';
+import 'package:fix_connect_mobile/features/onboarding/splash_gate_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/payment_methods_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/personal_information_page.dart';
@@ -31,6 +34,8 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // final args = settings.arguments;
     switch (settings.name) {
+      case AppRoutes.splash:
+        return MaterialPageRoute(builder: (_) => const SplashGatePage());
       case AppRoutes.onboarding:
         return MaterialPageRoute(
           builder: (_) => CarouselPage(
@@ -61,9 +66,12 @@ class RouteGenerator {
       case AppRoutes.signup:
         return MaterialPageRoute(builder: (_) => const SignupPage());
       case AppRoutes.otp:
-        return MaterialPageRoute(builder: (_) => const OtpPage());
+        final args = settings.arguments as OtpArgs;
+        return MaterialPageRoute(builder: (_) => OtpPage(args: args));
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
+      case AppRoutes.resetPassword:
+        return MaterialPageRoute(builder: (_) => const ResetPasswordPage());
       case AppRoutes.home:
         final idx = settings.arguments as int?;
         return MaterialPageRoute(
