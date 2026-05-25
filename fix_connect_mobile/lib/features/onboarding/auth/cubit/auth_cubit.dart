@@ -1,26 +1,43 @@
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Represents the authentication status of the user.
-abstract class AuthState {}
+// ── States ────────────────────────────────────────────────────────────────────
 
-/// Initial state before any auth action has occurred.
-class AuthInitial extends AuthState {}
+sealed class AuthState {
+  const AuthState();
+}
 
-/// User has successfully authenticated.
-class AuthAuthenticated extends AuthState {}
+class AuthInitial extends AuthState {
+  const AuthInitial();
+}
 
-/// User has logged out or session has expired.
-class AuthUnauthenticated extends AuthState {}
+class AuthAuthenticated extends AuthState {
+  const AuthAuthenticated([this.user]);
 
-/// Manages authentication state for the app.
-/// The root [BlocListener] in [MyApp] reacts to state changes
-/// and navigates to the appropriate screen automatically.
+  /// Null during mock/stub flows; populated once the real API is integrated.
+  final UserEntity? user;
+}
+
+class AuthUnauthenticated extends AuthState {
+  const AuthUnauthenticated();
+}
+
+// ── Cubit ─────────────────────────────────────────────────────────────────────
+
+/// Holds the global session state.
+///
+/// The root [BlocListener] in [MyApp] reacts to state changes and navigates
+/// to the appropriate screen automatically.
+///
+/// Feature BLoCs (LoginBloc, OtpBloc …) emit their own success states.
+/// When a page receives a success, it calls [logIn] here to set the session.
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial());
+  AuthCubit() : super(const AuthInitial());
 
-  /// Call when login / OTP verification succeeds.
-  void logIn() => emit(AuthAuthenticated());
+  /// Call when login or OTP verification succeeds.
+  /// Pass [user] once real API integration is wired up.
+  void logIn([UserEntity? user]) => emit(AuthAuthenticated(user));
 
   /// Call when the user logs out.
-  void logOut() => emit(AuthUnauthenticated());
+  void logOut() => emit(const AuthUnauthenticated());
 }
