@@ -50,8 +50,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
     final data = response.data!;
     await _tokenStorage.saveTokens(
-      accessToken: data['access_token'] as String,
-      refreshToken: data['refresh_token'] as String,
+      accessToken: data['accessToken'] as String,
+      refreshToken: data['refreshToken'] as String,
     );
     return UserDto.fromJson(data['user'] as Map<String, dynamic>);
   }
@@ -86,8 +86,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
     final data = response.data!;
     await _tokenStorage.saveTokens(
-      accessToken: data['access_token'] as String,
-      refreshToken: data['refresh_token'] as String,
+      accessToken: data['accessToken'] as String,
+      refreshToken: data['refreshToken'] as String,
     );
     return UserDto.fromJson(data['user'] as Map<String, dynamic>);
   }

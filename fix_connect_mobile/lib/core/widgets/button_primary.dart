@@ -12,6 +12,7 @@ class ButtonPrimary extends StatelessWidget {
     required this.bgColor,
     this.textColor,
     this.enabled = true,
+    this.isLoading = false,
   });
 
   final String text;
@@ -20,6 +21,7 @@ class ButtonPrimary extends StatelessWidget {
   final bool enabled;
   final Color bgColor;
   final Color? textColor;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +59,25 @@ class ButtonPrimary extends StatelessWidget {
         disabledElevation: 0.02,
         disabledColor: AppColors.grey400,
         elevation: AppSpacing.custom0,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _buildTextWidget(context),
-            if (trailing != null) _buildTrailingWidget(),
-          ],
-        ),
+        child: isLoading
+            ? SizedBox(
+                width: AppSpacing.custom24,
+                height: AppSpacing.custom24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    textColor ?? Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _buildTextWidget(context),
+                  if (trailing != null) _buildTrailingWidget(),
+                ],
+              ),
       ),
     );
   }

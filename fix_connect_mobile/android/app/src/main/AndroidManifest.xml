@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for all network requests in release builds. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="fix_connect_mobile"
         android:name="${applicationName}"

@@ -14,13 +14,18 @@ class UserDto extends UserEntity {
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
+    // API returns firstName + lastName separately; combine for the domain entity.
+    final firstName = (json['firstName'] as String? ?? '').trim();
+    final lastName = (json['lastName'] as String? ?? '').trim();
+    final fullName = [firstName, lastName].where((s) => s.isNotEmpty).join(' ');
+
     return UserDto(
       id: json['id'] as String,
-      name: json['name'] as String,
+      name: fullName,
       email: json['email'] as String,
-      phone: json['phone'] as String,
+      phone: (json['phone'] as String?) ?? '',
       role: _roleFromString(json['role'] as String? ?? 'customer'),
-      avatarUrl: json['avatar_url'] as String?,
+      avatarUrl: json['avatarUrl'] as String? ?? json['avatar_url'] as String?,
     );
   }
 
@@ -34,8 +39,10 @@ class UserDto extends UserEntity {
   };
 
   static UserRole _roleFromString(String value) {
+    // API returns uppercase roles e.g. 'CUSTOMER' — normalise before matching.
+    final normalised = value.toLowerCase();
     return UserRole.values.firstWhere(
-      (r) => r.name == value,
+      (r) => r.name == normalised,
       orElse: () => UserRole.customer,
     );
   }

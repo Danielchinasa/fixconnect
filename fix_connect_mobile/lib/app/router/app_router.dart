@@ -1,4 +1,5 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
+import 'package:fix_connect_mobile/core/di/injection_container.dart';
 import 'package:fix_connect_mobile/core/utils/assets_helper.dart';
 import 'package:fix_connect_mobile/features/bookings/data/models/booking_model.dart';
 import 'package:fix_connect_mobile/features/bookings/presentation/pages/booking_detail_page.dart';
@@ -15,6 +16,7 @@ import 'package:fix_connect_mobile/features/home/presentation/pages/home_page.da
 import 'package:fix_connect_mobile/features/home/presentation/pages/service_detail_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/login_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/forgot_password_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/login_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/otp_page.dart';
@@ -29,6 +31,7 @@ import 'package:fix_connect_mobile/features/profile/presentation/pages/personal_
 import 'package:fix_connect_mobile/features/profile/presentation/pages/saved_addresses_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -62,7 +65,12 @@ class RouteGenerator {
           ),
         );
       case AppRoutes.login:
-        return MaterialPageRoute(builder: (_) => const LoginPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<LoginBloc>(),
+            child: const LoginPage(),
+          ),
+        );
       case AppRoutes.signup:
         return MaterialPageRoute(builder: (_) => const SignupPage());
       case AppRoutes.otp:
