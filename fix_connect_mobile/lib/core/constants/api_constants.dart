@@ -34,9 +34,11 @@ class ApiConstants {
   static const resetPassword = '/auth/reset-password';
   static const refreshToken = '/auth/refresh';
   static const logout = '/auth/logout';
+  static const me = '/auth/me';
 
   // ── Profile ─────────────────────────────────────────────────────────────────
   static const profile = '/profile';
+  static const savedAddresses = '/saved-addresses';
 
   // ── Bookings ────────────────────────────────────────────────────────────────
   static const bookings = '/bookings';

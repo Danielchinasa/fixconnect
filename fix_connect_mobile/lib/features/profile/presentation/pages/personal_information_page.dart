@@ -3,8 +3,11 @@ import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PersonalInformationPage
@@ -13,48 +16,43 @@ import 'package:flutter/services.dart';
 class PersonalInformationPage extends StatelessWidget {
   const PersonalInformationPage({super.key});
 
-  // Mock data — replace with real user model when backend is ready
-  static const _fields = [
+  List<_InfoField> _buildFields(UserEntity? user) => [
     _InfoField(
       icon: Icons.person_outline_rounded,
       label: 'Full Name',
-      value: 'Daniel Ochinasa',
+      value: user?.name.isNotEmpty == true ? user!.name : '—',
     ),
     _InfoField(
       icon: Icons.mail_outline_rounded,
       label: 'Email Address',
-      value: 'daniel@fixconnect.app',
+      value: user?.email ?? '—',
     ),
     _InfoField(
       icon: Icons.phone_outlined,
       label: 'Phone Number',
-      value: '+234 810 000 0000',
+      value: user?.phone.isNotEmpty == true ? user!.phone : 'Not set',
     ),
     _InfoField(
-      icon: Icons.cake_outlined,
-      label: 'Date of Birth',
-      value: '12 March 1994',
-    ),
-    _InfoField(
-      icon: Icons.person_pin_circle_outlined,
-      label: 'Gender',
-      value: 'Male',
-    ),
-    _InfoField(
-      icon: Icons.location_city_outlined,
-      label: 'City',
-      value: 'Lagos, Nigeria',
-    ),
-    _InfoField(
-      icon: Icons.notes_rounded,
-      label: 'Bio',
-      value:
-          'Homeowner and DIY enthusiast. I love finding reliable artisans to help maintain my home.',
+      icon: Icons.work_outline_rounded,
+      label: 'Account Type',
+      value: user?.role.name.toLowerCase() == 'artisan'
+          ? 'Artisan'
+          : 'Customer',
     ),
   ];
 
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = (context.read<AuthCubit>().state is AuthAuthenticated)
+        ? (context.read<AuthCubit>().state as AuthAuthenticated).user
+        : null;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final primary = theme.colorScheme.primary;
@@ -91,16 +89,6 @@ class PersonalInformationPage extends StatelessWidget {
             style: AppTextStyles.header4Bold(color: textColor),
           ),
           centerTitle: true,
-          actions: [
-            TextButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.editProfile),
-              child: Text(
-                'Edit',
-                style: AppTextStyles.bodyMediumBold(color: primary),
-              ),
-            ),
-          ],
         ),
         body: ListView(
           padding: EdgeInsets.all(AppSpacing.custom16),
@@ -122,7 +110,7 @@ class PersonalInformationPage extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      'DO',
+                      _initials(user?.name ?? ''),
                       style: AppTextStyles.bodyLargeBold(
                         color: primary,
                       ).copyWith(fontSize: 22),
@@ -132,10 +120,18 @@ class PersonalInformationPage extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.verified_rounded, size: 14, color: primary),
+                      Icon(
+                        user?.isVerified == true
+                            ? Icons.verified_rounded
+                            : Icons.pending_outlined,
+                        size: 14,
+                        color: primary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
-                        'Verified Account',
+                        user?.isVerified == true
+                            ? 'Verified Account'
+                            : 'Unverified Account',
                         style: AppTextStyles.bodySmallMedium(color: primary),
                       ),
                     ],
@@ -153,7 +149,7 @@ class PersonalInformationPage extends StatelessWidget {
               ),
               child: Column(
                 children: _intersperse(
-                  _fields
+                  _buildFields(user)
                       .map(
                         (f) => _InfoRow(
                           field: f,
