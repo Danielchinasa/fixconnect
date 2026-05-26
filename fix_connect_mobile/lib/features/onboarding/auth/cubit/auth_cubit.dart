@@ -1,3 +1,5 @@
+import 'package:fix_connect_mobile/core/network/token_storage.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/data/dto/user_dto.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,12 +34,35 @@ class AuthUnauthenticated extends AuthState {
 /// Feature BLoCs (LoginBloc, OtpBloc …) emit their own success states.
 /// When a page receives a success, it calls [logIn] here to set the session.
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(const AuthInitial());
+  AuthCubit(this._tokenStorage) : super(const AuthInitial());
+
+  final TokenStorage _tokenStorage;
+
+  /// Called once on app start to restore an existing session.
+  /// Emits [AuthAuthenticated] if a stored token is found, otherwise [AuthUnauthenticated].
+  Future<void> init() async {
+    final hasToken = await _tokenStorage.hasToken();
+    if (!hasToken) {
+      emit(const AuthUnauthenticated());
+      return;
+    }
+    final userJson = await _tokenStorage.getUser();
+    final user = userJson != null ? UserDto.fromJson(userJson) : null;
+    emit(AuthAuthenticated(user));
+  }
 
   /// Call when login or OTP verification succeeds.
-  /// Pass [user] once real API integration is wired up.
-  void logIn([UserEntity? user]) => emit(AuthAuthenticated(user));
+  void logIn([UserEntity? user]) {
+    emit(AuthAuthenticated(user));
+    // Persist user data in the background for session restoration.
+    if (user is UserDto) {
+      _tokenStorage.saveUser(user.toJson());
+    }
+  }
 
   /// Call when the user logs out.
-  void logOut() => emit(const AuthUnauthenticated());
+  void logOut() {
+    emit(const AuthUnauthenticated());
+    _tokenStorage.clear();
+  }
 }

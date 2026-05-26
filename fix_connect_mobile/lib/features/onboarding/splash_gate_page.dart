@@ -1,10 +1,10 @@
-import 'package:fix_connect_mobile/app/router/route_names.dart';
-import 'package:fix_connect_mobile/core/utils/onboarding_prefs.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Entry point of the app.
-/// Reads the onboarding flag and immediately redirects —
-/// users never see this page for more than a frame.
+/// Calls [AuthCubit.init] to restore any existing session.
+/// Navigation is handled by the root [BlocListener] in [MyApp].
 class SplashGatePage extends StatefulWidget {
   const SplashGatePage({super.key});
 
@@ -16,19 +16,11 @@ class _SplashGatePageState extends State<SplashGatePage> {
   @override
   void initState() {
     super.initState();
-    _redirect();
-  }
-
-  Future<void> _redirect() async {
-    final seen = await OnboardingPrefs.hasSeenOnboarding();
-    if (!mounted) return;
-    Navigator.of(
-      context,
-    ).pushReplacementNamed(seen ? AppRoutes.login : AppRoutes.onboarding);
+    context.read<AuthCubit>().init();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SizedBox.shrink());
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

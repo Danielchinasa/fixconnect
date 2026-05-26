@@ -1,6 +1,7 @@
 import 'package:fix_connect_mobile/app/router/app_navigator.dart';
 import 'package:fix_connect_mobile/app/router/app_router.dart';
 import 'package:fix_connect_mobile/app/router/route_names.dart';
+import 'package:fix_connect_mobile/core/utils/onboarding_prefs.dart';
 import 'package:fix_connect_mobile/core/utils/screen_util.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +18,17 @@ class MyApp extends StatelessWidget {
     ScreenUtil.init(context);
 
     return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         final nav = AppNavigator.navigatorKey.currentState;
         if (nav == null) return;
         if (state is AuthAuthenticated) {
           nav.pushNamedAndRemoveUntil(AppRoutes.home, (_) => false);
         } else if (state is AuthUnauthenticated) {
-          nav.pushNamedAndRemoveUntil(AppRoutes.login, (_) => false);
+          final seen = await OnboardingPrefs.hasSeenOnboarding();
+          nav.pushNamedAndRemoveUntil(
+            seen ? AppRoutes.login : AppRoutes.onboarding,
+            (_) => false,
+          );
         }
       },
       child: BlocBuilder<ThemeCubit, ThemeMode>(
