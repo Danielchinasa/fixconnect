@@ -40,27 +40,31 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<void>> signup({
-    required String name,
+    required String firstName,
+    required String lastName,
     required String email,
     required String phone,
     required String password,
+    String role = 'CUSTOMER',
   }) => _safeCall(
     () => _remoteDataSource.signup(
-      name: name,
+      firstName: firstName,
+      lastName: lastName,
       email: email,
       phone: phone,
       password: password,
+      role: role,
     ),
   );
 
   @override
-  Future<Result<UserEntity>> verifyOtp({
+  Future<Result<UserEntity?>> verifyOtp({
     required String email,
-    required String otp,
-    required String purpose,
-  }) => _safeCall(
-    () => _remoteDataSource.verifyOtp(email: email, otp: otp, purpose: purpose),
-  );
+    required String code,
+  }) => _safeCall<UserEntity?>(() async {
+    final dto = await _remoteDataSource.verifyOtp(email: email, code: code);
+    return dto;
+  });
 
   @override
   Future<Result<void>> resendOtp({
@@ -68,6 +72,14 @@ class AuthRepositoryImpl implements AuthRepository {
     required String purpose,
   }) => _safeCall(
     () => _remoteDataSource.resendOtp(email: email, purpose: purpose),
+  );
+
+  @override
+  Future<Result<void>> sendOtp({
+    required String email,
+    required String purpose,
+  }) => _safeCall(
+    () => _remoteDataSource.sendOtp(email: email, purpose: purpose),
   );
 
   @override

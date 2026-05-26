@@ -9,20 +9,26 @@ abstract interface class AuthRepository {
   });
 
   Future<Result<void>> signup({
-    required String name,
+    required String firstName,
+    required String lastName,
     required String email,
     required String phone,
     required String password,
+    String role = 'CUSTOMER',
   });
 
-  /// [purpose] is either "signup" or "forgot_password".
-  Future<Result<UserEntity>> verifyOtp({
+  /// Returns the verified [UserEntity] if the server includes it, otherwise null.
+  Future<Result<UserEntity?>> verifyOtp({
     required String email,
-    required String otp,
-    required String purpose,
+    required String code,
   });
 
   Future<Result<void>> resendOtp({
+    required String email,
+    required String purpose,
+  });
+
+  Future<Result<void>> sendOtp({
     required String email,
     required String purpose,
   });

@@ -17,6 +17,8 @@ import 'package:fix_connect_mobile/features/home/presentation/pages/service_deta
 import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/login_bloc.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/otp_bloc.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/signup_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/forgot_password_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/login_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/pages/otp_page.dart';
@@ -72,10 +74,20 @@ class RouteGenerator {
           ),
         );
       case AppRoutes.signup:
-        return MaterialPageRoute(builder: (_) => const SignupPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<SignupBloc>(),
+            child: const SignupPage(),
+          ),
+        );
       case AppRoutes.otp:
         final args = settings.arguments as OtpArgs;
-        return MaterialPageRoute(builder: (_) => OtpPage(args: args));
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<OtpBloc>(),
+            child: OtpPage(args: args),
+          ),
+        );
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
       case AppRoutes.resetPassword:

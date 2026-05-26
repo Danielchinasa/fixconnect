@@ -15,6 +15,7 @@ class InputPrimary extends StatefulWidget {
     this.suffixIcon,
     this.obscureText,
     this.autofocus,
+    this.keyboardType,
   });
 
   final String? label;
@@ -25,6 +26,7 @@ class InputPrimary extends StatefulWidget {
   final bool? obscureText;
   final bool? autofocus;
   final TextEditingController controller;
+  final TextInputType? keyboardType;
 
   @override
   State<InputPrimary> createState() => _InputPrimaryState();
@@ -91,6 +93,7 @@ class _InputPrimaryState extends State<InputPrimary> {
                     controller: widget.controller,
                     autofocus: widget.autofocus ?? false,
                     focusNode: widget.focusNode,
+                    keyboardType: widget.keyboardType,
                     maxLines: 1,
                     style: Theme.of(
                       context,

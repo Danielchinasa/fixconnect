@@ -7,6 +7,7 @@ import 'package:fix_connect_mobile/features/onboarding/auth/domain/repositories/
 import 'package:fix_connect_mobile/features/onboarding/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/domain/usecases/login_usecase.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/domain/usecases/reset_password_usecase.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/domain/usecases/signup_usecase.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/domain/usecases/verify_otp_usecase.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/forgot_password_bloc.dart';
@@ -59,6 +60,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<SignupUseCase>(
     () => SignupUseCase(sl<AuthRepository>()),
   );
+  sl.registerLazySingleton<SendOtpUseCase>(
+    () => SendOtpUseCase(sl<AuthRepository>()),
+  );
   sl.registerLazySingleton<VerifyOtpUseCase>(
     () => VerifyOtpUseCase(sl<AuthRepository>()),
   );
@@ -74,7 +78,10 @@ Future<void> initDependencies() async {
     () => LoginBloc(loginUseCase: sl<LoginUseCase>()),
   );
   sl.registerFactory<SignupBloc>(
-    () => SignupBloc(signupUseCase: sl<SignupUseCase>()),
+    () => SignupBloc(
+      signupUseCase: sl<SignupUseCase>(),
+      sendOtpUseCase: sl<SendOtpUseCase>(),
+    ),
   );
   sl.registerFactory<OtpBloc>(
     () => OtpBloc(verifyOtpUseCase: sl<VerifyOtpUseCase>()),
