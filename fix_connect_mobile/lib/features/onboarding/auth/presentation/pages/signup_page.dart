@@ -6,7 +6,9 @@ import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/social_icon_button.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/signup_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -22,19 +24,24 @@ class _SignupPageState extends State<SignupPage> {
       TextEditingController();
   final TextEditingController _textEditingControllerEmail =
       TextEditingController();
+  final TextEditingController _textEditingControllerPhone =
+      TextEditingController();
   final TextEditingController _textEditingControllerPassword =
       TextEditingController();
   final FocusNode _focusNodeFirstname = FocusNode();
   final FocusNode _focusNodeLastname = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
+  final FocusNode _focusNodePhone = FocusNode();
   final FocusNode _focusNodePassword = FocusNode();
 
   bool _passwordObscured = true;
+  String _selectedRole = 'CUSTOMER';
 
   bool get _canSignUp =>
       _textEditingControllerFirstname.text.trim().isNotEmpty &&
       _textEditingControllerLastname.text.trim().isNotEmpty &&
       _textEditingControllerEmail.text.trim().isNotEmpty &&
+      _textEditingControllerPhone.text.trim().isNotEmpty &&
       _textEditingControllerPassword.text.isNotEmpty;
 
   @override
@@ -43,6 +50,7 @@ class _SignupPageState extends State<SignupPage> {
     _textEditingControllerFirstname.addListener(() => setState(() {}));
     _textEditingControllerLastname.addListener(() => setState(() {}));
     _textEditingControllerEmail.addListener(() => setState(() {}));
+    _textEditingControllerPhone.addListener(() => setState(() {}));
     _textEditingControllerPassword.addListener(() => setState(() {}));
   }
 
@@ -55,10 +63,12 @@ class _SignupPageState extends State<SignupPage> {
   @override
   void dispose() {
     _textEditingControllerPassword.dispose();
+    _textEditingControllerPhone.dispose();
     _textEditingControllerEmail.dispose();
     _textEditingControllerLastname.dispose();
     _textEditingControllerFirstname.dispose();
     _focusNodeEmail.dispose();
+    _focusNodePhone.dispose();
     _focusNodeLastname.dispose();
     _focusNodeFirstname.dispose();
     _focusNodePassword.dispose();
@@ -69,214 +79,377 @@ class _SignupPageState extends State<SignupPage> {
     Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
 
-  void _goToOtp() {
-    Navigator.of(context).pushNamed(
-      AppRoutes.otp,
-      arguments: OtpArgs(
-        email: _textEditingControllerEmail.text.trim(),
-        source: OtpSource.signup,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.custom16),
-          child: Column(
-            children: [
-              /// 🔹 Scrollable content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Create Account',
-                        style: Theme.of(context).textTheme.displayLarge,
-                      ),
-                      AppGaps.h4,
-                      Text(
-                        'Create an account to find trusted experts near you and get your jobs done hassle-free.',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      AppGaps.h32,
+    final primary = Theme.of(context).primaryColor;
+    final scheme = Theme.of(context).colorScheme;
 
-                      /// First name
-                      InputPrimary(
-                        focusNode: _focusNodeFirstname,
-                        controller: _textEditingControllerFirstname,
-                        autofocus: true,
-                        label: 'First name',
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Theme.of(context).colorScheme.primary,
+    return BlocListener<SignupBloc, SignupState>(
+      listener: (context, state) {
+        if (state is SignupSuccess) {
+          Navigator.of(context).pushNamed(
+            AppRoutes.otp,
+            arguments: OtpArgs(email: state.email, source: OtpSource.signup),
+          );
+        } else if (state is SignupFailure) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                backgroundColor: scheme.error,
+              ),
+            );
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(
+                      top: AppSpacing.custom24,
+                      bottom: AppSpacing.custom16,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Header
+                        Text(
+                          'Create Account',
+                          style: Theme.of(context).textTheme.displayLarge,
                         ),
-                      ),
-
-                      AppGaps.h8,
-
-                      /// Last name
-                      InputPrimary(
-                        focusNode: _focusNodeLastname,
-                        controller: _textEditingControllerLastname,
-                        label: 'Last name',
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-
-                      AppGaps.h8,
-
-                      /// Email
-                      InputPrimary(
-                        focusNode: _focusNodeEmail,
-                        controller: _textEditingControllerEmail,
-                        label: 'Email',
-                        prefixIcon: Icon(
-                          Icons.email,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-
-                      AppGaps.h8,
-
-                      /// Password
-                      InputPrimary(
-                        obscureText: _passwordObscured,
-                        focusNode: _focusNodePassword,
-                        controller: _textEditingControllerPassword,
-                        label: 'Password',
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        suffixIcon: Padding(
-                          padding: EdgeInsets.only(right: AppSpacing.custom4),
-                          child: GestureDetector(
-                            onTap: _togglePasswordObscured,
-                            child: Icon(
-                              _passwordObscured
-                                  ? Icons.visibility_off_rounded
-                                  : Icons.visibility_rounded,
-                              size: AppSpacing.custom24,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      AppGaps.h8,
-
-                      /// Terms and conditions
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: 'By creating an account, you agree to our ',
+                        AppGaps.h4,
+                        Text(
+                          'Find trusted experts or offer your skills.',
                           style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+
+                        AppGaps.h24,
+
+                        /// Role cards
+                        Text(
+                          'I am a…',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        AppGaps.h8,
+                        Row(
                           children: [
-                            TextSpan(
-                              text: 'Terms of Service',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
+                            _RoleCard(
+                              icon: Icons.person_search_rounded,
+                              title: 'Customer',
+                              subtitle: 'I need a pro',
+                              selected: _selectedRole == 'CUSTOMER',
+                              onTap: () =>
+                                  setState(() => _selectedRole = 'CUSTOMER'),
+                              primary: primary,
+                              scheme: scheme,
                             ),
-                            TextSpan(
-                              text: ' and ',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            TextSpan(
-                              text: 'Privacy Policy',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                            ),
-                            TextSpan(
-                              text: '.',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            SizedBox(width: AppSpacing.custom16),
+                            _RoleCard(
+                              icon: Icons.construction_rounded,
+                              title: 'Artisan',
+                              subtitle: 'I fix things',
+                              selected: _selectedRole == 'ARTISAN',
+                              onTap: () =>
+                                  setState(() => _selectedRole = 'ARTISAN'),
+                              primary: primary,
+                              scheme: scheme,
                             ),
                           ],
                         ),
-                      ),
 
-                      AppGaps.h24,
+                        AppGaps.h16,
 
-                      /// Sign up button
-                      ButtonPrimary(
-                        onTap: _goToOtp,
-                        enabled: _canSignUp,
-                        text: 'Create Account',
-                        bgColor: Theme.of(context).primaryColor,
-                      ),
-
-                      AppGaps.h32,
-
-                      /// Divider
-                      Row(
-                        children: [
-                          const Expanded(child: Divider()),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.custom8,
+                        /// Name row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: InputPrimary(
+                                focusNode: _focusNodeFirstname,
+                                controller: _textEditingControllerFirstname,
+                                autofocus: true,
+                                label: 'First name',
+                              ),
                             ),
-                            child: Text(
-                              'Or continue with',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            SizedBox(width: AppSpacing.custom16),
+                            Expanded(
+                              child: InputPrimary(
+                                focusNode: _focusNodeLastname,
+                                controller: _textEditingControllerLastname,
+                                label: 'Last name',
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        AppGaps.h10,
+
+                        /// Email
+                        InputPrimary(
+                          focusNode: _focusNodeEmail,
+                          controller: _textEditingControllerEmail,
+                          label: 'Email',
+                          keyboardType: TextInputType.emailAddress,
+                          prefixIcon: Icon(
+                            Icons.mail_outline_rounded,
+                            color: scheme.primary,
+                          ),
+                        ),
+
+                        AppGaps.h10,
+
+                        /// Phone
+                        InputPrimary(
+                          focusNode: _focusNodePhone,
+                          controller: _textEditingControllerPhone,
+                          label: 'Phone number',
+                          keyboardType: TextInputType.phone,
+                          prefixIcon: Icon(
+                            Icons.phone_outlined,
+                            color: scheme.primary,
+                          ),
+                        ),
+
+                        AppGaps.h10,
+
+                        /// Password
+                        InputPrimary(
+                          obscureText: _passwordObscured,
+                          focusNode: _focusNodePassword,
+                          controller: _textEditingControllerPassword,
+                          label: 'Password',
+                          prefixIcon: Icon(
+                            Icons.lock_outline_rounded,
+                            color: scheme.primary,
+                          ),
+                          suffixIcon: Padding(
+                            padding: EdgeInsets.only(right: AppSpacing.custom4),
+                            child: GestureDetector(
+                              onTap: _togglePasswordObscured,
+                              child: Icon(
+                                _passwordObscured
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                size: AppSpacing.custom24,
+                              ),
                             ),
                           ),
-                          const Expanded(child: Divider()),
-                        ],
+                        ),
+
+                        AppGaps.h24,
+
+                        /// Create Account button
+                        BlocBuilder<SignupBloc, SignupState>(
+                          builder: (context, state) => ButtonPrimary(
+                            enabled: _canSignUp && state is! SignupLoading,
+                            isLoading: state is SignupLoading,
+                            text: 'Create Account',
+                            bgColor: primary,
+                            onTap: () => context.read<SignupBloc>().add(
+                              SignupSubmitted(
+                                firstName: _textEditingControllerFirstname.text
+                                    .trim(),
+                                lastName: _textEditingControllerLastname.text
+                                    .trim(),
+                                email: _textEditingControllerEmail.text.trim(),
+                                phone: _textEditingControllerPhone.text.trim(),
+                                password: _textEditingControllerPassword.text,
+                                role: _selectedRole,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        AppGaps.h16,
+
+                        /// Terms
+                        Center(
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              text: 'By creating an account you agree to our ',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              children: [
+                                TextSpan(
+                                  text: 'Terms',
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(color: primary),
+                                ),
+                                TextSpan(
+                                  text: ' & ',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                TextSpan(
+                                  text: 'Privacy Policy',
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(color: primary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        AppGaps.h24,
+
+                        /// Divider
+                        Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppSpacing.custom16,
+                              ),
+                              child: Text(
+                                'or',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+
+                        AppGaps.h16,
+
+                        /// Social buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SocialIconButton(
+                              asset: ImageAssets.google(),
+                              onTap: () {},
+                            ),
+                            SizedBox(width: AppSpacing.custom16),
+                            SocialIconButton(
+                              asset: ImageAssets.facebook(),
+                              onTap: () {},
+                            ),
+                            SizedBox(width: AppSpacing.custom16),
+                            SocialIconButton(
+                              asset: ImageAssets.apple(color: Colors.white),
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                /// Sign in link
+                Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.custom8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Already have an account?',
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
-
-                      AppGaps.h32,
-
-                      /// Social buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SocialIconButton(
-                            asset: ImageAssets.google(),
-                            onTap: () {},
-                          ),
-                          SizedBox(width: AppSpacing.custom16),
-                          SocialIconButton(
-                            asset: ImageAssets.facebook(),
-                            onTap: () {},
-                          ),
-                          SizedBox(width: AppSpacing.custom16),
-                          SocialIconButton(
-                            asset: ImageAssets.apple(),
-                            onTap: () {},
-                          ),
-                        ],
+                      TextButton(
+                        onPressed: goBackToLogin,
+                        child: Text(
+                          'Sign In',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(color: primary),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Already have an account?',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  TextButton(
-                    onPressed: goBackToLogin,
-                    child: Text(
-                      'Sign In',
+// ── Role card ─────────────────────────────────────────────────────────────────
+
+class _RoleCard extends StatelessWidget {
+  const _RoleCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.selected,
+    required this.onTap,
+    required this.primary,
+    required this.scheme,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool selected;
+  final VoidCallback onTap;
+  final Color primary;
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          decoration: BoxDecoration(
+            color: selected
+                ? primary.withValues(alpha: 0.08)
+                : Colors.transparent,
+            border: Border.all(
+              color: selected ? primary : scheme.outlineVariant,
+              width: selected ? 2 : 1,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: selected ? primary : scheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: selected ? Colors.white : scheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w600,
+                        color: selected ? primary : null,
                       ),
                     ),
-                  ),
-                ],
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              if (selected)
+                Icon(Icons.check_circle_rounded, size: 18, color: primary),
             ],
           ),
         ),

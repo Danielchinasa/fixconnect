@@ -14,20 +14,13 @@ sealed class OtpEvent extends Equatable {
 }
 
 final class OtpSubmitted extends OtpEvent {
-  const OtpSubmitted({
-    required this.email,
-    required this.otp,
-    required this.purpose,
-  });
+  const OtpSubmitted({required this.email, required this.code});
 
   final String email;
-  final String otp;
-
-  /// Either "signup" or "forgot_password".
-  final String purpose;
+  final String code;
 
   @override
-  List<Object?> get props => [email, otp, purpose];
+  List<Object?> get props => [email, code];
 }
 
 final class OtpResendRequested extends OtpEvent {
@@ -101,11 +94,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
   Future<void> _onSubmitted(OtpSubmitted event, Emitter<OtpState> emit) async {
     emit(const OtpLoading());
     final result = await _verifyOtpUseCase(
-      VerifyOtpParams(
-        email: event.email,
-        otp: event.otp,
-        purpose: event.purpose,
-      ),
+      VerifyOtpParams(email: event.email, code: event.code),
     );
     switch (result) {
       case Ok(:final value):

@@ -77,10 +77,13 @@ class ApiClient {
       case DioExceptionType.badResponse:
         final code = e.response?.statusCode;
         if (code == 401) return const UnauthorizedException();
-        final message =
-            (e.response?.data as Map<String, dynamic>?)?['message']
-                as String? ??
-            'Server error';
+        final body = e.response?.data as Map<String, dynamic>?;
+        final raw = body?['message'];
+        final message = switch (raw) {
+          final List list => list.join(', '),
+          final String s => s,
+          _ => body?['error'] as String? ?? 'Server error',
+        };
         return ServerException(message: message, statusCode: code);
       default:
         return ServerException(message: e.message ?? 'Unknown error');

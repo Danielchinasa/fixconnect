@@ -24,10 +24,12 @@ class ImageAssets {
     height: size,
     fit: BoxFit.contain,
   );
-  static Widget apple({double size = 24}) => SvgPicture.asset(
-    '${iconEndPoint}apple.svg',
-    width: size,
-    height: size,
-    fit: BoxFit.contain,
-  );
+  static Widget apple({double size = 24, Color color = Colors.black}) =>
+      SvgPicture.asset(
+        '${iconEndPoint}apple.svg',
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+      );
 }

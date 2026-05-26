@@ -8,19 +8,19 @@ abstract interface class AuthRemoteDataSource {
   Future<UserDto> login({required String email, required String password});
 
   Future<void> signup({
-    required String name,
+    required String firstName,
+    required String lastName,
     required String email,
     required String phone,
     required String password,
+    String role = 'CUSTOMER',
   });
 
-  Future<UserDto> verifyOtp({
-    required String email,
-    required String otp,
-    required String purpose,
-  });
+  Future<UserDto?> verifyOtp({required String email, required String code});
 
   Future<void> resendOtp({required String email, required String purpose});
+
+  Future<void> sendOtp({required String email, required String purpose});
 
   Future<void> forgotPassword({required String email});
 
@@ -58,38 +58,52 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> signup({
-    required String name,
+    required String firstName,
+    required String lastName,
     required String email,
     required String phone,
     required String password,
-  }) async {
-    await _api.post<void>(
-      ApiConstants.signup,
-      data: {
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'password': password,
-      },
-    );
-  }
-
-  @override
-  Future<UserDto> verifyOtp({
-    required String email,
-    required String otp,
-    required String purpose,
+    String role = 'CUSTOMER',
   }) async {
     final response = await _api.post<Map<String, dynamic>>(
-      ApiConstants.verifyOtp,
-      data: {'email': email, 'otp': otp, 'purpose': purpose},
+      ApiConstants.signup,
+      data: {
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        if (phone.isNotEmpty) 'phone': phone,
+        'password': password,
+        'role': role.toUpperCase(),
+      },
     );
     final data = response.data!;
+    // Persist tokens so the subsequent OTP-verify call can use them.
     await _tokenStorage.saveTokens(
       accessToken: data['accessToken'] as String,
       refreshToken: data['refreshToken'] as String,
     );
-    return UserDto.fromJson(data['user'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<UserDto?> verifyOtp({
+    required String email,
+    required String code,
+  }) async {
+    final response = await _api.post<Map<String, dynamic>>(
+      ApiConstants.verifyOtp,
+      data: {'email': email, 'code': code},
+    );
+    final data = response.data ?? {};
+    final accessToken = data['accessToken'] as String?;
+    final refreshToken = data['refreshToken'] as String?;
+    if (accessToken != null) {
+      await _tokenStorage.saveTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken ?? '',
+      );
+    }
+    final userData = data['user'] as Map<String, dynamic>?;
+    return userData != null ? UserDto.fromJson(userData) : null;
   }
 
   @override
@@ -99,6 +113,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     await _api.post<void>(
       ApiConstants.resendOtp,
+      data: {'email': email, 'purpose': purpose},
+    );
+  }
+
+  @override
+  Future<void> sendOtp({required String email, required String purpose}) async {
+    await _api.post<void>(
+      ApiConstants.sendOtp,
       data: {'email': email, 'purpose': purpose},
     );
   }

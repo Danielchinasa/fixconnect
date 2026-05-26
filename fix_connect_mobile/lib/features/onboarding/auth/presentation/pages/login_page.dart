@@ -72,7 +72,10 @@ class _LoginPageState extends State<LoginPage> {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(
+                  state.message,
+                  style: const TextStyle(color: Colors.white),
+                ),
                 backgroundColor: Theme.of(context).colorScheme.error,
               ),
             );
@@ -206,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             SizedBox(width: AppSpacing.custom16),
                             SocialIconButton(
-                              asset: ImageAssets.apple(),
+                              asset: ImageAssets.apple(color: Colors.white),
                               onTap: () {},
                             ),
                           ],
