@@ -13,6 +13,8 @@ class UserEntity extends Equatable {
     required this.phone,
     required this.role,
     this.avatarUrl,
+    this.isVerified = false,
+    this.createdAt,
   });
 
   final String id;
@@ -21,6 +23,8 @@ class UserEntity extends Equatable {
   final String phone;
   final UserRole role;
   final String? avatarUrl;
+  final bool isVerified;
+  final DateTime? createdAt;
 
   @override
   List<Object?> get props => [id, email, role];

@@ -8,8 +8,10 @@ import 'package:fix_connect_mobile/core/constants/integer_constants.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/section_header.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fix_connect_mobile/core/widgets/photo_options_sheet.dart';
 
@@ -39,20 +41,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _hasChanges = false;
   bool _isSaving = false;
 
-  // Initial mock values — replace with real user model later
-  static const _initName = 'Daniel Ochinasa';
-  static const _initEmail = 'daniel@fixconnect.app';
-  static const _initPhone = '+234 810 000 0000';
-  static const _initBio =
-      'Homeowner and DIY enthusiast. I love finding reliable artisans to help maintain my home.';
-
   @override
   void initState() {
     super.initState();
-    _nameCtrl = TextEditingController(text: _initName);
-    _emailCtrl = TextEditingController(text: _initEmail);
-    _phoneCtrl = TextEditingController(text: _initPhone);
-    _bioCtrl = TextEditingController(text: _initBio);
+    final authState = context.read<AuthCubit>().state;
+    final user = authState is AuthAuthenticated ? authState.user : null;
+
+    _nameCtrl = TextEditingController(text: user?.name ?? '');
+    _emailCtrl = TextEditingController(text: user?.email ?? '');
+    _phoneCtrl = TextEditingController(text: user?.phone ?? '');
+    _bioCtrl = TextEditingController(text: '');
 
     for (final c in [_nameCtrl, _emailCtrl, _phoneCtrl, _bioCtrl]) {
       c.addListener(_markChanged);
@@ -504,7 +502,6 @@ class _BioInputState extends State<_BioInput> {
               isDense: true,
               contentPadding: EdgeInsets.zero,
               border: InputBorder.none,
-              labelText: 'Bio',
               alignLabelWithHint: true,
               labelStyle: Theme.of(context).textTheme.bodyMedium,
               counterText: '',

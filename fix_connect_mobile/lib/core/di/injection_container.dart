@@ -15,6 +15,15 @@ import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/l
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/otp_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/reset_password_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/signup_bloc.dart';
+import 'package:fix_connect_mobile/features/profile/data/datasources/profile_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:fix_connect_mobile/features/profile/domain/repositories/profile_repository.dart';
+import 'package:fix_connect_mobile/features/profile/domain/usecases/get_me_usecase.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:fix_connect_mobile/features/profile/data/datasources/address_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/profile/data/repositories/address_repository_impl.dart';
+import 'package:fix_connect_mobile/features/profile/domain/repositories/address_repository.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
@@ -93,4 +102,32 @@ Future<void> initDependencies() async {
   sl.registerFactory<ResetPasswordBloc>(
     () => ResetPasswordBloc(resetPasswordUseCase: sl<ResetPasswordUseCase>()),
   );
+
+  // ── Profile: Data ──────────────────────────────────────────────────────────
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(sl<ApiClient>()),
+  );
+
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(sl<ProfileRemoteDataSource>()),
+  );
+
+  // ── Profile: Use cases ────────────────────────────────────────────────────
+  sl.registerLazySingleton<GetMeUseCase>(
+    () => GetMeUseCase(sl<ProfileRepository>()),
+  );
+
+  // ── Profile: BLoC ─────────────────────────────────────────────────────────
+  sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl<GetMeUseCase>()));
+
+  // ── Address: Data/BLoC ────────────────────────────────────────────────────
+  sl.registerLazySingleton<AddressRemoteDataSource>(
+    () => AddressRemoteDataSourceImpl(sl<ApiClient>()),
+  );
+
+  sl.registerLazySingleton<AddressRepository>(
+    () => AddressRepositoryImpl(sl<AddressRemoteDataSource>()),
+  );
+
+  sl.registerFactory<AddressCubit>(() => AddressCubit(sl<AddressRepository>()));
 }

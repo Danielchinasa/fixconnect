@@ -29,4 +29,5 @@ class AppColors {
 
   // Common
   static const error = Color(0xFFEF4444);
+  static const success = Color(0xFF22C55E);
 }

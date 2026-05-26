@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fix_connect_mobile/core/constants/api_constants.dart';
 import 'package:fix_connect_mobile/core/errors/exceptions.dart';
 import 'package:fix_connect_mobile/core/network/token_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -27,7 +28,8 @@ class ApiClient {
       ),
     );
 
-    _dio.interceptors.add(_AuthInterceptor(tokenStorage));
+    _authInterceptor = _AuthInterceptor(_dio, tokenStorage);
+    _dio.interceptors.add(_authInterceptor);
 
     if (kDebugMode) {
       _dio.interceptors.add(_PrettyDioLogger());
@@ -35,6 +37,12 @@ class ApiClient {
   }
 
   late final Dio _dio;
+  late final _AuthInterceptor _authInterceptor;
+
+  /// Called when a 401 cannot be recovered by token refresh.
+  /// Typically set to [AuthCubit.logOut] from [main].
+  set onSessionExpired(VoidCallback? callback) =>
+      _authInterceptor.onSessionExpired = callback;
 
   // ── HTTP verbs ──────────────────────────────────────────────────────────────
 
@@ -91,11 +99,17 @@ class ApiClient {
   }
 }
 
-/// Reads the stored access token and injects it as a Bearer header.
+/// Injects the Bearer token on every request and transparently refreshes
+/// the access token when a 401 is received, retrying the original request.
+/// If the refresh also fails, [onSessionExpired] is called to log the user out.
 class _AuthInterceptor extends Interceptor {
-  _AuthInterceptor(this._tokenStorage);
+  _AuthInterceptor(this._dio, this._tokenStorage);
 
+  final Dio _dio;
   final TokenStorage _tokenStorage;
+  VoidCallback? onSessionExpired;
+
+  static const _retriedKey = '_retried';
 
   @override
   Future<void> onRequest(
@@ -107,6 +121,68 @@ class _AuthInterceptor extends Interceptor {
       options.headers['Authorization'] = 'Bearer $token';
     }
     handler.next(options);
+  }
+
+  @override
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    if (err.response?.statusCode != 401) return handler.next(err);
+
+    // Prevent infinite retry loops.
+    if (err.requestOptions.extra.containsKey(_retriedKey)) {
+      await _tokenStorage.clear();
+      onSessionExpired?.call();
+      return handler.next(err);
+    }
+
+    final refreshToken = await _tokenStorage.getRefreshToken();
+    if (refreshToken == null || refreshToken.isEmpty) {
+      await _tokenStorage.clear();
+      onSessionExpired?.call();
+      return handler.next(err);
+    }
+
+    try {
+      // Use a fresh Dio instance to avoid triggering this interceptor again.
+      final freshDio = Dio(
+        BaseOptions(
+          baseUrl: _dio.options.baseUrl,
+          connectTimeout: _dio.options.connectTimeout,
+          receiveTimeout: _dio.options.receiveTimeout,
+          headers: const {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      final refreshResponse = await freshDio.post<Map<String, dynamic>>(
+        ApiConstants.refreshToken,
+        data: {'refreshToken': refreshToken},
+      );
+
+      final data = refreshResponse.data!;
+      final newAccessToken = data['accessToken'] as String;
+      final newRefreshToken = data['refreshToken'] as String? ?? refreshToken;
+
+      await _tokenStorage.saveTokens(
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      );
+
+      // Retry the original request with the new token.
+      final opts = err.requestOptions
+        ..extra[_retriedKey] = true
+        ..headers['Authorization'] = 'Bearer $newAccessToken';
+      final retryResponse = await _dio.fetch<dynamic>(opts);
+      return handler.resolve(retryResponse);
+    } catch (_) {
+      await _tokenStorage.clear();
+      onSessionExpired?.call();
+      return handler.next(err);
+    }
   }
 }
 

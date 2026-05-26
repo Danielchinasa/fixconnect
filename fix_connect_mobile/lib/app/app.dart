@@ -18,6 +18,11 @@ class MyApp extends StatelessWidget {
     ScreenUtil.init(context);
 
     return BlocListener<AuthCubit, AuthState>(
+      // Only navigate when actually transitioning between auth states.
+      // Prevents re-navigation when AuthCubit emits a fresh user on profile refresh.
+      listenWhen: (previous, current) =>
+          (previous is! AuthAuthenticated && current is AuthAuthenticated) ||
+          (previous is! AuthUnauthenticated && current is AuthUnauthenticated),
       listener: (context, state) async {
         final nav = AppNavigator.navigatorKey.currentState;
         if (nav == null) return;

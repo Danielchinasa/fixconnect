@@ -11,6 +11,8 @@ class UserDto extends UserEntity {
     required super.phone,
     required super.role,
     super.avatarUrl,
+    super.isVerified,
+    super.createdAt,
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,10 @@ class UserDto extends UserEntity {
       phone: (json['phone'] as String?) ?? '',
       role: _roleFromString(json['role'] as String? ?? 'customer'),
       avatarUrl: json['avatarUrl'] as String? ?? json['avatar_url'] as String?,
+      isVerified: json['isVerified'] as bool? ?? false,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
     );
   }
 
@@ -36,6 +42,8 @@ class UserDto extends UserEntity {
     'phone': phone,
     'role': role.name,
     if (avatarUrl != null) 'avatar_url': avatarUrl,
+    'isVerified': isVerified,
+    if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
   };
 
   static UserRole _roleFromString(String value) {
