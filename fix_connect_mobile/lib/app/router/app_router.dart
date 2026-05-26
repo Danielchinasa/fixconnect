@@ -16,6 +16,7 @@ import 'package:fix_connect_mobile/features/home/presentation/pages/home_page.da
 import 'package:fix_connect_mobile/features/home/presentation/pages/service_detail_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/forgot_password_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/login_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/otp_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/signup_bloc.dart';
@@ -89,7 +90,12 @@ class RouteGenerator {
           ),
         );
       case AppRoutes.forgotPassword:
-        return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<ForgotPasswordBloc>(),
+            child: const ForgotPasswordPage(),
+          ),
+        );
       case AppRoutes.resetPassword:
         return MaterialPageRoute(builder: (_) => const ResetPasswordPage());
       case AppRoutes.home:
