@@ -3,14 +3,12 @@ import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/stats_cubit.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 
 /// The three-stat row (Bookings / Reviews / Rating) on UserProfilePage.
 class ProfileStatsRow extends StatelessWidget {
-  // Replace with real user model values when backend is ready.
-  static const int _totalBookings = 12;
-  static const int _totalReviews = 7;
-  static const double _avgRating = 4.8;
-
   const ProfileStatsRow({super.key});
 
   @override
@@ -19,38 +17,66 @@ class ProfileStatsRow extends StatelessWidget {
     final textColor = context.textColor;
     final surfaceColor = context.surfaceColor;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
-      child: Row(
-        children: [
-          _StatChip(
-            label: 'Bookings',
-            value: '$_totalBookings',
-            icon: Icons.calendar_today_rounded,
-            primary: primary,
-            textColor: textColor,
-            surfaceColor: surfaceColor,
-          ),
-          SizedBox(width: AppSpacing.custom12),
-          _StatChip(
-            label: 'Reviews',
-            value: '$_totalReviews',
-            icon: Icons.chat_bubble_rounded,
-            primary: primary,
-            textColor: textColor,
-            surfaceColor: surfaceColor,
-          ),
-          SizedBox(width: AppSpacing.custom12),
-          _StatChip(
-            label: 'Rating',
-            value: '$_avgRating ★',
-            icon: Icons.star_rounded,
-            primary: primary,
-            textColor: textColor,
-            surfaceColor: surfaceColor,
-          ),
-        ],
-      ),
+    final user = context.read<AuthCubit>().state is AuthAuthenticated
+        ? (context.read<AuthCubit>().state as AuthAuthenticated).user
+        : null;
+    final isArtisan = user?.role == 'Artisan';
+
+    return BlocBuilder<StatsCubit, StatsState>(
+      builder: (context, state) {
+        if (state is StatsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is StatsLoaded) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
+            child: Row(
+              children: [
+                _StatChip(
+                  label: 'Bookings',
+                  value: "${state.totalBookings}",
+                  icon: Icons.calendar_today_rounded,
+                  primary: primary,
+                  textColor: textColor,
+                  surfaceColor: surfaceColor,
+                ),
+                SizedBox(width: AppSpacing.custom12),
+                _StatChip(
+                  label: 'Reviews',
+                  value: "${state.totalReviews}",
+                  icon: Icons.chat_bubble_rounded,
+                  primary: primary,
+                  textColor: textColor,
+                  surfaceColor: surfaceColor,
+                ),
+                if (isArtisan) ...[
+                  SizedBox(width: AppSpacing.custom12),
+                  _StatChip(
+                    label: 'Completed Jobs',
+                    value: "${state.completedJobs}",
+                    icon: Icons.work_outline,
+                    primary: primary,
+                    textColor: textColor,
+                    surfaceColor: surfaceColor,
+                  ),
+                ],
+                SizedBox(width: AppSpacing.custom12),
+                _StatChip(
+                  label: 'Rating',
+                  value: state.avgRating != null
+                      ? "${state.avgRating!.toStringAsFixed(1)} ★"
+                      : "N/A",
+                  icon: Icons.star_rounded,
+                  primary: primary,
+                  textColor: textColor,
+                  surfaceColor: surfaceColor,
+                ),
+              ],
+            ),
+          );
+        } else {
+          return const Center(child: Text('Failed to load stats'));
+        }
+      },
     );
   }
 }

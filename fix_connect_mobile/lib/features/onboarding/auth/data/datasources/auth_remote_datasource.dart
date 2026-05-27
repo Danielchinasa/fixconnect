@@ -143,7 +143,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> logout() async {
-    await _api.post<void>(ApiConstants.logout);
+    final refreshToken = await _tokenStorage.getRefreshToken();
+    await _api.post<void>(
+      ApiConstants.logout,
+      data: {'refreshToken': refreshToken ?? ''},
+    );
     await _tokenStorage.clear();
   }
 }

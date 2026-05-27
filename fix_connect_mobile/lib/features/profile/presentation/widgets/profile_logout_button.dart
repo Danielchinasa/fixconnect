@@ -69,7 +69,7 @@ class ProfileLogoutButton extends StatelessWidget {
       confirmLabel: 'Log Out',
     );
     if (confirmed == true && context.mounted) {
-      context.read<AuthCubit>().logOut();
+      await context.read<AuthCubit>().logoutRequested();
     }
   }
 }

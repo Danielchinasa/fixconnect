@@ -2,7 +2,9 @@ import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
+import 'package:fix_connect_mobile/core/widgets/confirm_sheet.dart';
 import 'package:fix_connect_mobile/core/widgets/empty_state.dart';
+import 'package:fix_connect_mobile/core/widgets/feedback_sheet.dart';
 import 'package:fix_connect_mobile/core/widgets/form_text_field.dart';
 import 'package:fix_connect_mobile/features/profile/data/models/saved_address.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
@@ -32,6 +34,34 @@ class _SavedAddressesPageState extends State<SavedAddressesPage> {
     }
     if (l.contains('school')) return Icons.school_rounded;
     return Icons.location_on_rounded;
+  }
+
+  Future<void> _confirmSetDefault(SavedAddress addr) async {
+    final confirmed = await showConfirmSheet(
+      context,
+      icon: Icons.location_on_outlined,
+      title: 'Set as Default?',
+      message: 'Use "${addr.label}" as your default address for bookings?',
+      confirmLabel: 'Set as Default',
+      confirmColor: context.primary,
+    );
+    if (confirmed == true && mounted) {
+      context.read<AddressCubit>().setDefault(addr.id);
+    }
+  }
+
+  Future<void> _confirmDelete(SavedAddress addr) async {
+    final confirmed = await showConfirmSheet(
+      context,
+      icon: Icons.delete_outline_rounded,
+      title: 'Delete Address?',
+      message:
+          'This will permanently remove "${addr.label}" from your saved addresses.',
+      confirmLabel: 'Delete',
+    );
+    if (confirmed == true && mounted) {
+      context.read<AddressCubit>().delete(addr.id);
+    }
   }
 
   void _showAddressSheet({SavedAddress? editing}) {
@@ -115,7 +145,7 @@ class _SavedAddressesPageState extends State<SavedAddressesPage> {
                   Navigator.pop(ctx);
                   if (isEdit) {
                     context.read<AddressCubit>().update(
-                      editing!.id,
+                      editing.id,
                       label: labelCtrl.text.trim(),
                       address: addressCtrl.text.trim(),
                       city: cityCtrl.text.trim(),
@@ -164,37 +194,13 @@ class _SavedAddressesPageState extends State<SavedAddressesPage> {
     return BlocConsumer<AddressCubit, AddressState>(
       listener: (context, state) {
         if (state is AddressError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.message,
-                style: AppTextStyles.bodyMediumMedium(color: Colors.white),
-              ),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.all(16),
-              duration: const Duration(seconds: 3),
-            ),
-          );
+          showFeedbackSheet(context, isSuccess: false, message: state.message);
         }
         if (state is AddressLoaded && state.successMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.successMessage!,
-                style: AppTextStyles.bodyMediumMedium(color: Colors.white),
-              ),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.all(16),
-              duration: const Duration(seconds: 3),
-            ),
+          showFeedbackSheet(
+            context,
+            isSuccess: true,
+            message: state.successMessage!,
           );
         }
       },
@@ -288,10 +294,8 @@ class _SavedAddressesPageState extends State<SavedAddressesPage> {
                         subTextColor: subTextColor,
                         primary: primary,
                         isLoading: loadingId == addr.id,
-                        onSetDefault: () =>
-                            context.read<AddressCubit>().setDefault(addr.id),
-                        onDelete: () =>
-                            context.read<AddressCubit>().delete(addr.id),
+                        onSetDefault: () => _confirmSetDefault(addr),
+                        onDelete: () => _confirmDelete(addr),
                         onEdit: () => _showAddressSheet(editing: addr),
                       );
                     },
