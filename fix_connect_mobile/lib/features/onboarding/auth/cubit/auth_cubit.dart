@@ -1,6 +1,7 @@
 import 'package:fix_connect_mobile/core/network/token_storage.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/dto/user_dto.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ── States ────────────────────────────────────────────────────────────────────
@@ -34,9 +35,11 @@ class AuthUnauthenticated extends AuthState {
 /// Feature BLoCs (LoginBloc, OtpBloc …) emit their own success states.
 /// When a page receives a success, it calls [logIn] here to set the session.
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this._tokenStorage) : super(const AuthInitial());
+  AuthCubit(this._tokenStorage, [this._authRepository])
+    : super(const AuthInitial());
 
   final TokenStorage _tokenStorage;
+  final AuthRepository? _authRepository;
 
   /// Called once on app start to restore an existing session.
   /// Emits [AuthAuthenticated] if a stored token is found, otherwise [AuthUnauthenticated].
@@ -64,5 +67,15 @@ class AuthCubit extends Cubit<AuthState> {
   void logOut() {
     emit(const AuthUnauthenticated());
     _tokenStorage.clear();
+  }
+
+  /// Calls backend logout first, then always clears local session.
+  Future<void> logoutRequested() async {
+    try {
+      await _authRepository?.logout();
+    } catch (_) {
+      // Ignore remote errors and force local logout to unblock the user.
+    }
+    logOut();
   }
 }

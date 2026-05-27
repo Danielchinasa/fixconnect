@@ -7,6 +7,7 @@ import 'package:fix_connect_mobile/features/home/presentation/widgets/section_he
 import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/stats_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/saved_addresses_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile_identity_card.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile_logout_button.dart';
@@ -15,6 +16,7 @@ import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fix_connect_mobile/core/di/injection_container.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -41,6 +43,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<StatsCubit>()..fetchStats(),
+      child: Builder(
+        builder: (context) {
+          return _buildProfilePage(context);
+        },
+      ),
+    );
+  }
+
+  Widget _buildProfilePage(BuildContext context) {
     final isDark = context.isDark;
     final bgColor = context.bgColor;
     final textColor = context.textColor;
@@ -133,12 +146,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             );
                           },
                         ),
-                        ProfileMenuItem(
-                          icon: Icons.credit_card_outlined,
-                          label: 'Payment Methods',
-                          subtitle: 'Visa •••• 4242',
-                          onTap: () => _push(AppRoutes.paymentMethods),
-                        ),
+                        // TODO: Payment Methods — coming soon
                         ProfileMenuToggle(
                           icon: Icons.notifications_outlined,
                           label: 'Push Notifications',

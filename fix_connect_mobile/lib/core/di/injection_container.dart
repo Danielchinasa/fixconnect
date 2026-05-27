@@ -26,6 +26,7 @@ import 'package:fix_connect_mobile/features/profile/domain/repositories/address_
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/stats_cubit.dart';
 
 /// Global service locator instance.
 /// Access registered objects via `sl<MyType>()`.
@@ -130,4 +131,6 @@ Future<void> initDependencies() async {
   );
 
   sl.registerFactory<AddressCubit>(() => AddressCubit(sl<AddressRepository>()));
+  // ── Stats: BLoC ────────────────────────────────────────────────────────────
+  sl.registerFactory(() => StatsCubit(sl<ApiClient>().dio));
 }

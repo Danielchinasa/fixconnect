@@ -39,6 +39,8 @@ class ApiClient {
   late final Dio _dio;
   late final _AuthInterceptor _authInterceptor;
 
+  Dio get dio => _dio;
+
   /// Called when a 401 cannot be recovered by token refresh.
   /// Typically set to [AuthCubit.logOut] from [main].
   set onSessionExpired(VoidCallback? callback) =>
