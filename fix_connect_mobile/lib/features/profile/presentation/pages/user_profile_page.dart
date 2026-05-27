@@ -7,7 +7,9 @@ import 'package:fix_connect_mobile/features/home/presentation/widgets/section_he
 import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/reviews_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/stats_cubit.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/pages/my_reviews_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/saved_addresses_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile_identity_card.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/widgets/profile_logout_button.dart';
@@ -36,6 +38,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
         builder: (_) => BlocProvider.value(
           value: context.read<AddressCubit>(),
           child: const SavedAddressesPage(),
+        ),
+      ),
+    );
+  }
+
+  void _pushMyReviews() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: context.read<ReviewsCubit>(),
+          child: const MyReviewsPage(),
         ),
       ),
     );
@@ -171,23 +184,22 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   SliverToBoxAdapter(
                     child: ProfileMenuSection(
                       items: [
-                        ProfileMenuItem(
-                          icon: Icons.calendar_today_outlined,
-                          label: 'My Bookings',
-                          subtitle: '12 total',
-                          onTap: () {},
-                        ),
-                        ProfileMenuItem(
-                          icon: Icons.bookmark_outline_rounded,
-                          label: 'Saved Artisans',
-                          subtitle: '5 saved',
-                          onTap: () {},
-                        ),
-                        ProfileMenuItem(
-                          icon: Icons.star_outline_rounded,
-                          label: 'My Reviews',
-                          subtitle: '7 reviews given',
-                          onTap: () {},
+                        // Removed 'My Bookings' and 'Saved Artisans' as requested
+                        BlocBuilder<ReviewsCubit, ReviewsState>(
+                          builder: (context, reviewsState) {
+                            final count = reviewsState is ReviewsLoaded
+                                ? reviewsState.reviews.length
+                                : 0;
+                            final subtitle = count == 1
+                                ? '1 review'
+                                : '$count reviews';
+                            return ProfileMenuItem(
+                              icon: Icons.star_outline_rounded,
+                              label: 'My Reviews',
+                              subtitle: subtitle,
+                              onTap: _pushMyReviews,
+                            );
+                          },
                         ),
                       ],
                     ),

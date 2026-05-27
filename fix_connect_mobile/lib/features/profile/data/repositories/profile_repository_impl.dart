@@ -27,4 +27,30 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<Result<UserEntity>> getMe() =>
       _safeCall(() => _remoteDataSource.getMe());
+
+  @override
+  Future<Result<UserEntity>> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? bio,
+    String? city,
+    String? gender,
+    String? dateOfBirth,
+  }) {
+    return _safeCall(
+      () => _remoteDataSource.updateProfile(
+        firstName: firstName,
+        lastName: lastName,
+        bio: bio,
+        city: city,
+        gender: gender,
+        dateOfBirth: dateOfBirth,
+      ),
+    );
+  }
+
+  @override
+  Future<Result<String>> uploadAvatar({required String filePath}) {
+    return _safeCall(() => _remoteDataSource.uploadAvatar(filePath: filePath));
+  }
 }

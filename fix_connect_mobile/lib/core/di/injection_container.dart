@@ -24,6 +24,10 @@ import 'package:fix_connect_mobile/features/profile/data/datasources/address_rem
 import 'package:fix_connect_mobile/features/profile/data/repositories/address_repository_impl.dart';
 import 'package:fix_connect_mobile/features/profile/domain/repositories/address_repository.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
+import 'package:fix_connect_mobile/features/profile/data/datasources/reviews_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/profile/data/repositories/reviews_repository_impl.dart';
+import 'package:fix_connect_mobile/features/profile/domain/repositories/reviews_repository.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/reviews_cubit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/stats_cubit.dart';
@@ -131,6 +135,18 @@ Future<void> initDependencies() async {
   );
 
   sl.registerFactory<AddressCubit>(() => AddressCubit(sl<AddressRepository>()));
+
+  // ── Reviews: Data/BLoC ────────────────────────────────────────────────────
+  sl.registerLazySingleton<ReviewsRemoteDataSource>(
+    () => ReviewsRemoteDataSourceImpl(sl<ApiClient>()),
+  );
+
+  sl.registerLazySingleton<ReviewsRepository>(
+    () => ReviewsRepositoryImpl(sl<ReviewsRemoteDataSource>()),
+  );
+
+  sl.registerFactory<ReviewsCubit>(() => ReviewsCubit(sl<ReviewsRepository>()));
+
   // ── Stats: BLoC ────────────────────────────────────────────────────────────
   sl.registerFactory(() => StatsCubit(sl<ApiClient>().dio));
 }
