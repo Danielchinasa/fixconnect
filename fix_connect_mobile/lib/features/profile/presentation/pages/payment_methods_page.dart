@@ -17,12 +17,7 @@ class PaymentMethodsPage extends StatefulWidget {
 }
 
 class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
-  final List<PaymentCard> _cards = [
-    PaymentCard(id: '1', brand: CardBrand.visa, last4: '4242',
-        expiry: '08/27', holderName: 'Daniel Ochinasa', isDefault: true),
-    PaymentCard(id: '2', brand: CardBrand.mastercard, last4: '1234',
-        expiry: '12/26', holderName: 'Daniel Ochinasa', isDefault: false),
-  ];
+  final List<PaymentCard> _cards = [];
 
   void _setDefault(String id) {
     setState(() {
@@ -32,15 +27,19 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
 
   void _remove(String id) {
     setState(() => _cards.removeWhere((c) => c.id == id));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Card removed',
-          style: AppTextStyles.bodyMediumMedium(color: Colors.white)),
-      backgroundColor: AppColors.grey700,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.all(16),
-      duration: const Duration(seconds: 2),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Card removed',
+          style: AppTextStyles.bodyMediumMedium(color: Colors.white),
+        ),
+        backgroundColor: AppColors.grey700,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   Future<void> _confirmRemove(PaymentCard card) async {
@@ -72,39 +71,70 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
       isScrollControlled: true,
       backgroundColor: surfBg,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
-            left: 24, right: 24, top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 32),
+          left: 24,
+          right: 24,
+          top: 20,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Container(width: 40, height: 4,
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
-                    color: isDark ? AppColors.grey700 : AppColors.grey300,
-                    borderRadius: BorderRadius.circular(2)))),
+                  color: isDark ? AppColors.grey700 : AppColors.grey300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
-            Text('Add Payment Card',
-                style: AppTextStyles.header4Bold(color: textColor)),
+            Text(
+              'Add Payment Card',
+              style: AppTextStyles.header4Bold(color: textColor),
+            ),
             const SizedBox(height: 20),
-            FormTextField(controller: numberCtrl, label: 'Card Number',
-                icon: Icons.credit_card_rounded,
-                keyboardType: TextInputType.number),
+            FormTextField(
+              controller: numberCtrl,
+              label: 'Card Number',
+              icon: Icons.credit_card_rounded,
+              keyboardType: TextInputType.number,
+            ),
             const SizedBox(height: 12),
-            FormTextField(controller: nameCtrl, label: 'Cardholder Name',
-                icon: Icons.person_outline_rounded),
+            FormTextField(
+              controller: nameCtrl,
+              label: 'Cardholder Name',
+              icon: Icons.person_outline_rounded,
+            ),
             const SizedBox(height: 12),
-            Row(children: [
-              Expanded(child: FormTextField(controller: expiryCtrl,
-                  label: 'MM / YY', icon: Icons.calendar_today_outlined,
-                  keyboardType: TextInputType.number)),
-              const SizedBox(width: 12),
-              Expanded(child: FormTextField(controller: cvvCtrl, label: 'CVV',
-                  icon: Icons.lock_outline_rounded,
-                  keyboardType: TextInputType.number, obscureText: true)),
-            ]),
+            Row(
+              children: [
+                Expanded(
+                  child: FormTextField(
+                    controller: expiryCtrl,
+                    label: 'MM / YY',
+                    icon: Icons.calendar_today_outlined,
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FormTextField(
+                    controller: cvvCtrl,
+                    label: 'CVV',
+                    icon: Icons.lock_outline_rounded,
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -113,27 +143,37 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                   final num = numberCtrl.text.replaceAll(' ', '');
                   if (num.length < 4) return;
                   setState(() {
-                    _cards.add(PaymentCard(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      brand: num.startsWith('4')
-                          ? CardBrand.visa : CardBrand.mastercard,
-                      last4: num.length >= 4
-                          ? num.substring(num.length - 4) : '0000',
-                      expiry: expiryCtrl.text.trim(),
-                      holderName: nameCtrl.text.trim(),
-                      isDefault: _cards.isEmpty,
-                    ));
+                    _cards.add(
+                      PaymentCard(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        brand: num.startsWith('4')
+                            ? CardBrand.visa
+                            : CardBrand.mastercard,
+                        last4: num.length >= 4
+                            ? num.substring(num.length - 4)
+                            : '0000',
+                        expiry: expiryCtrl.text.trim(),
+                        holderName: nameCtrl.text.trim(),
+                        isDefault: _cards.isEmpty,
+                      ),
+                    );
                   });
                   Navigator.pop(ctx);
                 },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: primary, elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14))),
-                child: Text('Add Card',
-                    style: AppTextStyles.bodyMediumBold(
-                        color: isDark ? AppColors.grey900 : Colors.white)),
+                  backgroundColor: primary,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: Text(
+                  'Add Card',
+                  style: AppTextStyles.bodyMediumBold(
+                    color: isDark ? AppColors.grey900 : Colors.white,
+                  ),
+                ),
               ),
             ),
           ],
@@ -163,30 +203,47 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
           elevation: 0,
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_rounded, size: 20, color: textColor),
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+              size: 20,
+              color: textColor,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text('Payment Methods',
-              style: AppTextStyles.header4Bold(color: textColor)),
+          title: Text(
+            'Payment Methods',
+            style: AppTextStyles.header4Bold(color: textColor),
+          ),
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: _showAddSheet,
           backgroundColor: primary,
-          icon: Icon(Icons.add_rounded,
-              color: isDark ? AppColors.grey900 : Colors.white),
-          label: Text('Add Card',
-              style: AppTextStyles.bodyMediumBold(
-                  color: isDark ? AppColors.grey900 : Colors.white)),
+          icon: Icon(
+            Icons.add_rounded,
+            color: isDark ? AppColors.grey900 : Colors.white,
+          ),
+          label: Text(
+            'Add Card',
+            style: AppTextStyles.bodyMediumBold(
+              color: isDark ? AppColors.grey900 : Colors.white,
+            ),
+          ),
         ),
         body: _cards.isEmpty
             ? const EmptyState(
                 icon: Icons.credit_card_off_outlined,
                 title: 'No Payment Methods',
-                subtitle: 'Add a card to pay for bookings quickly and securely.')
+                subtitle:
+                    'Add a card to pay for bookings quickly and securely.',
+              )
             : ListView.separated(
-                padding: EdgeInsets.fromLTRB(AppSpacing.custom16,
-                    AppSpacing.custom16, AppSpacing.custom16, 120),
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.custom16,
+                  AppSpacing.custom16,
+                  AppSpacing.custom16,
+                  120,
+                ),
                 itemCount: _cards.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (_, i) {
@@ -220,9 +277,14 @@ class _CardTile extends StatelessWidget {
   final VoidCallback onRemove;
 
   const _CardTile({
-    required this.card, required this.surfaceColor, required this.textColor,
-    required this.subTextColor, required this.primary, required this.isDark,
-    required this.onSetDefault, required this.onRemove,
+    required this.card,
+    required this.surfaceColor,
+    required this.textColor,
+    required this.subTextColor,
+    required this.primary,
+    required this.isDark,
+    required this.onSetDefault,
+    required this.onRemove,
   });
 
   @override
@@ -235,70 +297,118 @@ class _CardTile extends StatelessWidget {
             ? Border.all(color: primary.withValues(alpha: 0.45), width: 1.5)
             : null,
       ),
-      child: Column(children: [
-        // Brand header
-        Container(
-          height: 80,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-            gradient: LinearGradient(
-              colors: card.brand == CardBrand.visa
-                  ? [const Color(0xFF1A1F71).withValues(alpha: 0.9),
-                     const Color(0xFF0D47A1).withValues(alpha: 0.75)]
-                  : [const Color(0xFFEB5757).withValues(alpha: 0.85),
-                     const Color(0xFFEB9C13).withValues(alpha: 0.75)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      child: Column(
+        children: [
+          // Brand header
+          Container(
+            height: 80,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(14),
+              ),
+              gradient: LinearGradient(
+                colors: card.brand == CardBrand.visa
+                    ? [
+                        const Color(0xFF1A1F71).withValues(alpha: 0.9),
+                        const Color(0xFF0D47A1).withValues(alpha: 0.75),
+                      ]
+                    : [
+                        const Color(0xFFEB5757).withValues(alpha: 0.85),
+                        const Color(0xFFEB9C13).withValues(alpha: 0.75),
+                      ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  card.brandName.toUpperCase(),
+                  style: AppTextStyles.bodyLargeBold(
+                    color: Colors.white,
+                  ).copyWith(letterSpacing: 2),
+                ),
+                const Spacer(),
+                Text(
+                  '•••• \${card.last4}',
+                  style: AppTextStyles.bodyLargeSemibold(color: Colors.white),
+                ),
+              ],
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(card.brandName.toUpperCase(),
-                style: AppTextStyles.bodyLargeBold(color: Colors.white)
-                    .copyWith(letterSpacing: 2)),
-            const Spacer(),
-            Text('•••• \${card.last4}',
-                style: AppTextStyles.bodyLargeSemibold(color: Colors.white)),
-          ]),
-        ),
-        // Details
-        Padding(
-          padding: EdgeInsets.all(AppSpacing.custom16),
-          child: Row(children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(card.holderName,
-                  style: AppTextStyles.bodyMediumMedium(color: textColor),
-                  maxLines: 1, overflow: TextOverflow.ellipsis),
-              const SizedBox(height: 2),
-              Text('Expires \${card.expiry}',
-                  style: AppTextStyles.bodySmallRegular(color: subTextColor)),
-            ])),
-            if (card.isDefault)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                    color: primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Text('Default',
-                    style: AppTextStyles.bodySmallBold(color: primary)),
-              ),
-          ]),
-        ),
-        // Actions
-        Padding(
-          padding: EdgeInsets.fromLTRB(AppSpacing.custom16, 0,
-              AppSpacing.custom16, AppSpacing.custom16),
-          child: Row(children: [
-            if (!card.isDefault) ...[
-              _ActionChip(label: 'Set as Default', color: primary,
-                  onTap: onSetDefault),
-              const SizedBox(width: 10),
-            ],
-            _ActionChip(label: 'Remove', color: AppColors.error,
-                onTap: onRemove),
-          ]),
-        ),
-      ]),
+          // Details
+          Padding(
+            padding: EdgeInsets.all(AppSpacing.custom16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        card.holderName,
+                        style: AppTextStyles.bodyMediumMedium(color: textColor),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Expires \${card.expiry}',
+                        style: AppTextStyles.bodySmallRegular(
+                          color: subTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (card.isDefault)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Default',
+                      style: AppTextStyles.bodySmallBold(color: primary),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // Actions
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.custom16,
+              0,
+              AppSpacing.custom16,
+              AppSpacing.custom16,
+            ),
+            child: Row(
+              children: [
+                if (!card.isDefault) ...[
+                  _ActionChip(
+                    label: 'Set as Default',
+                    color: primary,
+                    onTap: onSetDefault,
+                  ),
+                  const SizedBox(width: 10),
+                ],
+                _ActionChip(
+                  label: 'Remove',
+                  color: AppColors.error,
+                  onTap: onRemove,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -308,7 +418,11 @@ class _ActionChip extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
-  const _ActionChip({required this.label, required this.color, required this.onTap});
+  const _ActionChip({
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -316,8 +430,10 @@ class _ActionChip extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Text(label, style: AppTextStyles.bodySmallBold(color: color)),
       ),
     );

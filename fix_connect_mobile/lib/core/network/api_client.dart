@@ -86,18 +86,31 @@ class ApiClient {
         return NetworkException(e.message ?? 'Connection failed');
       case DioExceptionType.badResponse:
         final code = e.response?.statusCode;
-        if (code == 401) return const UnauthorizedException();
-        final body = e.response?.data as Map<String, dynamic>?;
+        final body = _asJsonMap(e.response?.data);
         final raw = body?['message'];
         final message = switch (raw) {
           final List list => list.join(', '),
           final String s => s,
           _ => body?['error'] as String? ?? 'Server error',
         };
+        final path = e.requestOptions.path;
+        if (code == 401) {
+          // For login errors, preserve backend message (e.g. invalid credentials).
+          if (path == ApiConstants.login && message != 'Server error') {
+            return ServerException(message: message, statusCode: code);
+          }
+          return const UnauthorizedException();
+        }
         return ServerException(message: message, statusCode: code);
       default:
         return ServerException(message: e.message ?? 'Unknown error');
     }
+  }
+
+  Map<String, dynamic>? _asJsonMap(dynamic data) {
+    if (data is Map<String, dynamic>) return data;
+    if (data is Map) return Map<String, dynamic>.from(data);
+    return null;
   }
 }
 

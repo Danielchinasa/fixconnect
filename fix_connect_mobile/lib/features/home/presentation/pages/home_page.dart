@@ -7,6 +7,7 @@ import 'package:fix_connect_mobile/features/home/presentation/pages/services_all
 import 'package:fix_connect_mobile/features/home/presentation/widgets/home_bottom_nav.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/reviews_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/user_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,6 +55,7 @@ class _HomePageState extends State<HomePage> {
         providers: [
           BlocProvider(create: (_) => sl<ProfileCubit>()..fetchProfile()),
           BlocProvider(create: (_) => sl<AddressCubit>()..load()),
+          BlocProvider(create: (_) => sl<ReviewsCubit>()..load()),
         ],
         child: const UserProfilePage(),
       ),
