@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class FilterSheet extends StatefulWidget {
   final HomeFilter filter;
   final Color primary;
+  final List<String> categories;
   final void Function(HomeFilter) onApply;
   final VoidCallback onReset;
 
@@ -13,6 +14,7 @@ class FilterSheet extends StatefulWidget {
     super.key,
     required this.filter,
     required this.primary,
+    required this.categories,
     required this.onApply,
     required this.onReset,
   });
@@ -34,18 +36,6 @@ class _FilterSheetState extends State<FilterSheet> {
     (label: '10 km', value: 10 as int?),
     (label: '20 km', value: 20 as int?),
     (label: '50 km', value: 50 as int?),
-  ];
-
-  static const _categories = [
-    'Plumbing',
-    'Electrical',
-    'Carpentry',
-    'Cleaning',
-    'Painting',
-    'HVAC',
-    'Landscaping',
-    'Moving',
-    'Mechanic',
   ];
 
   static const _ratingOptions = [
@@ -123,38 +113,44 @@ class _FilterSheetState extends State<FilterSheet> {
             style: AppTextStyles.bodyMediumBold(color: textColor),
           ),
           const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _categories.map((cat) {
-              final isSelected = _category == cat;
-              return GestureDetector(
-                onTap: () =>
-                    setState(() => _category = isSelected ? null : cat),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected ? primary : surfaceColor,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected ? primary : AppColors.grey300,
+          if (widget.categories.isEmpty)
+            Text(
+              'Loading categories…',
+              style: AppTextStyles.bodySmallRegular(
+                color: textColor.withOpacity(0.45),
+              ),
+            )
+          else
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.categories.map((cat) {
+                final isSelected = _category == cat;
+                return GestureDetector(
+                  onTap: () =>
+                      setState(() => _category = isSelected ? null : cat),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected ? primary : surfaceColor,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isSelected ? primary : AppColors.grey300,
+                      ),
+                    ),
+                    child: Text(
+                      cat,
+                      style: AppTextStyles.bodySmallMedium(
+                        color: isSelected ? Colors.black : textColor,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    cat,
-                    style: AppTextStyles.bodySmallMedium(
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.surface
-                          : textColor,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
+                );
+              }).toList(),
+            ),
 
           const SizedBox(height: 20),
 
@@ -317,9 +313,7 @@ class _FilterSheetState extends State<FilterSheet> {
               ),
               child: Text(
                 'Apply Filters',
-                style: AppTextStyles.header4Bold(
-                  color: Theme.of(context).colorScheme.surface,
-                ),
+                style: AppTextStyles.header4Bold(color: Colors.black),
               ),
             ),
           ),

@@ -31,11 +31,7 @@ class ArtisanWorkSamplesSection extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.photo_library_rounded,
-                    size: 18,
-                    color: textColor.withOpacity(0.7),
-                  ),
+                  Icon(Icons.photo_library_rounded, size: 18, color: primary),
                   const SizedBox(width: 8),
                   Text(
                     'Work Samples',

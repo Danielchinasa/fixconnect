@@ -8,4 +8,9 @@ class AppNavigator {
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
+
+  /// App-wide [RouteObserver] used for [RouteAware] subscriptions.
+  /// Widgets can subscribe to know when they become active after a pop.
+  static final RouteObserver<ModalRoute<void>> routeObserver =
+      RouteObserver<ModalRoute<void>>();
 }

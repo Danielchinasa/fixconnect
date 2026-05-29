@@ -73,7 +73,6 @@ class ProfileMenuItem extends StatelessWidget {
     final primary = context.primary;
     final textColor = context.textColor;
     final subTextColor = context.subTextColor;
-    final isDark = context.isDark;
 
     return InkWell(
       onTap: onTap,
@@ -118,7 +117,7 @@ class ProfileMenuItem extends StatelessWidget {
             Icon(
               Icons.chevron_right_rounded,
               size: 20,
-              color: isDark ? AppColors.grey600 : AppColors.grey400,
+              color: primary.withValues(alpha: 0.5),
             ),
           ],
         ),

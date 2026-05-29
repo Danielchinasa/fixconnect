@@ -40,11 +40,7 @@ class _ArtisanAboutSectionState extends State<ArtisanAboutSection> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.person_outline_rounded,
-                size: 18,
-                color: textColor.withOpacity(0.7),
-              ),
+              Icon(Icons.person_outline_rounded, size: 18, color: primary),
               const SizedBox(width: 8),
               Text(
                 'About',

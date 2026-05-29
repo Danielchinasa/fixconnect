@@ -1,3 +1,4 @@
+import 'package:fix_connect_mobile/app/router/app_navigator.dart';
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
@@ -17,6 +18,8 @@ import 'package:fix_connect_mobile/features/home/presentation/widgets/promo_bann
 import 'package:fix_connect_mobile/features/home/presentation/widgets/section_header.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/service_category_grid.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/stats_strip.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/featured_artisans_cubit.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/services_cubit.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/top_artisans_section.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
@@ -37,13 +40,12 @@ class HomeTab extends StatefulWidget {
   State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends State<HomeTab> with RouteAware {
   String _selectedLocation = 'Lagos, Nigeria';
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   HomeFilter _filter = HomeFilter.empty;
 
-  final List<ArtisanModel> _artisans = HomeMockDatasource.getTopArtisans();
   final List<String> _locations = HomeMockDatasource.getLocations();
 
   bool get _isSearching => _searchQuery.isNotEmpty || _filter.isActive;
@@ -78,16 +80,20 @@ class _HomeTabState extends State<HomeTab> {
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 
-  List<ArtisanModel> get _filteredArtisans {
-    return _artisans.where((a) {
+  List<ArtisanModel> _filteredArtisans(List<ArtisanModel> artisans) {
+    return artisans.where((a) {
       final query = _searchQuery.toLowerCase();
       final matchesQuery =
           query.isEmpty ||
           a.name.toLowerCase().contains(query) ||
-          a.specialty.toLowerCase().contains(query);
+          a.specialty.toLowerCase().contains(query) ||
+          a.categories.any((c) => c.name.toLowerCase().contains(query));
       final matchesCategory =
           _filter.category == null ||
-          a.specialty.toLowerCase().contains(_filter.category!.toLowerCase());
+          a.specialty.toLowerCase().contains(_filter.category!.toLowerCase()) ||
+          a.categories.any(
+            (c) => c.name.toLowerCase() == _filter.category!.toLowerCase(),
+          );
       final matchesRating = a.rating >= _filter.minRating;
       final matchesVerified = !_filter.verifiedOnly || a.isVerified;
       return matchesQuery &&
@@ -98,9 +104,24 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe to route events so we can reload when returning to this tab.
+    AppNavigator.routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
   void dispose() {
+    AppNavigator.routeObserver.unsubscribe(this);
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Called when a route above this one was popped, making this visible again.
+  @override
+  void didPopNext() {
+    context.read<FeaturedArtisansCubit>().load();
+    context.read<ServicesCubit>().load();
   }
 
   @override
@@ -113,6 +134,15 @@ class _HomeTabState extends State<HomeTab> {
         : AppColors.surfaceLight;
     final primary = theme.colorScheme.primary;
     final authState = context.watch<AuthCubit>().state;
+    final artisanState = context.watch<FeaturedArtisansCubit>().state;
+    // Watch ServicesCubit so the UI rebuilds when categories load.
+    context.watch<ServicesCubit>();
+    final featuredArtisans = artisanState is FeaturedArtisansLoaded
+        ? artisanState.artisans
+        : <ArtisanModel>[];
+    final isLoadingArtisans =
+        artisanState is FeaturedArtisansInitial ||
+        artisanState is FeaturedArtisansLoading;
 
     // 📚 CONCEPT: CustomScrollView + Slivers
     // A CustomScrollView lets you mix scrollable "slivers" (slices of scroll) —
@@ -194,9 +224,21 @@ class _HomeTabState extends State<HomeTab> {
           ],
           SliverToBoxAdapter(child: AppGaps.h24),
           if (_isSearching)
-            ..._buildSearchResults(textColor, surfaceColor, primary)
+            ..._buildSearchResults(
+              featuredArtisans,
+              textColor,
+              surfaceColor,
+              primary,
+            )
           else
-            ..._buildHomeContent(textColor, surfaceColor, primary, isDark),
+            ..._buildHomeContent(
+              featuredArtisans,
+              isLoadingArtisans,
+              textColor,
+              surfaceColor,
+              primary,
+              isDark,
+            ),
           // Extra bottom padding so content doesn't hide behind the nav bar.
           // 📚 CONCEPT: MediaQuery.of(context).padding.bottom gives the safe-area
           // inset (the notch/home indicator). We add 80 for the nav bar height.
@@ -209,11 +251,12 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   List<Widget> _buildSearchResults(
+    List<ArtisanModel> artisans,
     Color textColor,
     Color surfaceColor,
     Color primary,
   ) {
-    final results = _filteredArtisans;
+    final results = _filteredArtisans(artisans);
     return [
       SliverToBoxAdapter(
         child: Padding(
@@ -264,6 +307,8 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   List<Widget> _buildHomeContent(
+    List<ArtisanModel> artisans,
+    bool isLoading,
     Color textColor,
     Color surfaceColor,
     Color primary,
@@ -274,23 +319,29 @@ class _HomeTabState extends State<HomeTab> {
         child: SectionHeader(
           title: 'Top-Rated Artisans',
           actionLabel: 'View all',
-          onAction: () {},
+          onAction: () => Navigator.of(
+            context,
+          ).pushNamed(AppRoutes.artisansAll, arguments: artisans),
           textColor: textColor,
           primary: primary,
         ),
       ),
       SliverToBoxAdapter(child: AppGaps.h8),
       SliverToBoxAdapter(
-        child: TopArtisansSection(
-          artisans: _artisans,
-          surfaceColor: surfaceColor,
-          textColor: textColor,
-          onArtisanTap: (artisan) => Navigator.of(
-            context,
-          ).pushNamed(AppRoutes.artisanProfile, arguments: artisan),
-          primary: primary,
-          isDark: isDark,
-        ),
+        child: isLoading
+            ? _buildArtisansShimmer(surfaceColor, isDark)
+            : artisans.isEmpty
+            ? const SizedBox.shrink()
+            : TopArtisansSection(
+                artisans: artisans,
+                surfaceColor: surfaceColor,
+                textColor: textColor,
+                onArtisanTap: (artisan) => Navigator.of(
+                  context,
+                ).pushNamed(AppRoutes.artisanProfile, arguments: artisan),
+                primary: primary,
+                isDark: isDark,
+              ),
       ),
       SliverToBoxAdapter(child: AppGaps.h24),
       SliverToBoxAdapter(
@@ -303,6 +354,30 @@ class _HomeTabState extends State<HomeTab> {
     ];
   }
 
+  /// Skeleton loading placeholder shown while featured artisans are fetching.
+  Widget _buildArtisansShimmer(Color surfaceColor, bool isDark) {
+    final shimmerColor = isDark
+        ? Colors.white.withOpacity(0.07)
+        : Colors.black.withOpacity(0.06);
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 3,
+        itemBuilder: (_, __) => Container(
+          width: AppSpacing.custom150,
+          margin: const EdgeInsets.only(right: 12),
+          decoration: BoxDecoration(
+            color: shimmerColor,
+            borderRadius: BorderRadius.circular(AppSpacing.custom18),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _clearSearch() {
     _searchController.clear();
     setState(() {
@@ -312,6 +387,11 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void _showFilterSheet() {
+    final servicesState = context.read<ServicesCubit>().state;
+    final categoryNames = servicesState is ServicesLoaded
+        ? servicesState.categories.map((c) => c.name).toList()
+        : <String>[];
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -323,6 +403,7 @@ class _HomeTabState extends State<HomeTab> {
       builder: (_) => FilterSheet(
         filter: _filter,
         primary: Theme.of(context).colorScheme.primary,
+        categories: categoryNames,
         onApply: (updated) {
           setState(() => _filter = updated);
           Navigator.pop(context);

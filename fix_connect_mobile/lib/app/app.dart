@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
             initialRoute: AppRoutes.splash,
             onGenerateRoute: RouteGenerator.generateRoute,
             navigatorKey: AppNavigator.navigatorKey,
+            navigatorObservers: [AppNavigator.routeObserver],
           );
         },
       ),

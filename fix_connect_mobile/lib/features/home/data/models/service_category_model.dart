@@ -5,6 +5,7 @@ class ServiceCategoryModel {
   final String? iconSvg;
   final String? description;
   final bool isActive;
+  final int? artisanCount;
   final DateTime? createdAt;
 
   const ServiceCategoryModel({
@@ -13,6 +14,7 @@ class ServiceCategoryModel {
     this.iconSvg,
     this.description,
     this.isActive = true,
+    this.artisanCount,
     this.createdAt,
   });
 
@@ -23,6 +25,7 @@ class ServiceCategoryModel {
       iconSvg: json['iconSvg'] as String?,
       description: json['description'] as String?,
       isActive: json['isActive'] as bool? ?? true,
+      artisanCount: json['artisanCount'] as int?,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
           : null,

@@ -24,7 +24,7 @@ class TopArtisansSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppSpacing.custom200,
+      height: AppSpacing.custom200 + 20,
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
         scrollDirection: Axis.horizontal,

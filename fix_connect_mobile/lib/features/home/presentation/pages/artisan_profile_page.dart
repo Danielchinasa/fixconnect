@@ -1,9 +1,11 @@
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
+import 'package:fix_connect_mobile/core/di/injection_container.dart';
 import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:fix_connect_mobile/features/home/data/datasources/home_mock_datasource.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/artisan_profile_cubit.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/artisan/artisan_about_section.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/artisan/artisan_booking_bar.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/artisan/artisan_reviews_section.dart';
@@ -15,17 +17,34 @@ import 'package:fix_connect_mobile/features/home/presentation/widgets/profile/pr
 import 'package:fix_connect_mobile/features/home/presentation/widgets/profile/profile_work_sample_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ArtisanProfilePage extends StatefulWidget {
+// ── Entry widget: provides the cubit ─────────────────────────────────────────
+class ArtisanProfilePage extends StatelessWidget {
   final ArtisanModel artisan;
 
   const ArtisanProfilePage({super.key, required this.artisan});
 
   @override
-  State<ArtisanProfilePage> createState() => _ArtisanProfilePageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<ArtisanProfileCubit>()..load(artisan.id),
+      child: _ArtisanProfileView(artisan: artisan),
+    );
+  }
 }
 
-class _ArtisanProfilePageState extends State<ArtisanProfilePage> {
+// ── View: scroll state + layout ───────────────────────────────────────────────
+class _ArtisanProfileView extends StatefulWidget {
+  final ArtisanModel artisan;
+
+  const _ArtisanProfileView({required this.artisan});
+
+  @override
+  State<_ArtisanProfileView> createState() => _ArtisanProfileViewState();
+}
+
+class _ArtisanProfileViewState extends State<_ArtisanProfileView> {
   late final ScrollController _scrollController;
   bool _isCollapsed = false;
 
@@ -47,17 +66,19 @@ class _ArtisanProfilePageState extends State<ArtisanProfilePage> {
     super.dispose();
   }
 
-  void _showAvatarFullScreen() {
-    final artisan = widget.artisan;
+  ArtisanModel _currentArtisan(ArtisanProfileState state) {
+    if (state is ArtisanProfileLoaded) return state.artisan;
+    return widget.artisan;
+  }
+
+  void _showAvatarFullScreen(ArtisanModel artisan) {
     Navigator.of(context).push(
       PageRouteBuilder<void>(
         opaque: false,
         barrierDismissible: true,
         barrierColor: Colors.transparent,
-        pageBuilder: (_, __, ___) => AvatarFullscreenPage(
-          artisan: artisan,
-          badgeColor: artisan.badgeColor,
-        ),
+        pageBuilder: (_, __, ___) =>
+            AvatarFullscreenPage(artisan: artisan, badgeColor: context.primary),
         transitionsBuilder: (_, animation, __, child) =>
             FadeTransition(opacity: animation, child: child),
         transitionDuration: const Duration(milliseconds: 280),
@@ -72,125 +93,162 @@ class _ArtisanProfilePageState extends State<ArtisanProfilePage> {
     final textColor = context.textColor;
     final surfaceColor = context.surfaceColor;
     final primary = context.primary;
-    final artisan = widget.artisan;
-    final reviews = HomeMockDatasource.getReviewsForArtisan(artisan.id);
-    final samples = workSamplesForSpecialty(artisan.specialty);
-    final bgColor = isDark
-        ? AppColors.darkBackground
-        : AppColors.lightBackground;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: _isCollapsed
-            ? (isDark ? Brightness.light : Brightness.dark)
-            : Brightness.light,
-      ),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: CustomScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              expandedHeight: 340.0,
-              pinned: true,
-              stretch: true,
-              elevation: _isCollapsed ? 2 : 0,
-              backgroundColor: bgColor,
-              surfaceTintColor: Colors.transparent,
-              automaticallyImplyLeading: false,
-              title: _isCollapsed
-                  ? Row(
-                      children: [
-                        Text(
-                          artisan.name,
-                          style: AppTextStyles.bodyLargeBold(color: textColor),
+    return BlocBuilder<ArtisanProfileCubit, ArtisanProfileState>(
+      builder: (context, state) {
+        final artisan = _currentArtisan(state);
+        final isLoading = state is ArtisanProfileLoading;
+        final reviews = HomeMockDatasource.getReviewsForArtisan(artisan.id);
+        final samples = workSamplesForSpecialty(artisan.specialty);
+        final bgColor = isDark
+            ? AppColors.darkBackground
+            : AppColors.lightBackground;
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: _isCollapsed
+                ? (isDark ? Brightness.light : Brightness.dark)
+                : Brightness.dark,
+          ),
+          child: Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: Stack(
+              children: [
+                CustomScrollView(
+                  controller: _scrollController,
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverAppBar(
+                      expandedHeight: 340.0,
+                      pinned: true,
+                      stretch: true,
+                      elevation: _isCollapsed ? 2 : 0,
+                      backgroundColor: bgColor,
+                      surfaceTintColor: Colors.transparent,
+                      automaticallyImplyLeading: false,
+                      title: _isCollapsed
+                          ? Row(
+                              children: [
+                                Text(
+                                  artisan.name,
+                                  style: AppTextStyles.bodyLargeBold(
+                                    color: textColor,
+                                  ),
+                                ),
+                                if (artisan.isVerified) ...[
+                                  SizedBox(width: AppSpacing.custom6),
+                                  Icon(
+                                    Icons.verified_rounded,
+                                    color: primary,
+                                    size: AppSpacing.custom18,
+                                  ),
+                                ],
+                              ],
+                            )
+                          : null,
+                      leading: Padding(
+                        padding: EdgeInsets.all(AppSpacing.custom8),
+                        child: ProfileCircleIconButton(
+                          icon: Icons.arrow_back_ios_new_rounded,
+                          onTap: () => Navigator.of(context).pop(),
+                          isCollapsed: _isCollapsed,
+                          isDark: isDark,
                         ),
-                        if (artisan.isVerified) ...[
-                          SizedBox(width: AppSpacing.custom6),
-                          Icon(
-                            Icons.verified_rounded,
-                            color: primary,
-                            size: AppSpacing.custom18,
-                          ),
-                        ],
+                      ),
+                      actions: [
+                        ProfileCircleIconButton(
+                          icon: Icons.share_rounded,
+                          onTap: () {},
+                          isCollapsed: _isCollapsed,
+                          isDark: isDark,
+                        ),
+                        const SizedBox(width: 6),
+                        ProfileCircleIconButton(
+                          icon: Icons.bookmark_border_rounded,
+                          onTap: () {},
+                          isCollapsed: _isCollapsed,
+                          isDark: isDark,
+                        ),
+                        const SizedBox(width: 8),
                       ],
-                    )
-                  : null,
-              leading: Padding(
-                padding: EdgeInsets.all(AppSpacing.custom8),
-                child: ProfileCircleIconButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
-                  onTap: () => Navigator.of(context).pop(),
-                  isCollapsed: _isCollapsed,
-                  isDark: isDark,
-                ),
-              ),
-              actions: [
-                ProfileCircleIconButton(
-                  icon: Icons.share_rounded,
-                  onTap: () {},
-                  isCollapsed: _isCollapsed,
-                  isDark: isDark,
-                ),
-                const SizedBox(width: 6),
-                ProfileCircleIconButton(
-                  icon: Icons.bookmark_border_rounded,
-                  onTap: () {},
-                  isCollapsed: _isCollapsed,
-                  isDark: isDark,
-                ),
-                const SizedBox(width: 8),
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
-                stretchModes: const [StretchMode.zoomBackground],
-                background: ProfileHeroHeader(
-                  artisan: artisan,
-                  onAvatarTap: _showAvatarFullScreen,
-                ),
-              ),
-            ),
+                      flexibleSpace: FlexibleSpaceBar(
+                        collapseMode: CollapseMode.pin,
+                        stretchModes: const [StretchMode.zoomBackground],
+                        background: ProfileHeroHeader(
+                          artisan: artisan,
+                          onAvatarTap: () => _showAvatarFullScreen(artisan),
+                        ),
+                      ),
+                    ),
 
-            SliverToBoxAdapter(
-              child: _StatsRow(
-                artisan: artisan,
-                textColor: textColor,
-                surfaceColor: surfaceColor,
-                primary: primary,
-              ),
+                    SliverToBoxAdapter(
+                      child: _StatsRow(
+                        artisan: artisan,
+                        textColor: textColor,
+                        surfaceColor: surfaceColor,
+                        primary: primary,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.custom16),
+                    ),
+                    SliverToBoxAdapter(
+                      child: _InfoRow(
+                        artisan: artisan,
+                        textColor: textColor,
+                        surfaceColor: surfaceColor,
+                        primary: primary,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.custom16),
+                    ),
+                    SliverToBoxAdapter(
+                      child: ArtisanScheduleCard(artisan: artisan),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.custom16),
+                    ),
+                    SliverToBoxAdapter(
+                      child: ArtisanAboutSection(artisan: artisan),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.custom16),
+                    ),
+                    SliverToBoxAdapter(
+                      child: ArtisanWorkSamplesSection(samples: samples),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.custom16),
+                    ),
+                    SliverToBoxAdapter(
+                      child: ArtisanReviewsSection(
+                        artisan: artisan,
+                        reviews: reviews,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).padding.bottom + 100,
+                      ),
+                    ),
+                  ],
+                ),
+                // Subtle loading bar while fetching full profile
+                if (isLoading)
+                  const Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: LinearProgressIndicator(minHeight: 3),
+                  ),
+              ],
             ),
-            SliverToBoxAdapter(child: SizedBox(height: AppSpacing.custom16)),
-            SliverToBoxAdapter(
-              child: _InfoRow(
-                artisan: artisan,
-                textColor: textColor,
-                surfaceColor: surfaceColor,
-                primary: primary,
-              ),
-            ),
-            SliverToBoxAdapter(child: SizedBox(height: AppSpacing.custom16)),
-            SliverToBoxAdapter(child: ArtisanScheduleCard(artisan: artisan)),
-            SliverToBoxAdapter(child: SizedBox(height: AppSpacing.custom16)),
-            SliverToBoxAdapter(child: ArtisanAboutSection(artisan: artisan)),
-            SliverToBoxAdapter(child: SizedBox(height: AppSpacing.custom16)),
-            SliverToBoxAdapter(
-              child: ArtisanWorkSamplesSection(samples: samples),
-            ),
-            SliverToBoxAdapter(child: SizedBox(height: AppSpacing.custom16)),
-            SliverToBoxAdapter(
-              child: ArtisanReviewsSection(artisan: artisan, reviews: reviews),
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: MediaQuery.of(context).padding.bottom + 100,
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: ArtisanBookingBar(artisan: artisan),
-      ),
+            bottomNavigationBar: ArtisanBookingBar(artisan: artisan),
+          ),
+        );
+      },
     );
   }
 }
@@ -229,7 +287,7 @@ class _StatsRow extends StatelessWidget {
             Expanded(
               child: ProfileStatCell(
                 icon: Icons.star_rounded,
-                iconColor: const Color(0xFFFFB800),
+                iconColor: primary,
                 value: artisan.rating.toStringAsFixed(1),
                 label: 'Rating',
                 textColor: textColor,
@@ -259,7 +317,7 @@ class _StatsRow extends StatelessWidget {
             Expanded(
               child: ProfileStatCell(
                 icon: Icons.chat_bubble_rounded,
-                iconColor: AppColors.secondary,
+                iconColor: primary,
                 value: '${artisan.reviews}',
                 label: 'Reviews',
                 textColor: textColor,
@@ -272,7 +330,7 @@ class _StatsRow extends StatelessWidget {
   }
 }
 
-// ── Info row (Location + Price) ───────────────────────────────────────────────
+// ── Info row (Location + Phone) ───────────────────────────────────────────────
 class _InfoRow extends StatelessWidget {
   final ArtisanModel artisan;
   final Color textColor;
@@ -307,10 +365,10 @@ class _InfoRow extends StatelessWidget {
           SizedBox(width: AppSpacing.custom8),
           Expanded(
             child: ProfileInfoCard(
-              icon: Icons.payments_rounded,
-              iconColor: AppColors.secondary,
-              label: 'Starting Price',
-              value: artisan.startingPrice,
+              icon: Icons.phone_rounded,
+              iconColor: primary,
+              label: 'Phone',
+              value: artisan.phone.isNotEmpty ? artisan.phone : 'N/A',
               surfaceColor: surfaceColor,
               textColor: textColor,
             ),

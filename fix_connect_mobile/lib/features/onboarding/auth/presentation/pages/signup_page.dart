@@ -6,6 +6,7 @@ import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/input_primary.dart';
 import 'package:fix_connect_mobile/core/widgets/social_icon_button.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/signup_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -89,7 +90,13 @@ class _SignupPageState extends State<SignupPage> {
         if (state is SignupSuccess) {
           Navigator.of(context).pushNamed(
             AppRoutes.otp,
-            arguments: OtpArgs(email: state.email, source: OtpSource.signup),
+            arguments: OtpArgs(
+              email: state.email,
+              source: OtpSource.signup,
+              role: _selectedRole == 'ARTISAN'
+                  ? UserRole.artisan
+                  : UserRole.customer,
+            ),
           );
         } else if (state is SignupFailure) {
           ScaffoldMessenger.of(context)

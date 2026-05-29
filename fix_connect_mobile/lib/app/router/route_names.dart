@@ -31,4 +31,12 @@ class AppRoutes {
   static const searchResults = '/search-results';
   static const helpSupport = '/help-support';
   static const termsPrivacy = '/terms-privacy';
+
+  // ── Artisan onboarding ───────────────────────────────────────────────────────
+  static const artisanSetup = '/artisan-setup';
+
+  // ── Listings ─────────────────────────────────────────────────────────────────
+  static const artisansAll = '/artisans-all';
+  static const categoryArtisans = '/category-artisans';
+  static const myArtisanProfile = '/my-artisan-profile';
 }

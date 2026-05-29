@@ -23,124 +23,187 @@ class ArtisanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardInner = Container(
-      width: AppSpacing.custom150,
-      padding: EdgeInsets.all(AppSpacing.custom14),
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: BorderRadius.circular(AppSpacing.custom18),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Avatar + online status dot
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              CircleAvatar(
-                radius: 35,
-                backgroundColor: artisan.badgeColor.withOpacity(0.15),
-                child: Text(
-                  artisan.initials,
-                  style: AppTextStyles.bodyMediumBold(
-                    color: artisan.badgeColor,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 4,
-                right: 2,
-                child: Container(
-                  width: AppSpacing.custom12,
-                  height: AppSpacing.custom12,
-                  decoration: BoxDecoration(
-                    color: artisan.isOnline
-                        ? const Color(0xFF22C55E)
-                        : const Color(0xFF9E9E9E),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black, width: 1),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: AppSpacing.custom8),
-
-          // Name
-          Text(
-            artisan.name,
-            style: AppTextStyles.bodyMediumSemibold(color: textColor),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          SizedBox(height: AppSpacing.custom2),
-
-          // Specialty
-          Text(
-            artisan.specialty,
-            style: AppTextStyles.bodySmallRegular(
-              color: textColor.withOpacity(0.55),
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          SizedBox(height: AppSpacing.custom6),
-
-          // Rating
-          Row(
-            children: [
-              Icon(
-                Icons.star_rounded,
-                color: Color(0xFFFFB800),
-                size: AppSpacing.custom14,
-              ),
-              const SizedBox(width: 3),
-              Text(
-                '${artisan.rating}',
-                style: AppTextStyles.bodySmallBold(color: textColor),
-              ),
-              const SizedBox(width: 3),
-              Text(
-                '(${artisan.reviews})',
-                style: AppTextStyles.bodySmallRegular(
-                  color: textColor.withOpacity(0.5),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 6),
-
-          // Rate
-          Text(
-            'From ${artisan.startingPrice}',
-            style: AppTextStyles.bodySmallSemibold(color: primary),
-          ),
-        ],
-      ),
-    );
-
     return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
-        child: artisan.isVerified
-            ? Banner(
-                message: 'Verified',
-                location: BannerLocation.topEnd,
-                color: const Color(0xFF22C55E),
-                textStyle: TextStyle(
-                  fontSize: AppSpacing.custom12,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.4,
+      child: Container(
+        width: AppSpacing.custom150,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.07)
+                : Colors.black.withOpacity(0.06),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.20 : 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Avatar row + inline badges ──────────────────────────────────
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: artisan.badgeColor.withOpacity(0.15),
+                      backgroundImage: artisan.avatarUrl != null
+                          ? NetworkImage(artisan.avatarUrl!)
+                          : null,
+                      child: artisan.avatarUrl == null
+                          ? Text(
+                              artisan.initials,
+                              style: AppTextStyles.bodyMediumBold(
+                                color: artisan.badgeColor,
+                              ),
+                            )
+                          : null,
+                    ),
+                    // Online / offline indicator
+                    Positioned(
+                      bottom: 1,
+                      right: 1,
+                      child: Container(
+                        width: 11,
+                        height: 11,
+                        decoration: BoxDecoration(
+                          color: artisan.isOnline
+                              ? const Color(0xFF22C55E)
+                              : const Color(0xFF9E9E9E),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: surfaceColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: cardInner,
-              )
-            : cardInner,
+                const Spacer(),
+                // Badges stacked at top-right
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (artisan.isFeatured)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFB800),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          '★',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    if (artisan.isVerified) ...[
+                      if (artisan.isFeatured) const SizedBox(height: 4),
+                      const Icon(
+                        Icons.verified_rounded,
+                        color: Color(0xFF22C55E),
+                        size: 18,
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // ── Name ────────────────────────────────────────────────────────
+            Text(
+              artisan.name,
+              style: AppTextStyles.bodyMediumSemibold(color: textColor),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 5),
+
+            // ── Category / specialty pill ────────────────────────────────
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              decoration: BoxDecoration(
+                color: primary.withOpacity(0.10),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                artisan.categories.isNotEmpty
+                    ? artisan.categories.first.name
+                    : artisan.specialty,
+                style: AppTextStyles.bodySmallMedium(color: primary),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // ── Rating ──────────────────────────────────────────────────────
+            Row(
+              children: [
+                Icon(
+                  Icons.star_rounded,
+                  color: artisan.rating > 0
+                      ? const Color(0xFFFFB800)
+                      : const Color(0xFF9E9E9E),
+                  size: 13,
+                ),
+                const SizedBox(width: 3),
+                Text(
+                  artisan.rating > 0
+                      ? artisan.rating.toStringAsFixed(1)
+                      : 'New',
+                  style: AppTextStyles.bodySmallBold(color: textColor),
+                ),
+                if (artisan.reviews > 0) ...[
+                  const SizedBox(width: 2),
+                  Text(
+                    '(${artisan.reviews})',
+                    style: AppTextStyles.bodySmallRegular(
+                      color: textColor.withOpacity(0.45),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // ── Divider ─────────────────────────────────────────────────────
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: isDark
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.06),
+            ),
+            const SizedBox(height: 8),
+
+            // ── Starting price ───────────────────────────────────────────────
+            Text(
+              'From ${artisan.startingPrice}',
+              style: AppTextStyles.bodySmallSemibold(color: primary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }

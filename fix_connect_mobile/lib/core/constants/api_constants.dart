@@ -47,6 +47,11 @@ class ApiConstants {
   static const services = '/services';
   static const serviceCategories = '/service-categories';
 
+  // ── Artisans ────────────────────────────────────────────────────────────────
+  static const artisans = '/artisans';
+  static const artisanCategories = '/artisans/categories';
+  static const featuredArtisans = '/artisans/featured';
+
   // ── Notifications ───────────────────────────────────────────────────────────
   static const notifications = '/notifications';
 }
