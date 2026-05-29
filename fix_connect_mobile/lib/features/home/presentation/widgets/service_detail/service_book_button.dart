@@ -33,7 +33,7 @@ class ServiceBookButton extends StatelessWidget {
       child: GestureDetector(
         onTap: () => Navigator.of(
           context,
-        ).pushNamed(AppRoutes.searchResults, arguments: service.label),
+        ).pushNamed(AppRoutes.searchResults, arguments: service.name),
         child: Container(
           height: 54,
           decoration: BoxDecoration(
@@ -57,7 +57,7 @@ class ServiceBookButton extends StatelessWidget {
               ),
               AppGaps.w8,
               Text(
-                'Find a ${service.label} Pro',
+                'Find a ${service.name} Pro',
                 style: AppTextStyles.bodyLargeSemibold(
                   color: isDark ? Colors.black87 : Colors.white,
                 ),

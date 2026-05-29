@@ -18,7 +18,9 @@ import 'package:fix_connect_mobile/features/home/presentation/widgets/section_he
 import 'package:fix_connect_mobile/features/home/presentation/widgets/service_category_grid.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/stats_strip.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/top_artisans_section.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // 📚 CONCEPT: Widget Extraction / Decomposition
 // The HomeTab is carved out of the original HomePage so the shell (HomePage)
@@ -27,8 +29,9 @@ import 'package:flutter/material.dart';
 // and change without touching anything else.
 class HomeTab extends StatefulWidget {
   final VoidCallback? onSeeAllServices;
+  final VoidCallback? onAvatarTap;
 
-  const HomeTab({super.key, this.onSeeAllServices});
+  const HomeTab({super.key, this.onSeeAllServices, this.onAvatarTap});
 
   @override
   State<HomeTab> createState() => _HomeTabState();
@@ -44,6 +47,36 @@ class _HomeTabState extends State<HomeTab> {
   final List<String> _locations = HomeMockDatasource.getLocations();
 
   bool get _isSearching => _searchQuery.isNotEmpty || _filter.isActive;
+
+  /// Returns a time-of-day greeting: morning / afternoon / evening.
+  String get _timeGreeting {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  /// Extracts just the first name from the authenticated user, falling back
+  /// to a generic greeting when the user or name is unavailable.
+  String _buildGreeting(AuthState authState) {
+    if (authState is AuthAuthenticated) {
+      final name = authState.user?.name.trim() ?? '';
+      if (name.isNotEmpty) {
+        final firstName = name.split(' ').first;
+        return '$_timeGreeting, $firstName!';
+      }
+    }
+    return '$_timeGreeting!';
+  }
+
+  /// Returns up to 2 uppercase initials from a full name.
+  /// e.g. "Daniel Osei" → "DO", "Daniel" → "D", "" → "?"
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
 
   List<ArtisanModel> get _filteredArtisans {
     return _artisans.where((a) {
@@ -79,6 +112,7 @@ class _HomeTabState extends State<HomeTab> {
         ? AppColors.surfaceDark
         : AppColors.surfaceLight;
     final primary = theme.colorScheme.primary;
+    final authState = context.watch<AuthCubit>().state;
 
     // 📚 CONCEPT: CustomScrollView + Slivers
     // A CustomScrollView lets you mix scrollable "slivers" (slices of scroll) —
@@ -92,9 +126,19 @@ class _HomeTabState extends State<HomeTab> {
           SliverToBoxAdapter(
             child: HomeHeader(
               location: _selectedLocation,
+              greeting: _buildGreeting(authState),
+              avatarUrl: authState is AuthAuthenticated
+                  ? authState.user?.avatarUrl
+                  : null,
+              initials: _initials(
+                authState is AuthAuthenticated
+                    ? (authState.user?.name ?? '')
+                    : '',
+              ),
               onLocationTap: _showLocationPicker,
               onNotificationTap: () =>
                   Navigator.of(context).pushNamed(AppRoutes.notifications),
+              onAvatarTap: widget.onAvatarTap ?? () {},
               textColor: textColor,
               primary: primary,
               isDark: isDark,

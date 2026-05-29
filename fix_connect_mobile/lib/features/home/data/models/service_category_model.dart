@@ -1,25 +1,31 @@
-import 'package:flutter/material.dart';
-
+/// Domain model for a service category returned by GET /service-categories.
 class ServiceCategoryModel {
   final String id;
-  final String label;
-  final IconData icon;
-  final List<Color> gradientColors;
-  final int artisanCount;
-  final String startingPrice;
-  final double avgRating;
-  final String description;
-  final List<String> popularServices;
+  final String name;
+  final String? iconSvg;
+  final String? description;
+  final bool isActive;
+  final DateTime? createdAt;
 
   const ServiceCategoryModel({
     required this.id,
-    required this.label,
-    required this.icon,
-    required this.gradientColors,
-    required this.artisanCount,
-    required this.startingPrice,
-    required this.avgRating,
-    required this.description,
-    required this.popularServices,
+    required this.name,
+    this.iconSvg,
+    this.description,
+    this.isActive = true,
+    this.createdAt,
   });
+
+  factory ServiceCategoryModel.fromJson(Map<String, dynamic> json) {
+    return ServiceCategoryModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      iconSvg: json['iconSvg'] as String?,
+      description: json['description'] as String?,
+      isActive: json['isActive'] as bool? ?? true,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+    );
+  }
 }

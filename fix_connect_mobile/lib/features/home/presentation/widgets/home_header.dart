@@ -6,8 +6,12 @@ import 'package:flutter/material.dart';
 
 class HomeHeader extends StatelessWidget {
   final String location;
+  final String greeting;
+  final String? avatarUrl;
+  final String initials;
   final VoidCallback onLocationTap;
   final VoidCallback onNotificationTap;
+  final VoidCallback onAvatarTap;
   final Color textColor;
   final Color primary;
   final bool isDark;
@@ -15,8 +19,12 @@ class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
     required this.location,
+    required this.greeting,
+    this.avatarUrl,
+    required this.initials,
     required this.onLocationTap,
     required this.onNotificationTap,
+    required this.onAvatarTap,
     required this.textColor,
     required this.primary,
     required this.isDark,
@@ -39,7 +47,7 @@ class HomeHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Good morning, John!',
+                    greeting,
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.primary,
@@ -81,11 +89,24 @@ class HomeHeader extends StatelessWidget {
             ),
             SizedBox(width: AppSpacing.custom8),
             GestureDetector(
-              onTap: () {},
+              onTap: onAvatarTap,
               child: CircleAvatar(
                 radius: 20,
                 backgroundColor: primary,
-                child: Text('DO', style: AppTextStyles.bodySmallBold()),
+                child: avatarUrl != null
+                    ? ClipOval(
+                        child: Image.network(
+                          avatarUrl!,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Text(
+                            initials,
+                            style: AppTextStyles.bodySmallBold(),
+                          ),
+                        ),
+                      )
+                    : Text(initials, style: AppTextStyles.bodySmallBold()),
               ),
             ),
           ],
