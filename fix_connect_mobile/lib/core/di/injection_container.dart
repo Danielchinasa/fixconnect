@@ -31,7 +31,18 @@ import 'package:fix_connect_mobile/features/profile/presentation/cubit/reviews_c
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/stats_cubit.dart';
+import 'package:fix_connect_mobile/features/home/data/datasources/artisans_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/home/data/repositories/artisans_repository_impl.dart';
+import 'package:fix_connect_mobile/features/home/domain/repositories/artisans_repository.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/artisan_profile_cubit.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/category_artisans_cubit.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/my_artisan_profile_cubit.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/featured_artisans_cubit.dart';
 import 'package:fix_connect_mobile/features/home/data/datasources/services_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/onboarding/artisan_setup/data/datasources/artisan_setup_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/onboarding/artisan_setup/data/repositories/artisan_setup_repository_impl.dart';
+import 'package:fix_connect_mobile/features/onboarding/artisan_setup/domain/repositories/artisan_setup_repository.dart';
+import 'package:fix_connect_mobile/features/onboarding/artisan_setup/presentation/cubit/artisan_setup_cubit.dart';
 import 'package:fix_connect_mobile/features/home/data/repositories/services_repository_impl.dart';
 import 'package:fix_connect_mobile/features/home/domain/repositories/services_repository.dart';
 import 'package:fix_connect_mobile/features/home/presentation/cubit/services_cubit.dart';
@@ -165,5 +176,43 @@ Future<void> initDependencies() async {
 
   sl.registerFactory<ServicesCubit>(
     () => ServicesCubit(sl<ServicesRepository>()),
+  );
+
+  // ── Artisans (featured): Data/BLoC ─────────────────────────────────────────
+  sl.registerLazySingleton<ArtisansRemoteDataSource>(
+    () => ArtisansRemoteDataSourceImpl(sl<ApiClient>()),
+  );
+
+  sl.registerLazySingleton<ArtisansRepository>(
+    () => ArtisansRepositoryImpl(sl<ArtisansRemoteDataSource>()),
+  );
+
+  sl.registerFactory<FeaturedArtisansCubit>(
+    () => FeaturedArtisansCubit(sl<ArtisansRepository>()),
+  );
+
+  sl.registerFactory<ArtisanProfileCubit>(
+    () => ArtisanProfileCubit(sl<ArtisansRepository>()),
+  );
+
+  sl.registerFactory<MyArtisanProfileCubit>(
+    () => MyArtisanProfileCubit(sl<ArtisansRepository>()),
+  );
+
+  sl.registerFactory<CategoryArtisansCubit>(
+    () => CategoryArtisansCubit(sl<ArtisansRepository>()),
+  );
+
+  // ── Artisan setup (onboarding): Data/BLoC ──────────────────────────────────
+  sl.registerLazySingleton<ArtisanSetupRemoteDataSource>(
+    () => ArtisanSetupRemoteDataSourceImpl(sl<ApiClient>()),
+  );
+
+  sl.registerLazySingleton<ArtisanSetupRepository>(
+    () => ArtisanSetupRepositoryImpl(sl<ArtisanSetupRemoteDataSource>()),
+  );
+
+  sl.registerFactory<ArtisanSetupCubit>(
+    () => ArtisanSetupCubit(sl<ArtisanSetupRepository>()),
   );
 }

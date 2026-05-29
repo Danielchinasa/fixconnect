@@ -1,6 +1,7 @@
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
@@ -34,6 +35,13 @@ class _OtpPageState extends State<OtpPage> {
   void _onSuccess(BuildContext context, OtpSuccess state) {
     if (widget.args.source == OtpSource.forgotPassword) {
       Navigator.of(context).pushReplacementNamed(AppRoutes.resetPassword);
+    } else if (widget.args.role == UserRole.artisan) {
+      // Artisan users must complete their profile before accessing the app.
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.artisanSetup,
+        (_) => false,
+        arguments: state.user,
+      );
     } else {
       context.read<AuthCubit>().logIn(state.user);
     }

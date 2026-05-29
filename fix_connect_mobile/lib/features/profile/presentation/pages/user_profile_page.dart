@@ -5,6 +5,7 @@ import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/section_header.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/reviews_cubit.dart';
@@ -171,6 +172,31 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     ),
                   ),
                   SliverToBoxAdapter(child: AppGaps.h24),
+
+                  // ── Artisan section (only when role == artisan) ──────────────
+                  if (user?.role == UserRole.artisan) ...[
+                    SliverToBoxAdapter(
+                      child: SectionHeader(
+                        title: 'Artisan',
+                        textColor: textColor,
+                        primary: primary,
+                      ),
+                    ),
+                    SliverToBoxAdapter(child: AppGaps.h8),
+                    SliverToBoxAdapter(
+                      child: ProfileMenuSection(
+                        items: [
+                          ProfileMenuItem(
+                            icon: Icons.handyman_outlined,
+                            label: 'My Artisan Profile',
+                            subtitle: 'Manage your services & availability',
+                            onTap: () => _push(AppRoutes.myArtisanProfile),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SliverToBoxAdapter(child: AppGaps.h24),
+                  ],
 
                   // ── Activity ─────────────────────────────────────────────────
                   SliverToBoxAdapter(

@@ -11,11 +11,16 @@ import 'package:fix_connect_mobile/features/notifications/presentation/pages/not
 import 'package:fix_connect_mobile/features/support/presentation/pages/help_support_page.dart';
 import 'package:fix_connect_mobile/features/support/presentation/pages/terms_privacy_page.dart';
 import 'package:fix_connect_mobile/features/home/data/models/service_category_model.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/all_artisans_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/artisan_profile_page.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/category_artisans_page.dart';
+import 'package:fix_connect_mobile/features/home/presentation/pages/my_artisan_profile_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/service_detail_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
+import 'package:fix_connect_mobile/features/onboarding/artisan_setup/presentation/pages/artisan_setup_page.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/data/models/otp_args.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/forgot_password_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/login_bloc.dart';
 import 'package:fix_connect_mobile/features/onboarding/auth/presentation/blocs/otp_bloc.dart';
@@ -151,6 +156,21 @@ class RouteGenerator {
         );
       case AppRoutes.helpSupport:
         return MaterialPageRoute(builder: (_) => const HelpSupportPage());
+      case AppRoutes.artisanSetup:
+        final user = settings.arguments as UserEntity?;
+        return MaterialPageRoute(builder: (_) => ArtisanSetupPage(user: user));
+      case AppRoutes.artisansAll:
+        final artisans = settings.arguments as List<ArtisanModel>;
+        return MaterialPageRoute(
+          builder: (_) => AllArtisansPage(artisans: artisans),
+        );
+      case AppRoutes.myArtisanProfile:
+        return MaterialPageRoute(builder: (_) => const MyArtisanProfilePage());
+      case AppRoutes.categoryArtisans:
+        final category = settings.arguments as ServiceCategoryModel;
+        return MaterialPageRoute(
+          builder: (_) => CategoryArtisansPage(category: category),
+        );
       case AppRoutes.termsPrivacy:
         return MaterialPageRoute(builder: (_) => const TermsPrivacyPage());
       default:

@@ -2,6 +2,7 @@ import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/di/injection_container.dart';
 import 'package:fix_connect_mobile/features/bookings/presentation/pages/bookings_page.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/featured_artisans_cubit.dart';
 import 'package:fix_connect_mobile/features/home/presentation/cubit/services_cubit.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_tab.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
@@ -65,8 +66,11 @@ class _HomePageState extends State<HomePage> {
       ),
     ];
 
-    return BlocProvider(
-      create: (_) => sl<ServicesCubit>()..load(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<ServicesCubit>()..load()),
+        BlocProvider(create: (_) => sl<FeaturedArtisansCubit>()..load()),
+      ],
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         body: IndexedStack(index: _currentNavIndex, children: tabs),

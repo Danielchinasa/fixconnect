@@ -42,13 +42,14 @@ class ArtisanBookingBar extends StatelessWidget {
           ButtonPrimary(
             text: 'Book Now',
             bgColor: primary,
+            textColor: Colors.black,
             onTap: () => Navigator.of(
               context,
             ).pushNamed(AppRoutes.bookingFlow, arguments: artisan),
-            trailing: Icon(
+            trailing: const Icon(
               Icons.calendar_month_rounded,
-              color: Theme.of(context).colorScheme.surface,
-              size: AppSpacing.custom18,
+              color: Colors.black,
+              size: 18,
             ),
           ),
           AppGaps.h10,

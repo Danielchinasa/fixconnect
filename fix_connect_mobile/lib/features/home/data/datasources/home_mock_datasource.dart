@@ -1,7 +1,6 @@
-import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
 import 'package:fix_connect_mobile/features/home/data/models/review_model.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // Color used in ReviewModel avatarColor
 
 class HomeMockDatasource {
   HomeMockDatasource._();
@@ -16,23 +15,19 @@ class HomeMockDatasource {
       startingPrice: '₦3,500',
       isVerified: true,
       isOnline: true,
-      badgeColor: AppColors.primaryLight,
-      initials: 'EO',
       location: 'Lekki, Lagos',
       bio:
           'With over 8 years of experience, I specialise in residential and commercial plumbing. Quick diagnosis, clean work, and fair pricing are my hallmarks. I handle everything from blocked drains to full bathroom installations.',
       completedJobs: 342,
-      todayOpenTime: '7:00 AM – 7:00 PM',
-      isTodayOpen: true,
       responseTime: 'Typically < 1 hour',
-      weeklySchedule: const {
-        'Mon': '7:00 AM – 7:00 PM',
-        'Tue': '7:00 AM – 7:00 PM',
-        'Wed': '7:00 AM – 7:00 PM',
-        'Thu': '7:00 AM – 7:00 PM',
-        'Fri': '7:00 AM – 7:00 PM',
-        'Sat': '9:00 AM – 3:00 PM',
-        'Sun': null,
+      weeklySchedule: {
+        'Monday': '7:00 AM – 7:00 PM',
+        'Tuesday': '7:00 AM – 7:00 PM',
+        'Wednesday': '7:00 AM – 7:00 PM',
+        'Thursday': '7:00 AM – 7:00 PM',
+        'Friday': '7:00 AM – 7:00 PM',
+        'Saturday': '9:00 AM – 3:00 PM',
+        'Sunday': null,
       },
     ),
     ArtisanModel(
@@ -44,23 +39,19 @@ class HomeMockDatasource {
       startingPrice: '₦4,000',
       isVerified: true,
       isOnline: false,
-      badgeColor: AppColors.secondary,
-      initials: 'AB',
       location: 'Ikeja, Lagos',
       bio:
           'Certified electrician with 6 years of expertise in installations, rewiring, and emergency callouts. Safety-first approach with transparent pricing. Available for both residential and commercial projects.',
       completedJobs: 278,
-      todayOpenTime: '8:00 AM – 5:00 PM',
-      isTodayOpen: false,
       responseTime: 'Usually 1–2 hours',
-      weeklySchedule: const {
-        'Mon': '8:00 AM – 5:00 PM',
-        'Tue': '8:00 AM – 5:00 PM',
-        'Wed': '8:00 AM – 5:00 PM',
-        'Thu': '8:00 AM – 5:00 PM',
-        'Fri': '8:00 AM – 5:00 PM',
-        'Sat': null,
-        'Sun': null,
+      weeklySchedule: {
+        'Monday': '8:00 AM – 5:00 PM',
+        'Tuesday': '8:00 AM – 5:00 PM',
+        'Wednesday': '8:00 AM – 5:00 PM',
+        'Thursday': '8:00 AM – 5:00 PM',
+        'Friday': '8:00 AM – 5:00 PM',
+        'Saturday': null,
+        'Sunday': null,
       },
     ),
     ArtisanModel(
@@ -72,23 +63,19 @@ class HomeMockDatasource {
       startingPrice: '₦2,800',
       isVerified: false,
       isOnline: true,
-      badgeColor: Color(0xFFFF9500),
-      initials: 'CN',
       location: 'Surulere, Lagos',
       bio:
           'Custom furniture maker and repair specialist with 5 years in the craft. From fixing a broken chair to crafting bespoke wardrobes and kitchen cabinets, I bring wood to life with precision and care.',
       completedJobs: 195,
-      todayOpenTime: '9:00 AM – 6:00 PM',
-      isTodayOpen: true,
       responseTime: 'Same day',
-      weeklySchedule: const {
-        'Mon': null,
-        'Tue': '9:00 AM – 6:00 PM',
-        'Wed': '9:00 AM – 6:00 PM',
-        'Thu': '9:00 AM – 6:00 PM',
-        'Fri': '9:00 AM – 6:00 PM',
-        'Sat': '9:00 AM – 6:00 PM',
-        'Sun': null,
+      weeklySchedule: {
+        'Monday': null,
+        'Tuesday': '9:00 AM – 6:00 PM',
+        'Wednesday': '9:00 AM – 6:00 PM',
+        'Thursday': '9:00 AM – 6:00 PM',
+        'Friday': '9:00 AM – 6:00 PM',
+        'Saturday': '9:00 AM – 6:00 PM',
+        'Sunday': null,
       },
     ),
     ArtisanModel(
@@ -100,23 +87,19 @@ class HomeMockDatasource {
       startingPrice: '₦2,000',
       isVerified: true,
       isOnline: true,
-      badgeColor: AppColors.primaryLight,
-      initials: 'FM',
       location: 'Wuse II, Abuja',
       bio:
           'Professional cleaner with a keen eye for detail and 4 years of experience. I offer residential deep cleaning, post-construction cleanup, move-in/move-out services, and regular maintenance contracts.',
       completedJobs: 521,
-      todayOpenTime: '6:00 AM – 4:00 PM',
-      isTodayOpen: true,
       responseTime: 'Typically < 30 mins',
-      weeklySchedule: const {
-        'Mon': '6:00 AM – 4:00 PM',
-        'Tue': '6:00 AM – 4:00 PM',
-        'Wed': '6:00 AM – 4:00 PM',
-        'Thu': '6:00 AM – 4:00 PM',
-        'Fri': '6:00 AM – 4:00 PM',
-        'Sat': '7:00 AM – 1:00 PM',
-        'Sun': null,
+      weeklySchedule: {
+        'Monday': '6:00 AM – 4:00 PM',
+        'Tuesday': '6:00 AM – 4:00 PM',
+        'Wednesday': '6:00 AM – 4:00 PM',
+        'Thursday': '6:00 AM – 4:00 PM',
+        'Friday': '6:00 AM – 4:00 PM',
+        'Saturday': '7:00 AM – 1:00 PM',
+        'Sunday': null,
       },
     ),
     ArtisanModel(
@@ -128,23 +111,19 @@ class HomeMockDatasource {
       startingPrice: '₦3,200',
       isVerified: true,
       isOnline: false,
-      badgeColor: AppColors.secondary,
-      initials: 'TA',
       location: 'Victoria Island, Lagos',
       bio:
           'Interior and exterior painting specialist with 7 years delivering flawless finishes. I use premium paints, proper surface preparation, and meticulous technique to transform any space beautifully.',
       completedJobs: 156,
-      todayOpenTime: '8:00 AM – 6:00 PM',
-      isTodayOpen: false,
       responseTime: 'Within 24 hours',
-      weeklySchedule: const {
-        'Mon': '8:00 AM – 6:00 PM',
-        'Tue': '8:00 AM – 6:00 PM',
-        'Wed': '8:00 AM – 6:00 PM',
-        'Thu': '8:00 AM – 6:00 PM',
-        'Fri': '8:00 AM – 6:00 PM',
-        'Sat': null,
-        'Sun': null,
+      weeklySchedule: {
+        'Monday': '8:00 AM – 6:00 PM',
+        'Tuesday': '8:00 AM – 6:00 PM',
+        'Wednesday': '8:00 AM – 6:00 PM',
+        'Thursday': '8:00 AM – 6:00 PM',
+        'Friday': '8:00 AM – 6:00 PM',
+        'Saturday': null,
+        'Sunday': null,
       },
     ),
   ];

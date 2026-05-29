@@ -167,7 +167,7 @@ class _ServicesAllPageState extends State<ServicesAllPage>
                         animController: _animController,
                         onTap: () => Navigator.of(
                           context,
-                        ).pushNamed(AppRoutes.serviceDetail, arguments: cat),
+                        ).pushNamed(AppRoutes.categoryArtisans, arguments: cat),
                       );
                     }, childCount: displayed.length),
                     gridDelegate:
@@ -486,115 +486,84 @@ class _ServiceCardContent extends StatelessWidget {
 
   const _ServiceCardContent({required this.cat});
 
-  /// Same gradient set as ServiceHeroHeader — consistent per category.
-  static const _gradients = [
-    [Color(0xFF0ea5e9), Color(0xFF0dd0f0)],
-    [Color(0xFFf97316), Color(0xFFfbbf24)],
-    [Color(0xFF22c55e), Color(0xFF4ade80)],
-    [Color(0xFF8b5cf6), Color(0xFFc4b5fd)],
-    [Color(0xFFef4444), Color(0xFFfca5a5)],
-    [Color(0xFFf59e0b), Color(0xFFfde68a)],
-    [Color(0xFF06b6d4), Color(0xFF67e8f9)],
-    [Color(0xFFec4899), Color(0xFFf9a8d4)],
-  ];
-
-  List<Color> get _colors {
-    final hash = cat.id.codeUnits.fold(0, (a, b) => a + b);
-    return List<Color>.from(_gradients[hash % _gradients.length]);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final colors = _colors;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primary = theme.colorScheme.primary;
+    final textColor = isDark ? AppColors.darkText : AppColors.lightText;
+    final cardBg = isDark ? AppColors.surfaceDark : Colors.white;
+
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: colors,
-        ),
+        color: cardBg,
         borderRadius: BorderRadius.circular(AppSpacing.custom20),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.07) : AppColors.grey200,
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: colors.first.withOpacity(0.38),
-            blurRadius: 18,
-            offset: const Offset(0, 7),
+            color: Colors.black.withOpacity(isDark ? 0.22 : 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          // Decorative background circles
-          Positioned(
-            right: -22,
-            top: -22,
-            child: Container(
-              width: 110,
-              height: 110,
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.custom16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Icon bubble
+            Container(
+              width: 68,
+              height: 68,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.09),
-                shape: BoxShape.circle,
+                color: primary.withOpacity(0.10),
+                borderRadius: BorderRadius.circular(AppSpacing.custom12),
+              ),
+              child: Center(
+                child: _CardIcon(iconSvg: cat.iconSvg, categoryName: cat.name),
               ),
             ),
-          ),
-          Positioned(
-            right: 14,
-            bottom: 40,
-            child: Container(
-              width: 55,
-              height: 55,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.06),
-                shape: BoxShape.circle,
-              ),
+            const Spacer(),
+            // Service name
+            Text(
+              cat.name,
+              style: AppTextStyles.bodyLargeBold(color: textColor),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
-          ),
-          // Content
-          Padding(
-            padding: EdgeInsets.all(AppSpacing.custom16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Icon bubble
-                Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.22),
-                    borderRadius: BorderRadius.circular(AppSpacing.custom14),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: _CardIcon(
-                    iconSvg: cat.iconSvg,
-                    categoryName: cat.name,
-                  ),
+            if (cat.description != null && cat.description!.isNotEmpty) ...[
+              AppGaps.h4,
+              Text(
+                cat.description!,
+                style: AppTextStyles.bodySmallRegular(
+                  color: textColor.withOpacity(0.55),
                 ),
-                const Spacer(),
-                // Service name
-                Text(
-                  cat.name,
-                  style: AppTextStyles.bodyLargeBold(color: Colors.white),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (cat.description != null && cat.description!.isNotEmpty) ...[
-                  AppGaps.h4,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if ((cat.artisanCount ?? 0) >= 10) ...[
+              AppGaps.h4,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.people_outline_rounded, size: 12, color: primary),
+                  const SizedBox(width: 3),
                   Text(
-                    cat.description!,
-                    style: AppTextStyles.bodySmallRegular(
-                      color: Colors.white.withOpacity(0.75),
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    '${cat.artisanCount} pros available',
+                    style: AppTextStyles.bodySmallMedium(color: primary),
                   ),
                 ],
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -608,21 +577,22 @@ class _CardIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     if (iconSvg != null && iconSvg!.isNotEmpty) {
       return SizedBox(
-        width: 54,
-        height: 54,
+        width: 26,
+        height: 26,
         child: SvgPicture.string(
           iconSvg!,
           fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(primary, BlendMode.srcIn),
         ),
       );
     }
     return Icon(
       NetworkSvgIcon.iconForCategory(categoryName),
-      color: Colors.white,
-      size: 28,
+      color: primary,
+      size: 24,
     );
   }
 }

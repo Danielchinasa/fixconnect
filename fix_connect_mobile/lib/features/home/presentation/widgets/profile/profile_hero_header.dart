@@ -1,4 +1,5 @@
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
+import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class ProfileHeroHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final badgeColor = artisan.badgeColor;
+    final primary = context.primary;
 
     return Container(
       decoration: BoxDecoration(
@@ -22,9 +23,9 @@ class ProfileHeroHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            badgeColor,
-            badgeColor.withOpacity(0.75),
-            badgeColor.withOpacity(0.45),
+            primary,
+            primary.withOpacity(0.75),
+            primary.withOpacity(0.45),
           ],
           stops: const [0.0, 0.55, 1.0],
         ),
@@ -41,7 +42,7 @@ class ProfileHeroHeader extends StatelessWidget {
               height: 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.07),
+                color: Colors.black.withOpacity(0.05),
               ),
             ),
           ),
@@ -53,7 +54,7 @@ class ProfileHeroHeader extends StatelessWidget {
               height: 130,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.black.withOpacity(0.04),
               ),
             ),
           ),
@@ -65,7 +66,7 @@ class ProfileHeroHeader extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.black.withOpacity(0.04),
               ),
             ),
           ),
@@ -93,7 +94,7 @@ class ProfileHeroHeader extends StatelessWidget {
                             height: 148,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.25),
+                              color: Colors.black.withOpacity(0.08),
                             ),
                           ),
                           // Avatar circle
@@ -120,7 +121,7 @@ class ProfileHeroHeader extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 44,
                                     fontWeight: FontWeight.w800,
-                                    color: badgeColor,
+                                    color: primary,
                                     letterSpacing: 1,
                                   ),
                                 ),
@@ -162,7 +163,7 @@ class ProfileHeroHeader extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: Colors.black,
                           letterSpacing: 0.3,
                         ),
                       ),
@@ -170,25 +171,51 @@ class ProfileHeroHeader extends StatelessWidget {
                         const SizedBox(width: 6),
                         const Icon(
                           Icons.verified_rounded,
-                          color: Colors.white,
+                          color: Colors.black,
                           size: 20,
                         ),
                       ],
                     ],
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
 
-                  // Specialty
-                  Text(
-                    artisan.specialty,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white.withOpacity(0.88),
-                      letterSpacing: 0.2,
+                  // Category chips
+                  if (artisan.categories.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: artisan.categories
+                            .map(
+                              (cat) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.black.withOpacity(0.15),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  cat.name,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
                     ),
-                  ),
 
                   const SizedBox(height: 10),
 
@@ -199,10 +226,10 @@ class ProfileHeroHeader extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.18),
+                      color: Colors.black.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.35),
+                        color: Colors.black.withOpacity(0.15),
                         width: 1,
                       ),
                     ),
@@ -214,8 +241,8 @@ class ProfileHeroHeader extends StatelessWidget {
                           height: 8,
                           decoration: BoxDecoration(
                             color: artisan.isOnline
-                                ? const Color(0xFF4ADE80)
-                                : Colors.white.withOpacity(0.6),
+                                ? const Color(0xFF22C55E)
+                                : Colors.black.withOpacity(0.35),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -223,7 +250,7 @@ class ProfileHeroHeader extends StatelessWidget {
                         Text(
                           artisan.isOnline ? 'Online Now' : 'Currently Offline',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
