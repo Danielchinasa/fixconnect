@@ -1,11 +1,8 @@
-import 'package:fix_connect_mobile/features/home/data/datasources/home_mock_datasource.dart';
 import 'package:fix_connect_mobile/features/home/data/models/service_category_model.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/service_detail/service_book_button.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/service_detail/service_description_section.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/service_detail/service_featured_artisans.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/service_detail/service_hero_header.dart';
-import 'package:fix_connect_mobile/features/home/presentation/widgets/service_detail/service_popular_services.dart';
-import 'package:fix_connect_mobile/features/home/presentation/widgets/service_detail/service_stats_strip.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/service_detail/service_why_choose_us.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +14,7 @@ class ServiceDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bgColor = Theme.of(context).scaffoldBackgroundColor;
-    final featured = HomeMockDatasource.getTopArtisans().take(3).toList();
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -29,7 +26,7 @@ class ServiceDetailPage extends StatelessWidget {
               SliverAppBar(
                 pinned: true,
                 expandedHeight: 280,
-                backgroundColor: service.gradientColors.last,
+                backgroundColor: primary,
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 automaticallyImplyLeading: false,
@@ -37,22 +34,18 @@ class ServiceDetailPage extends StatelessWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.parallax,
                   background: Hero(
-                    tag: 'service_card_\${service.id}',
+                    tag: 'service_card_${service.id}',
                     child: ServiceHeroHeader(service: service),
                   ),
                 ),
               ),
-              SliverToBoxAdapter(child: ServiceStatsStrip(service: service)),
               SliverToBoxAdapter(
                 child: ServiceDescriptionSection(service: service),
               ),
               SliverToBoxAdapter(
-                child: ServicePopularServices(service: service),
-              ),
-              SliverToBoxAdapter(
                 child: ServiceFeaturedArtisans(
-                  artisans: featured,
-                  serviceLabel: service.label,
+                  artisans: const [],
+                  serviceLabel: service.name,
                 ),
               ),
               const SliverToBoxAdapter(child: ServiceWhyChooseUs()),

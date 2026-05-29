@@ -31,6 +31,10 @@ import 'package:fix_connect_mobile/features/profile/presentation/cubit/reviews_c
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/stats_cubit.dart';
+import 'package:fix_connect_mobile/features/home/data/datasources/services_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/home/data/repositories/services_repository_impl.dart';
+import 'package:fix_connect_mobile/features/home/domain/repositories/services_repository.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/services_cubit.dart';
 
 /// Global service locator instance.
 /// Access registered objects via `sl<MyType>()`.
@@ -149,4 +153,17 @@ Future<void> initDependencies() async {
 
   // ── Stats: BLoC ────────────────────────────────────────────────────────────
   sl.registerFactory(() => StatsCubit(sl<ApiClient>().dio));
+
+  // ── Services (categories): Data/BLoC ──────────────────────────────────────
+  sl.registerLazySingleton<ServicesRemoteDataSource>(
+    () => ServicesRemoteDataSourceImpl(sl<ApiClient>()),
+  );
+
+  sl.registerLazySingleton<ServicesRepository>(
+    () => ServicesRepositoryImpl(sl<ServicesRemoteDataSource>()),
+  );
+
+  sl.registerFactory<ServicesCubit>(
+    () => ServicesCubit(sl<ServicesRepository>()),
+  );
 }

@@ -11,7 +11,8 @@ class ServiceDescriptionSection extends StatefulWidget {
   const ServiceDescriptionSection({super.key, required this.service});
 
   @override
-  State<ServiceDescriptionSection> createState() => _ServiceDescriptionSectionState();
+  State<ServiceDescriptionSection> createState() =>
+      _ServiceDescriptionSectionState();
 }
 
 class _ServiceDescriptionSectionState extends State<ServiceDescriptionSection> {
@@ -23,26 +24,50 @@ class _ServiceDescriptionSectionState extends State<ServiceDescriptionSection> {
     final primary = context.primary;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(AppSpacing.custom16, 0, AppSpacing.custom16, AppSpacing.custom16),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('About this service', style: AppTextStyles.bodyLargeBold(color: textColor)),
-        AppGaps.h8,
-        AnimatedCrossFade(
-          duration: const Duration(milliseconds: 250),
-          crossFadeState: _expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-          firstChild: Text(widget.service.description,
-              style: AppTextStyles.bodyMediumRegular(color: textColor.withOpacity(0.7)),
-              maxLines: 2, overflow: TextOverflow.ellipsis),
-          secondChild: Text(widget.service.description,
-              style: AppTextStyles.bodyMediumRegular(color: textColor.withOpacity(0.7))),
-        ),
-        AppGaps.h4,
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: Text(_expanded ? 'Show less' : 'Read more',
-              style: AppTextStyles.bodySmallSemibold(color: primary)),
-        ),
-      ]),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.custom16,
+        0,
+        AppSpacing.custom16,
+        AppSpacing.custom16,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'About this service',
+            style: AppTextStyles.bodyLargeBold(color: textColor),
+          ),
+          AppGaps.h8,
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 250),
+            crossFadeState: _expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: Text(
+              widget.service.description ?? '',
+              style: AppTextStyles.bodyMediumRegular(
+                color: textColor.withOpacity(0.7),
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            secondChild: Text(
+              widget.service.description ?? '',
+              style: AppTextStyles.bodyMediumRegular(
+                color: textColor.withOpacity(0.7),
+              ),
+            ),
+          ),
+          AppGaps.h4,
+          GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Text(
+              _expanded ? 'Show less' : 'Read more',
+              style: AppTextStyles.bodySmallSemibold(color: primary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

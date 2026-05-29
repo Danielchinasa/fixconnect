@@ -2,6 +2,7 @@ import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/di/injection_container.dart';
 import 'package:fix_connect_mobile/features/bookings/presentation/pages/bookings_page.dart';
+import 'package:fix_connect_mobile/features/home/presentation/cubit/services_cubit.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/home_tab.dart';
 import 'package:fix_connect_mobile/features/home/presentation/pages/services_all_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/widgets/home_bottom_nav.dart';
@@ -47,7 +48,10 @@ class _HomePageState extends State<HomePage> {
 
     // Built here (not static const) so the callback can be wired in.
     final tabs = [
-      HomeTab(onSeeAllServices: _switchToServicesTab),
+      HomeTab(
+        onSeeAllServices: _switchToServicesTab,
+        onAvatarTap: () => setState(() => _currentNavIndex = 4),
+      ),
       const ServicesAllPage(),
       const BookingsPage(),
       const _PlaceholderTab(label: 'Messages', icon: Icons.chat_bubble_rounded),
@@ -61,14 +65,17 @@ class _HomePageState extends State<HomePage> {
       ),
     ];
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: IndexedStack(index: _currentNavIndex, children: tabs),
-      bottomNavigationBar: HomeBottomNav(
-        currentIndex: _currentNavIndex,
-        onTap: (i) => setState(() => _currentNavIndex = i),
-        primary: primary,
-        isDark: isDark,
+    return BlocProvider(
+      create: (_) => sl<ServicesCubit>()..load(),
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: IndexedStack(index: _currentNavIndex, children: tabs),
+        bottomNavigationBar: HomeBottomNav(
+          currentIndex: _currentNavIndex,
+          onTap: (i) => setState(() => _currentNavIndex = i),
+          primary: primary,
+          isDark: isDark,
+        ),
       ),
     );
   }
