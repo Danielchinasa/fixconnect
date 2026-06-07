@@ -4,13 +4,17 @@ import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/utils/build_context_ext.dart';
 import 'package:fix_connect_mobile/core/widgets/button_primary.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/booking_cubit.dart';
 import 'package:fix_connect_mobile/features/home/data/models/artisan_model.dart';
+import 'package:fix_connect_mobile/features/profile/data/models/saved_address.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:fix_connect_mobile/core/widgets/photo_options_sheet.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:fix_connect_mobile/app/router/route_names.dart';
 
@@ -33,7 +37,7 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
 
   // Step 1
   final _notesCtrl = TextEditingController();
-  String? _selectedAddress;
+  SavedAddress? _selectedAddress;
 
   @override
   void initState() {
@@ -42,9 +46,6 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
   }
 
   final List<XFile?> _images = [null, null, null];
-
-  // Step 2
-  int? _selectedPayment;
 
   static const _timeSlots = [
     '7:00 AM',
@@ -61,28 +62,14 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
     '6:00 PM',
   ];
 
-  static const _addresses = [
-    ('Home', Icons.home_rounded, '14 Admiralty Way, Lekki Phase 1, Lagos'),
-    (
-      'Work',
-      Icons.business_center_rounded,
-      '1A Adeola Odeku St, Victoria Island',
-    ),
-  ];
-
-  static const _payments = [
-    ('Visa •••• 4242', Icons.credit_card_rounded),
-    ('Mastercard •••• 1234', Icons.credit_card_rounded),
-  ];
-
   List<DateTime> get _dates =>
       List.generate(14, (i) => DateTime.now().add(Duration(days: i)));
 
   bool get _canProceed {
     if (_step == 0) return _selectedDate != null && _selectedSlot != null;
-    if (_step == 1)
+    if (_step == 1) {
       return _notesCtrl.text.trim().isNotEmpty && _selectedAddress != null;
-    if (_step == 2) return _selectedPayment != null;
+    }
     return true;
   }
 
@@ -95,8 +82,24 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
         curve: Curves.easeInOut,
       );
     } else {
-      _showConfirmSheet();
+      _submitBooking();
     }
+  }
+
+  void _submitBooking() {
+    final artisan = widget.artisan;
+    final categoryId = artisan.categories.isNotEmpty
+        ? artisan.categories.first.id
+        : '';
+    final addr = _selectedAddress!;
+    context.read<BookingCubit>().create(
+      artisanProfileId: artisan.id,
+      categoryId: categoryId,
+      serviceDescription: _notesCtrl.text.trim(),
+      scheduledDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
+      timeSlot: _selectedSlot!,
+      address: '${addr.address}, ${addr.city}, ${addr.state}',
+    );
   }
 
   void _back() {
@@ -191,12 +194,12 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
             ),
             AppGaps.h16,
             Text(
-              'Booking Confirmed!',
+              'Request Sent!',
               style: AppTextStyles.header4Bold(color: textColor),
             ),
             AppGaps.h8,
             Text(
-              'Your booking with ${widget.artisan.name} has been sent.\nYou will receive a confirmation shortly.',
+              '${widget.artisan.name.split(' ').first} will review your request and send you a price quote. You\'ll be notified as soon as they respond.',
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMediumRegular(
                 color: textColor.withValues(alpha: 0.65),
@@ -276,7 +279,7 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
     final surfaceColor = context.surfaceColor;
     final primary = context.primary;
 
-    const stepTitles = ['Date & Time', 'Service Details', 'Review & Pay'];
+    const stepTitles = ['Date & Time', 'Service Details', 'Review & Send'];
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -351,7 +354,6 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
                   _DetailsStep(
                     notesCtrl: _notesCtrl,
                     selectedAddress: _selectedAddress,
-                    addresses: _addresses,
                     images: _images,
                     textColor: textColor,
                     surfaceColor: surfaceColor,
@@ -366,16 +368,13 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
                     artisan: widget.artisan,
                     selectedDate: _selectedDate,
                     selectedSlot: _selectedSlot ?? '–',
-                    selectedAddress: _selectedAddress,
+                    selectedAddress: _selectedAddress != null
+                        ? '${_selectedAddress!.address}, ${_selectedAddress!.city}'
+                        : null,
                     notes: _notesCtrl.text,
-                    payments: _payments,
-                    selectedPayment: _selectedPayment,
                     textColor: textColor,
                     surfaceColor: surfaceColor,
                     primary: primary,
-                    isDark: isDark,
-                    onPaymentSelected: (i) =>
-                        setState(() => _selectedPayment = i),
                   ),
                 ],
               ),
@@ -393,11 +392,32 @@ class _BookingFlowPageState extends State<BookingFlowPage> {
                   top: BorderSide(color: textColor.withValues(alpha: 0.08)),
                 ),
               ),
-              child: ButtonPrimary(
-                text: _step == 2 ? 'Confirm Booking' : 'Continue',
-                bgColor: primary,
-                enabled: _canProceed,
-                onTap: _next,
+              child: BlocConsumer<BookingCubit, BookingState>(
+                listener: (context, state) {
+                  if (state is BookingSuccess) {
+                    _showConfirmSheet();
+                  } else if (state is BookingError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          state.message,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  final isLoading = state is BookingLoading;
+                  return ButtonPrimary(
+                    text: _step == 2 ? 'Send Request' : 'Continue',
+                    bgColor: primary,
+                    enabled: _canProceed && !isLoading,
+                    isLoading: isLoading,
+                    onTap: _next,
+                  );
+                },
               ),
             ),
           ],
@@ -533,19 +553,17 @@ class _DateTimeStep extends StatelessWidget {
 // ── Step 1: Service Details ───────────────────────────────────────────────────
 class _DetailsStep extends StatelessWidget {
   final TextEditingController notesCtrl;
-  final String? selectedAddress;
-  final List<(String, IconData, String)> addresses;
+  final SavedAddress? selectedAddress;
   final List<XFile?>? images;
   final Color textColor, surfaceColor, primary;
   final bool isDark;
-  final ValueChanged<String> onAddressSelected;
+  final ValueChanged<SavedAddress> onAddressSelected;
   final Future<void> Function(int)? onPickImage;
   final void Function(int)? onRemoveImage;
 
   const _DetailsStep({
     required this.notesCtrl,
     required this.selectedAddress,
-    required this.addresses,
     required this.textColor,
     required this.surfaceColor,
     required this.primary,
@@ -655,7 +673,7 @@ class _DetailsStep extends StatelessWidget {
                           onTap: () => onRemoveImage!(i),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha: 0.6),
                               shape: BoxShape.circle,
                             ),
                             padding: const EdgeInsets.all(4),
@@ -678,77 +696,101 @@ class _DetailsStep extends StatelessWidget {
             style: AppTextStyles.bodyLargeBold(color: textColor),
           ),
           const SizedBox(height: 12),
-          ...addresses.map((addr) {
-            final sel = selectedAddress != null && selectedAddress == addr.$1;
-            return GestureDetector(
-              onTap: () => onAddressSelected(addr.$1),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: EdgeInsets.all(AppSpacing.custom14),
-                decoration: BoxDecoration(
-                  color: sel ? primary.withValues(alpha: 0.08) : surfaceColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: sel ? primary : textColor.withValues(alpha: 0.1),
-                    width: sel ? 1.5 : 1,
+          BlocBuilder<AddressCubit, AddressState>(
+            builder: (context, state) {
+              if (state is AddressLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final addresses = state is AddressLoaded
+                  ? state.addresses
+                  : <SavedAddress>[];
+              if (addresses.isEmpty) {
+                return Text(
+                  'No saved addresses. Add one in your profile.',
+                  style: AppTextStyles.bodySmallRegular(
+                    color: textColor.withValues(alpha: 0.55),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      addr.$2,
-                      color: sel ? primary : textColor.withValues(alpha: 0.5),
-                      size: 22,
-                    ),
-                    SizedBox(width: AppSpacing.custom12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                );
+              }
+              return Column(
+                children: addresses.map((addr) {
+                  final sel = selectedAddress?.id == addr.id;
+                  return GestureDetector(
+                    onTap: () => onAddressSelected(addr),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.all(AppSpacing.custom14),
+                      decoration: BoxDecoration(
+                        color: sel
+                            ? primary.withValues(alpha: 0.08)
+                            : surfaceColor,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: sel
+                              ? primary
+                              : textColor.withValues(alpha: 0.1),
+                          width: sel ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Row(
                         children: [
-                          Text(
-                            addr.$1,
-                            style: AppTextStyles.bodyMediumBold(
-                              color: sel ? primary : textColor,
+                          Icon(
+                            addr.isDefault
+                                ? Icons.home_rounded
+                                : Icons.location_on_outlined,
+                            color: sel
+                                ? primary
+                                : textColor.withValues(alpha: 0.5),
+                            size: 22,
+                          ),
+                          SizedBox(width: AppSpacing.custom12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  addr.label,
+                                  style: AppTextStyles.bodyMediumBold(
+                                    color: sel ? primary : textColor,
+                                  ),
+                                ),
+                                Text(
+                                  '${addr.address}, ${addr.city}',
+                                  style: AppTextStyles.bodySmallRegular(
+                                    color: textColor.withValues(alpha: 0.55),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Text(
-                            addr.$3,
-                            style: AppTextStyles.bodySmallRegular(
-                              color: textColor.withValues(alpha: 0.55),
+                          if (sel)
+                            Icon(
+                              Icons.check_circle_rounded,
+                              color: primary,
+                              size: 20,
                             ),
-                          ),
                         ],
                       ),
                     ),
-                    if (sel)
-                      Icon(
-                        Icons.check_circle_rounded,
-                        color: primary,
-                        size: 20,
-                      ),
-                  ],
-                ),
-              ),
-            );
-          }),
+                  );
+                }).toList(),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 }
 
-// ── Step 2: Summary & Pay ─────────────────────────────────────────────────────
+// ── Step 2: Review & Send ─────────────────────────────────────────────────────
 class _SummaryStep extends StatelessWidget {
   final ArtisanModel artisan;
   final DateTime? selectedDate;
   final String selectedSlot, notes;
   final String? selectedAddress;
-  final List<(String, IconData)> payments;
-  final int? selectedPayment;
   final Color textColor, surfaceColor, primary;
-  final bool isDark;
-  final ValueChanged<int> onPaymentSelected;
 
   const _SummaryStep({
     required this.artisan,
@@ -756,13 +798,9 @@ class _SummaryStep extends StatelessWidget {
     required this.selectedSlot,
     required this.selectedAddress,
     required this.notes,
-    required this.payments,
-    required this.selectedPayment,
     required this.textColor,
     required this.surfaceColor,
     required this.primary,
-    required this.isDark,
-    required this.onPaymentSelected,
   });
 
   @override
@@ -778,7 +816,7 @@ class _SummaryStep extends StatelessWidget {
         children: [
           AppGaps.h8,
           Text(
-            'Review your booking',
+            'Review your request',
             style: AppTextStyles.bodyLargeBold(color: textColor),
           ),
           AppGaps.h16,
@@ -851,7 +889,7 @@ class _SummaryStep extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          // Detail rows
+          // Booking details
           Container(
             padding: EdgeInsets.all(AppSpacing.custom14),
             decoration: BoxDecoration(
@@ -896,102 +934,43 @@ class _SummaryStep extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
-          // Price breakdown
+          const SizedBox(height: 16),
+          // Quote-flow info banner
           Container(
-            padding: EdgeInsets.all(AppSpacing.custom14),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: surfaceColor,
-              borderRadius: BorderRadius.circular(16),
+              color: primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: primary.withValues(alpha: 0.2)),
             ),
-            child: Column(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      'Starting price',
-                      style: AppTextStyles.bodyMediumRegular(
-                        color: textColor.withValues(alpha: 0.65),
+                Icon(Icons.info_outline_rounded, color: primary, size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'No payment yet',
+                        style: AppTextStyles.bodySmallBold(color: primary),
                       ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      artisan.startingPrice,
-                      style: AppTextStyles.bodyMediumMedium(color: textColor),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Divider(color: textColor.withValues(alpha: 0.1)),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      'Total estimate',
-                      style: AppTextStyles.bodyMediumBold(color: textColor),
-                    ),
-                    const Spacer(),
-                    Text(
-                      artisan.startingPrice,
-                      style: AppTextStyles.bodyLargeBold(color: primary),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        'Your request will be sent to ${artisan.name.split(' ').first}. '
+                        'They will review your details and send you a price quote. '
+                        'You only pay after you accept their quote.',
+                        style: AppTextStyles.bodySmallRegular(
+                          color: textColor.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          AppGaps.h16,
-          Text(
-            'Payment Method',
-            style: AppTextStyles.bodyLargeBold(color: textColor),
-          ),
-          AppGaps.h10,
-          ...List.generate(payments.length, (i) {
-            final sel = selectedPayment != null && selectedPayment == i;
-            return GestureDetector(
-              onTap: () => onPaymentSelected(i),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: sel ? primary.withValues(alpha: 0.08) : surfaceColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: sel ? primary : textColor.withValues(alpha: 0.1),
-                    width: sel ? 1.5 : 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      payments[i].$2,
-                      color: sel ? primary : textColor.withValues(alpha: 0.5),
-                      size: 22,
-                    ),
-                    SizedBox(width: AppSpacing.custom12),
-                    Expanded(
-                      child: Text(
-                        payments[i].$1,
-                        style: AppTextStyles.bodyMediumMedium(
-                          color: sel ? primary : textColor,
-                        ),
-                      ),
-                    ),
-                    if (sel)
-                      Icon(
-                        Icons.check_circle_rounded,
-                        color: primary,
-                        size: 20,
-                      ),
-                  ],
-                ),
-              ),
-            );
-          }),
           AppGaps.h16,
         ],
       ),

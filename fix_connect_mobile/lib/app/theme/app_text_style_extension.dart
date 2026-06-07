@@ -18,6 +18,13 @@ class AppTextStyleExtension extends ThemeExtension<AppTextStyleExtension> {
     covariant ThemeExtension<AppTextStyleExtension>? other,
     double t,
   ) {
-    throw UnimplementedError();
+    if (other is! AppTextStyleExtension) return this;
+    return AppTextStyleExtension(
+      bodyLargeSemibold: TextStyle.lerp(
+        bodyLargeSemibold,
+        other.bodyLargeSemibold,
+        t,
+      )!,
+    );
   }
 }

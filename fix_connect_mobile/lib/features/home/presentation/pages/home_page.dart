@@ -1,6 +1,9 @@
 import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
 import 'package:fix_connect_mobile/core/di/injection_container.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/artisan_orders_cubit.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/my_bookings_cubit.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/pages/artisan_orders_page.dart';
 import 'package:fix_connect_mobile/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:fix_connect_mobile/features/home/presentation/cubit/featured_artisans_cubit.dart';
 import 'package:fix_connect_mobile/features/home/presentation/cubit/services_cubit.dart';
@@ -11,6 +14,8 @@ import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_c
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/cubit/reviews_cubit.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/user_profile_page.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/cubit/auth_cubit.dart';
+import 'package:fix_connect_mobile/features/onboarding/auth/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -47,6 +52,12 @@ class _HomePageState extends State<HomePage> {
     final isDark = theme.brightness == Brightness.dark;
     final primary = theme.colorScheme.primary;
 
+    // Determine the user's role to show the appropriate bookings tab.
+    final authState = context.read<AuthCubit>().state;
+    final isArtisan =
+        authState is AuthAuthenticated &&
+        authState.user?.role == UserRole.artisan;
+
     // Built here (not static const) so the callback can be wired in.
     final tabs = [
       HomeTab(
@@ -54,7 +65,15 @@ class _HomePageState extends State<HomePage> {
         onAvatarTap: () => setState(() => _currentNavIndex = 4),
       ),
       const ServicesAllPage(),
-      const BookingsPage(),
+      isArtisan
+          ? BlocProvider(
+              create: (_) => sl<ArtisanOrdersCubit>(),
+              child: const ArtisanOrdersPage(),
+            )
+          : BlocProvider(
+              create: (_) => sl<MyBookingsCubit>(),
+              child: const BookingsPage(),
+            ),
       const _PlaceholderTab(label: 'Messages', icon: Icons.chat_bubble_rounded),
       MultiBlocProvider(
         providers: [
