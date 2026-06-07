@@ -3,10 +3,11 @@ import 'package:fix_connect_mobile/app/theme/app_colors.dart';
 import 'package:fix_connect_mobile/app/theme/app_gaps.dart';
 import 'package:fix_connect_mobile/app/theme/app_spacing.dart';
 import 'package:fix_connect_mobile/app/theme/app_text_styles.dart';
-import 'package:fix_connect_mobile/features/bookings/data/datasources/bookings_mock_datasource.dart';
 import 'package:fix_connect_mobile/features/bookings/data/models/booking_model.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/my_bookings_cubit.dart';
 import 'package:fix_connect_mobile/features/bookings/presentation/widgets/booking_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // 📚 CONCEPT: Nested TabBar inside IndexedStack
 //
@@ -28,26 +29,36 @@ class _BookingsPageState extends State<BookingsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final _allBookings = BookingsMockDatasource.getBookings();
+  List<BookingModel> _bookings(MyBookingsState state) =>
+      state is MyBookingsLoaded ? state.bookings : [];
 
-  List<BookingModel> get _upcoming => _allBookings
+  List<BookingModel> _upcoming(MyBookingsState state) => _bookings(state)
       .where(
         (b) =>
-            b.status == BookingStatus.upcoming ||
+            b.status == BookingStatus.pending ||
+            b.status == BookingStatus.quoteSent ||
+            b.status == BookingStatus.confirmed ||
             b.status == BookingStatus.inProgress,
       )
       .toList();
 
-  List<BookingModel> get _completed =>
-      _allBookings.where((b) => b.status == BookingStatus.completed).toList();
+  List<BookingModel> _completed(MyBookingsState state) => _bookings(
+    state,
+  ).where((b) => b.status == BookingStatus.completed).toList();
 
-  List<BookingModel> get _cancelled =>
-      _allBookings.where((b) => b.status == BookingStatus.cancelled).toList();
+  List<BookingModel> _cancelled(MyBookingsState state) => _bookings(state)
+      .where(
+        (b) =>
+            b.status == BookingStatus.cancelled ||
+            b.status == BookingStatus.declined,
+      )
+      .toList();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    context.read<MyBookingsCubit>().load();
   }
 
   @override
@@ -66,102 +77,141 @@ class _BookingsPageState extends State<BookingsPage>
         : AppColors.surfaceLight;
     final primary = theme.colorScheme.primary;
 
-    // 📚 CONCEPT: No Scaffold here — the outer shell (HomePage) already provides one.
-    // Each tab widget is just a subtree. Using SafeArea ensures content stays
-    // below the status bar without double-nesting Scaffolds.
-    return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ─── Page title ──────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.custom16,
-              AppSpacing.custom16,
-              AppSpacing.custom16,
-              AppSpacing.custom8,
-            ),
-            child: Text(
-              'My Bookings',
-              style: theme.textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: primary,
-              ),
-            ),
-          ),
+    return BlocBuilder<MyBookingsCubit, MyBookingsState>(
+      builder: (context, state) {
+        final upcoming = _upcoming(state);
+        final completed = _completed(state);
+        final cancelled = _cancelled(state);
+        final isLoading = state is MyBookingsLoading;
+        final error = state is MyBookingsError ? state.message : null;
 
-          // ─── Pill-style TabBar ──────────────────────────────────
-          // 📚 CONCEPT: Pill TabBar
-          // We wrap the TabBar in a Container to give it a rounded background.
-          // Setting indicator to a BoxDecoration with the same borderRadius as
-          // the container creates the "sliding pill" effect.
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
-            child: Container(
-              decoration: BoxDecoration(
-                color: surfaceColor,
-                borderRadius: BorderRadius.circular(AppSpacing.custom12),
+        return SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ─── Page title ──────────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.custom16,
+                  AppSpacing.custom16,
+                  AppSpacing.custom16,
+                  AppSpacing.custom8,
+                ),
+                child: Text(
+                  'My Bookings',
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: primary,
+                  ),
+                ),
               ),
-              child: TabBar(
-                controller: _tabController,
-                indicator: BoxDecoration(
-                  color: primary,
-                  borderRadius: BorderRadius.circular(AppSpacing.custom12),
+
+              // ─── Pill-style TabBar ──────────────────────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.custom16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: surfaceColor,
+                    borderRadius: BorderRadius.circular(AppSpacing.custom12),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicator: BoxDecoration(
+                      color: primary,
+                      borderRadius: BorderRadius.circular(AppSpacing.custom12),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    labelColor: isDark
+                        ? AppColors.darkBackground
+                        : Colors.white,
+                    unselectedLabelColor: textColor.withValues(alpha: 0.55),
+                    labelStyle: AppTextStyles.bodySmallSemibold(),
+                    unselectedLabelStyle: AppTextStyles.bodySmallRegular(),
+                    tabs: [
+                      _TabLabel(label: 'Upcoming', count: upcoming.length),
+                      _TabLabel(label: 'Done', count: completed.length),
+                      _TabLabel(label: 'Cancelled', count: cancelled.length),
+                    ],
+                  ),
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                labelColor: isDark ? AppColors.darkBackground : Colors.white,
-                unselectedLabelColor: textColor.withValues(alpha: 0.55),
-                labelStyle: AppTextStyles.bodySmallSemibold(),
-                unselectedLabelStyle: AppTextStyles.bodySmallRegular(),
-                tabs: [
-                  _TabLabel(label: 'Upcoming', count: _upcoming.length),
-                  _TabLabel(label: 'Done', count: _completed.length),
-                  _TabLabel(label: 'Cancelled', count: _cancelled.length),
-                ],
               ),
-            ),
-          ),
 
-          AppGaps.h16,
+              AppGaps.h16,
 
-          // ─── Tab body ────────────────────────────────────────────
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _BookingList(
-                  bookings: _upcoming,
-                  textColor: textColor,
-                  surfaceColor: surfaceColor,
-                  isDark: isDark,
-                  emptyMessage: 'No upcoming bookings',
-                  emptyIcon: Icons.calendar_today_outlined,
-                  primary: primary,
-                ),
-                _BookingList(
-                  bookings: _completed,
-                  textColor: textColor,
-                  surfaceColor: surfaceColor,
-                  isDark: isDark,
-                  emptyMessage: 'No completed bookings yet',
-                  emptyIcon: Icons.check_circle_outline_rounded,
-                  primary: primary,
-                ),
-                _BookingList(
-                  bookings: _cancelled,
-                  textColor: textColor,
-                  surfaceColor: surfaceColor,
-                  isDark: isDark,
-                  emptyMessage: 'No cancelled bookings',
-                  emptyIcon: Icons.cancel_outlined,
-                  primary: primary,
-                ),
-              ],
-            ),
+              // ─── Tab body ────────────────────────────────────────────
+              Expanded(
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : error != null
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.error_outline_rounded,
+                              size: 48,
+                              color: primary.withValues(alpha: 0.4),
+                            ),
+                            AppGaps.h8,
+                            Text(
+                              error,
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.bodyMediumRegular(
+                                color: textColor.withValues(alpha: 0.55),
+                              ),
+                            ),
+                            AppGaps.h16,
+                            TextButton(
+                              onPressed: () =>
+                                  context.read<MyBookingsCubit>().load(),
+                              child: Text(
+                                'Retry',
+                                style: AppTextStyles.bodyMediumSemibold(
+                                  color: primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _BookingList(
+                            bookings: upcoming,
+                            textColor: textColor,
+                            surfaceColor: surfaceColor,
+                            isDark: isDark,
+                            emptyMessage: 'No upcoming bookings',
+                            emptyIcon: Icons.calendar_today_outlined,
+                            primary: primary,
+                          ),
+                          _BookingList(
+                            bookings: completed,
+                            textColor: textColor,
+                            surfaceColor: surfaceColor,
+                            isDark: isDark,
+                            emptyMessage: 'No completed bookings yet',
+                            emptyIcon: Icons.check_circle_outline_rounded,
+                            primary: primary,
+                          ),
+                          _BookingList(
+                            bookings: cancelled,
+                            textColor: textColor,
+                            surfaceColor: surfaceColor,
+                            isDark: isDark,
+                            emptyMessage: 'No cancelled bookings',
+                            emptyIcon: Icons.cancel_outlined,
+                            primary: primary,
+                          ),
+                        ],
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

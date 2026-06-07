@@ -38,6 +38,8 @@ import 'package:fix_connect_mobile/features/profile/presentation/pages/payment_m
 import 'package:fix_connect_mobile/features/profile/presentation/pages/personal_information_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/saved_addresses_page.dart';
 import 'package:fix_connect_mobile/features/profile/presentation/pages/settings_page.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/booking_cubit.dart';
+import 'package:fix_connect_mobile/features/profile/presentation/cubit/address_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -135,7 +137,13 @@ class RouteGenerator {
       case AppRoutes.bookingFlow:
         final artisan = settings.arguments as ArtisanModel;
         return MaterialPageRoute(
-          builder: (_) => BookingFlowPage(artisan: artisan),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => sl<BookingCubit>()),
+              BlocProvider(create: (_) => sl<AddressCubit>()..load()),
+            ],
+            child: BookingFlowPage(artisan: artisan),
+          ),
         );
       case AppRoutes.bookingDetail:
         final booking = settings.arguments as BookingModel;

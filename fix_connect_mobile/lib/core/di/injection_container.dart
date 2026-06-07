@@ -1,3 +1,7 @@
+import 'package:fix_connect_mobile/features/bookings/data/datasources/booking_remote_datasource.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/booking_cubit.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/artisan_orders_cubit.dart';
+import 'package:fix_connect_mobile/features/bookings/presentation/cubit/my_bookings_cubit.dart';
 import 'package:fix_connect_mobile/core/constants/api_constants.dart';
 import 'package:fix_connect_mobile/core/network/api_client.dart';
 import 'package:fix_connect_mobile/core/network/token_storage.dart';
@@ -214,5 +218,22 @@ Future<void> initDependencies() async {
 
   sl.registerFactory<ArtisanSetupCubit>(
     () => ArtisanSetupCubit(sl<ArtisanSetupRepository>()),
+  );
+
+  // ── Bookings: Data/BLoC ───────────────────────────────────────────────────
+  sl.registerLazySingleton<BookingRemoteDataSource>(
+    () => BookingRemoteDataSourceImpl(sl<ApiClient>()),
+  );
+
+  sl.registerFactory<BookingCubit>(
+    () => BookingCubit(sl<BookingRemoteDataSource>()),
+  );
+
+  sl.registerFactory<MyBookingsCubit>(
+    () => MyBookingsCubit(sl<BookingRemoteDataSource>()),
+  );
+
+  sl.registerFactory<ArtisanOrdersCubit>(
+    () => ArtisanOrdersCubit(sl<BookingRemoteDataSource>()),
   );
 }

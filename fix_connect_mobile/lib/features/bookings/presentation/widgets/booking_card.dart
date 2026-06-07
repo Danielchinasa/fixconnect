@@ -71,22 +71,11 @@ class BookingCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: AppSpacing.custom8),
-                  // Name + specialty
+                  // Name
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          booking.artisanName,
-                          style: AppTextStyles.bodyMediumBold(color: textColor),
-                        ),
-                        Text(
-                          booking.artisanSpecialty,
-                          style: AppTextStyles.bodySmallRegular(
-                            color: textColor.withValues(alpha: 0.55),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      booking.artisanName,
+                      style: AppTextStyles.bodyMediumBold(color: textColor),
                     ),
                   ),
                   // Status badge
@@ -108,13 +97,6 @@ class BookingCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _DetailRow(
-                          icon: Icons.build_circle_outlined,
-                          label: booking.service,
-                          textColor: textColor,
-                          iconColor: statusColor,
-                        ),
-                        SizedBox(height: AppSpacing.custom4),
                         _DetailRow(
                           icon: Icons.calendar_today_rounded,
                           label: DateFormat(
